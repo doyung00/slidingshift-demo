@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>슬라이딩시프트 데모</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F4F8; --surface:#FFFFFF; --surface2:#F8F9FC; --ink:#161A26; --ink2:#3A4152; --muted:#6B7385; --line:#E4E7EE;
+  --brand:#5146E5; --brand-weak:#ECEBFF; --brand-ink:#3A30C2;
+  --red:#E5484D; --red-weak:#FDECEC; --orange:#F2711C; --orange-weak:#FFF1E7;
+  --amber:#D99A00; --amber-weak:#FFF6DB; --green:#12A150; --green-weak:#E5F7EC;
+  --blue:#2F6FEB; --blue-weak:#E8F0FE; --violet:#7C3AED; --violet-weak:#F2EBFF; --gray-weak:#EEF0F4;
+  --shadow:0 1px 2px rgba(20,24,40,.05),0 4px 16px rgba(20,24,40,.06);
+  --radius:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1117; --surface:#181B24; --surface2:#1E222D; --ink:#EEF0F6; --ink2:#C9CEDB; --muted:#8C93A6; --line:#2A2F3C;
+    --brand:#7B72FF; --brand-weak:#26244A; --brand-ink:#B3ADFF;
+    --red-weak:#3A1D20; --orange-weak:#3A2616; --amber-weak:#3A3014; --green-weak:#15301F; --blue-weak:#172946; --violet-weak:#2A1E45; --gray-weak:#252A36;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1117; --surface:#181B24; --surface2:#1E222D; --ink:#EEF0F6; --ink2:#C9CEDB; --muted:#8C93A6; --line:#2A2F3C;
+  --brand:#7B72FF; --brand-weak:#26244A; --brand-ink:#B3ADFF;
+  --red-weak:#3A1D20; --orange-weak:#3A2616; --amber-weak:#3A3014; --green-weak:#15301F; --blue-weak:#172946; --violet-weak:#2A1E45; --gray-weak:#252A36;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input,textarea,select{font:inherit;color:var(--ink)}
+.app{display:grid;grid-template-columns:232px 1fr;height:100vh}
+.app.with-phone{grid-template-columns:232px 1fr 360px}
+/* sidebar */
+.side{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 14px;gap:4px}
+.logo{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.logo-mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--brand),#9B5CF6);display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px}
+.logo b{font-size:16px;display:block;line-height:1.2}
+.logo small{color:var(--muted);font-size:11.5px}
+.nav{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--ink2);font-weight:500;width:100%;text-align:left;position:relative}
+.nav:hover{background:var(--surface2)}
+.nav.on{background:var(--brand-weak);color:var(--brand-ink);font-weight:700}
+.nav .ic{width:22px;text-align:center;font-size:17px}
+.nav .badge{margin-left:auto;background:var(--red);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:1px 7px}
+.side .sep{height:1px;background:var(--line);margin:10px 6px}
+.side .foot{margin-top:auto;font-size:12px;color:var(--muted);padding:8px}
+.side .foot button{color:var(--muted);text-decoration:underline;font-size:12px;padding:0}
+/* main */
+.main{display:flex;flex-direction:column;min-width:0;height:100vh}
+.top{display:flex;align-items:center;gap:14px;padding:14px 26px;background:var(--surface);border-bottom:1px solid var(--line)}
+.store{font-weight:700}
+.store small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:var(--surface2);border:1px solid var(--line);font-size:13px;font-weight:500;white-space:nowrap}
+.top .grow{flex:1}
+.clock{font-variant-numeric:tabular-nums;font-weight:700;font-size:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;border:1px solid var(--line);background:var(--surface);white-space:nowrap}
+.btn:hover{filter:brightness(.98)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.btn.ghost{background:transparent}
+.btn.lg{padding:14px 22px;font-size:16px;border-radius:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.content{flex:1;overflow:auto;padding:24px 26px 40px}
+.h1{font-size:24px;font-weight:800;margin:0 0 4px;letter-spacing:-.3px}
+.sub{color:var(--muted);margin:0 0 18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.sec-t{font-weight:800;font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+/* banner */
+.banner{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;background:var(--orange-weak);color:var(--ink);margin-bottom:16px;font-weight:500}
+.banner.info{background:var(--brand-weak)}
+.banner .x{margin-left:auto}
+/* cards */
+.filters{display:flex;gap:8px;margin:4px 0 14px;flex-wrap:wrap}
+.fbtn{padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:500}
+.fbtn.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.hcard{padding:16px 16px 14px;text-align:left;display:flex;flex-direction:column;gap:10px;transition:transform .15s, box-shadow .15s;position:relative;overflow:hidden}
+.hcard:hover{transform:translateY(-2px)}
+.hcard.urgent{border-color:color-mix(in srgb,var(--red) 45%,var(--line))}
+.hcard.urgent::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--red)}
+.hcard.done{opacity:.62}
+.hcard.newin{animation:pop .6s ease}
+@keyframes pop{0%{transform:scale(.94);box-shadow:0 0 0 6px var(--brand-weak)}100%{transform:none}}
+.tline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.type{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px}
+.tag{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px}
+.tag.red{background:var(--red-weak);color:var(--red)}
+.tag.orange{background:var(--orange-weak);color:var(--orange)}
+.tag.gray{background:var(--gray-weak);color:var(--muted)}
+.tag.brand{background:var(--brand-weak);color:var(--brand-ink)}
+.hcard .title{font-weight:800;font-size:16.5px;line-height:1.35}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
+.meta dt{color:var(--muted)} .meta dd{margin:0;color:var(--ink2);font-weight:500}
+.hcard .foot{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:9px}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:99px}
+.st i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-0{background:var(--gray-weak);color:var(--muted)} .st-1{background:var(--blue-weak);color:var(--blue)} .st-2{background:var(--violet-weak);color:var(--violet)} .st-3{background:var(--amber-weak);color:var(--amber)} .st-4{background:var(--green-weak);color:var(--green)}
+/* stepper */
+.stepper{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0 4px}
+.step{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:13px;font-weight:700;color:var(--muted);transition:all .2s}
+.step .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--gray-weak);font-size:12px}
+.step.past{color:var(--ink2)} .step.past .n{background:var(--brand);color:#fff}
+.step.cur{border-color:var(--brand);background:var(--brand-weak);color:var(--brand-ink)} .step.cur .n{background:var(--brand);color:#fff}
+.step:hover{border-color:var(--brand)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.field label{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:2px}
+.field .v{font-weight:700;font-size:14.5px}
+.field input,.field select{width:100%;border:0;background:transparent;font-weight:700;font-size:14.5px;padding:0;outline:none}
+.field.miss{border:1.5px dashed var(--orange);background:var(--orange-weak)}
+.field.wide{grid-column:1/-1}
+.origin{display:flex;gap:12px;align-items:flex-start;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.origin .ic{width:40px;height:40px;border-radius:10px;background:var(--brand-weak);display:grid;place-items:center;font-size:19px;flex:none}
+.quote{font-size:14px;color:var(--ink2)}
+.audio{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:var(--muted)}
+.audio .bars{display:flex;gap:2px;align-items:center;height:16px}
+.audio .bars i{width:3px;background:var(--brand);border-radius:2px;opacity:.6}
+/* manual */
+.mlink{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--brand-weak),var(--surface));border:1px solid var(--line);width:100%;text-align:left}
+.mlink .ic{font-size:24px}
+.mlink b{display:block}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.mcard{padding:16px;text-align:left;display:flex;flex-direction:column;gap:6px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.steps li{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--line);cursor:pointer}
+.steps li .n{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--brand);color:#fff;font-weight:800;font-size:13px}
+.steps li.ok{background:var(--green-weak);border-color:transparent}
+.steps li.ok .n{background:var(--green)}
+.steps li.ok span{text-decoration:line-through;color:var(--muted)}
+.warn{background:var(--red-weak);border-radius:12px;padding:12px 14px;font-size:14px}
+.warn li{margin:2px 0}
+.terms{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.terms dt{font-weight:800;color:var(--brand-ink)} .terms dd{margin:0;color:var(--ink2)}
+.plan{width:100%;height:auto;display:block;border-radius:12px;background:var(--surface2);border:1px solid var(--line)}
+.plan .z{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.plan .z.hl{fill:var(--brand-weak);stroke:var(--brand);stroke-width:2.5}
+.plan text{font-size:11px;fill:var(--muted);font-family:inherit;font-weight:500}
+.plan text.hl{fill:var(--brand-ink);font-weight:800}
+.plan .pulse{fill:var(--brand);transform-origin:center;transform-box:fill-box;animation:pl 1.4s infinite}
+@keyframes pl{0%{opacity:.55;transform:scale(.6)}100%{opacity:0;transform:scale(2.4)}}
+.video{aspect-ratio:16/9;border-radius:12px;background:#1d2030;display:grid;place-items:center;color:#fff;position:relative;overflow:hidden}
+.video .play{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:22px}
+.video small{position:absolute;left:12px;bottom:10px;opacity:.8}
+/* chat */
+.chat{display:flex;flex-direction:column;height:100%;min-height:340px}
+.msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--surface2);border-radius:12px;border:1px solid var(--line);min-height:220px;max-height:420px}
+.msg{max-width:82%;display:flex;flex-direction:column;gap:2px}
+.msg .who{font-size:11.5px;color:var(--muted)}
+.msg .bub{padding:9px 13px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-size:14px}
+.msg.me{align-self:flex-end;align-items:flex-end}
+.msg.me .bub{background:var(--brand);color:#fff;border-color:var(--brand)}
+.msg.sys{align-self:center;max-width:100%}
+.msg.sys .bub{background:transparent;border:0;color:var(--muted);font-size:12px;padding:2px}
+.msg.new{animation:pop .5s ease}
+.typing .bub{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:tp 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tp{0%,100%{opacity:.3}50%{opacity:1}}
+.send{display:flex;gap:8px;margin-top:10px}
+.send input{flex:1;border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--surface);outline:none}
+.send input:focus{border-color:var(--brand)}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.quick button{font-size:12.5px;padding:5px 11px;border-radius:99px;background:var(--surface);border:1px solid var(--line)}
+.pin{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--amber-weak);margin-bottom:12px;font-size:14px}
+.threads{display:flex;flex-direction:column;gap:6px}
+.thr{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;text-align:left;width:100%;border:1px solid transparent}
+.thr:hover{background:var(--surface2)}
+.thr.on{background:var(--brand-weak);border-color:color-mix(in srgb,var(--brand) 30%,transparent)}
+.thr .t{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thr .p{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* record */
+.recbig{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.rb{padding:28px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;border-radius:20px}
+.rb .ic{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;font-size:36px}
+.rb b{font-size:19px}
+.rb small{color:var(--muted)}
+.rb:hover{border-color:var(--brand)}
+.recwrap{max-width:760px;margin:0 auto;text-align:center;padding:30px}
+.mic{width:130px;height:130px;border-radius:50%;background:var(--red);display:grid;place-items:center;margin:16px auto;color:#fff;font-size:50px;position:relative}
+.mic::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:3px solid var(--red);opacity:.4;animation:ring 1.4s infinite}
+@keyframes ring{0%{transform:scale(.9);opacity:.6}100%{transform:scale(1.25);opacity:0}}
+.wave{display:flex;gap:4px;justify-content:center;align-items:center;height:52px;margin:6px 0 14px}
+.wave i{width:5px;border-radius:3px;background:var(--brand);animation:wv 0.9s ease-in-out infinite}
+@keyframes wv{0%,100%{height:8px}50%{height:46px}}
+.transcript{min-height:84px;font-size:19px;font-weight:500;line-height:1.6;padding:16px 20px;border-radius:16px;background:var(--surface);border:1px solid var(--line);text-align:left}
+.transcript .cur{display:inline-block;width:2px;height:20px;background:var(--brand);vertical-align:middle;animation:tp .8s infinite}
+.ai-steps{list-style:none;padding:0;margin:20px auto;max-width:420px;text-align:left;display:flex;flex-direction:column;gap:10px}
+.ai-steps li{display:flex;gap:12px;align-items:center;font-size:16px;color:var(--muted);transition:color .2s}
+.ai-steps li .d{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;flex:none}
+.ai-steps li.run{color:var(--ink)} .ai-steps li.run .d{border-color:var(--brand);border-top-color:transparent;animation:spin .8s linear infinite}
+.ai-steps li.ok{color:var(--ink)} .ai-steps li.ok .d{background:var(--green);border-color:var(--green);color:#fff}
+@keyframes spin{to{transform:rotate(360deg)}}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph{border-radius:14px;overflow:hidden;border:2px solid var(--line);text-align:left;background:var(--surface)}
+.ph:hover{border-color:var(--brand)}
+.ph svg{display:block;width:100%;height:auto}
+.ph div{padding:8px 10px;font-size:13px;font-weight:500}
+textarea.big{width:100%;min-height:120px;border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:17px;background:var(--surface);outline:none;resize:vertical}
+textarea.big:focus{border-color:var(--brand)}
+.ask{border-radius:14px;padding:14px 16px;background:var(--orange-weak);border:1.5px solid color-mix(in srgb,var(--orange) 40%,transparent)}
+.ask b{display:flex;gap:8px;align-items:center}
+.ask .opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ask .opts button{padding:8px 14px;border-radius:99px;background:var(--surface);border:1.5px solid var(--line);font-weight:700;font-size:14px}
+.ask .opts button.on{border-color:var(--brand);background:var(--brand);color:#fff}
+.ai-tag{font-size:11.5px;font-weight:800;color:var(--brand-ink);background:var(--brand-weak);padding:2px 8px;border-radius:99px}
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(1200px 600px at 20% -10%,var(--brand-weak),transparent),var(--bg)}
+.lbox{width:min(880px,100%);padding:34px}
+.wk{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0 10px}
+.wbtn{padding:22px 14px;border-radius:18px;border:2px solid var(--line);background:var(--surface);display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
+.wbtn:hover{border-color:var(--brand)}
+.wbtn.next{border-color:var(--brand);box-shadow:0 0 0 5px var(--brand-weak)}
+.wbtn .av{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:800;color:#fff}
+.wbtn b{font-size:18px}
+.wbtn small{color:var(--muted)}
+.wbtn .nb{position:absolute;top:10px;right:10px}
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(10,12,20,.45);display:grid;place-items:center;z-index:50;padding:20px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(620px,100%);max-height:90vh;overflow:auto;padding:26px;border-radius:20px;background:var(--surface)}
+.hand{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.hand .it{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--surface2);border:1px solid var(--line);font-size:14px}
+.hand .it.go{animation:slide .7s ease both}
+@keyframes slide{0%{transform:translateX(0);opacity:1}60%{transform:translateX(24px);opacity:.3}100%{transform:none;opacity:1}}
+/* toast */
+.toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:80;align-items:center}
+.toast{background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:14px;font-weight:500;font-size:14px;box-shadow:var(--shadow);animation:up .3s ease}
+@keyframes up{from{transform:translateY(12px);opacity:0}}
+/* dashboard */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi{padding:16px}
+.kpi small{color:var(--muted);font-weight:500;font-size:12.5px}
+.kpi .v{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-top:2px}
+.kpi .d{font-size:12.5px;font-weight:700}
+.up{color:var(--green)} .dn{color:var(--red)}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.col{background:var(--surface2);border-radius:12px;padding:10px;min-height:120px}
+.col h4{margin:0 0 8px;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;white-space:nowrap}
+.mini{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;font-size:12.5px;font-weight:500;margin-bottom:6px}
+.faq{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1px solid var(--line);margin-bottom:8px}
+.faq .q{font-weight:700}
+.faq .c{font-size:12.5px;color:var(--muted)}
+.faq .btn{margin-left:auto}
+.bars{display:flex;align-items:flex-end;gap:14px;height:150px;padding:10px 6px 0}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.bars .b i{width:100%;max-width:46px;border-radius:8px 8px 4px 4px;background:var(--brand);display:block}
+.bars .b.before i{background:color-mix(in srgb,var(--muted) 45%,transparent)}
+.bars .b em{font-style:normal;font-weight:800;color:var(--ink);font-size:13px}
+/* phone */
+.phone-wrap{background:var(--bg);border-left:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:16px 14px;height:100vh;overflow:hidden}
+.phone-wrap .lbl{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;display:flex;gap:6px;align-items:center}
+.live{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 var(--green);animation:lv 1.6s infinite}
+@keyframes lv{0%{box-shadow:0 0 0 0 rgba(18,161,80,.5)}100%{box-shadow:0 0 0 8px rgba(18,161,80,0)}}
+.phone{width:320px;flex:1;max-height:700px;border-radius:40px;border:10px solid #111;background:var(--surface);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.phone .notch{width:110px;height:24px;background:#111;border-radius:0 0 14px 14px;margin:0 auto}
+.phone .ph-top{padding:8px 16px 10px;border-bottom:1px solid var(--line)}
+.phone .ph-top b{font-size:15px}
+.phone .tabs{display:flex;gap:6px;margin-top:8px}
+.phone .tabs button{flex:1;padding:6px;border-radius:9px;font-size:12.5px;font-weight:700;background:var(--surface2)}
+.phone .tabs button.on{background:var(--ink);color:var(--surface)}
+.phone .body{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+.noti{padding:10px 12px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);font-size:13px}
+.noti b{display:block;font-size:13px}
+.noti small{color:var(--muted);font-size:11px}
+.noti.new{animation:pop .6s ease;border-color:var(--brand)}
+.phone .msgs{max-height:none;min-height:0;border:0;padding:6px;background:transparent}
+.phone .send{padding:8px;margin:0;border-top:1px solid var(--line)}
+.phone .send input{padding:9px 12px;font-size:13px}
+.phone .msg .bub{font-size:13px}
+.banner-push{position:absolute;left:8px;right:8px;top:30px;background:rgba(30,32,44,.94);color:#fff;border-radius:16px;padding:10px 12px;font-size:12.5px;z-index:5;animation:drop .4s ease}
+.banner-push b{display:block;font-size:12px;opacity:.8}
+@keyframes drop{from{transform:translateY(-30px);opacity:0}}
+.help{position:fixed;right:14px;bottom:14px;z-index:40}
+.kbd{font-size:11px;padding:1px 6px;border-radius:5px;border:1px solid var(--line);background:var(--surface2)}
+/* responsive */
+@media (max-width:1100px){.app.with-phone{grid-template-columns:200px 1fr 340px}.side{padding:16px 8px}.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:760px){
+  .app,.app.with-phone{grid-template-columns:1fr;height:auto}
+  .side{position:fixed;bottom:0;left:0;right:0;flex-direction:row;padding:6px;z-index:30;border-right:0;border-top:1px solid var(--line);justify-content:space-around}
+  .side .logo,.side .sep,.side .foot,.nav .lb{display:none}
+  .nav{flex-direction:column;gap:2px;padding:8px;width:auto;font-size:11px}
+  .nav .lbm{display:block;font-size:10.5px}
+  .main{height:auto;min-height:100vh;padding-bottom:70px}
+  .top{padding:12px 16px;flex-wrap:wrap}
+  .content{padding:16px 16px 90px}
+  .phone-wrap{display:none}
+  .recbig,.photos,.wk{grid-template-columns:1fr}
+  .fields{grid-template-columns:1fr}
+  .board{grid-template-columns:repeat(2,1fr)}
+  .stepper{grid-template-columns:repeat(5,1fr)}
+  .step{font-size:11px;padding:8px 2px}
+  .hide-m{display:none}
+}
+.nav .lbm{display:none}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="toasts" id="toasts"></div>
+<script>
+/* ===================== 데이터 ===================== */
+const STATUS=['신규','확인','담당','처리 중','완료'];
+const TYPES={
+  '재고·발주':{ic:'📦',c:'var(--blue)',bg:'var(--blue-weak)'},
+  '장비 이상':{ic:'🛠️',c:'var(--red)',bg:'var(--red-weak)'},
+  '주문·예약':{ic:'🧾',c:'var(--violet)',bg:'var(--violet-weak)'},
+  '청소·위생':{ic:'🧽',c:'var(--green)',bg:'var(--green-weak)'},
+  '기타':{ic:'📌',c:'var(--muted)',bg:'var(--gray-weak)'}
+};
+const WORKERS=[
+  {id:'jy',name:'김지윤',shift:'오픈 07:00–13:00',color:'#F2711C'},
+  {id:'mh',name:'이민호',shift:'미들 13:00–19:00',color:'#5146E5'},
+  {id:'sb',name:'박서빈',shift:'마감 19:00–23:00',color:'#12A150'}
+];
+const OWNER='최은영 사장님';
+
+const MANUALS0={
+  'm-milk':{title:'우유 발주하기',type:'재고·발주',loc:'fridge',locText:'워크인 냉장고 2번 칸 (문 열고 왼쪽 두 번째)',
+    purpose:'우유는 하루 평균 10팩을 사용해요. 발주하면 다음 날 오전 9시에 도착하므로, 재고가 3팩 이하면 당일 14시 전에 발주해야 해요.',
+    steps:['워크인 냉장고 2번 칸에서 남은 팩 수 확인 (유통기한 빠른 것을 앞으로)','카운터 태블릿 홈 화면의 「발주」 즐겨찾기 → 「한빛유업 대리점」 선택','기본 수량 12팩 입력 (주말 전날은 16팩)','발주 완료 화면을 캡처해 이 카드에 첨부','카드를 「완료」로 변경'],
+    cautions:['14시 이후 발주는 다음다음 날 도착해요','두유·오트밀크는 다른 거래처예요 (창고 선반 B)'],
+    terms:[['대리점','우유를 매일 배송해 주는 거래처'],['선입선출','먼저 들어온 재고를 먼저 쓰는 것']],views:41},
+  'm-ice':{title:'제빙기 필터 교체',type:'장비 이상',loc:'ice',locText:'바 하부 오른쪽 제빙기, 필터는 창고 선반 C',
+    purpose:'필터 경고등이 켜지면 얼음 생성이 느려지고 얼음이 탁해져요. 경고등이 켜진 뒤 1주일 안에 교체해요.',
+    steps:['제빙기 전원 스위치 OFF','하부 커버를 앞으로 당겨 분리','기존 필터를 왼쪽으로 90° 돌려 빼기','새 필터를 끼우고 오른쪽으로 90° 돌려 고정','전원 ON 후 「RESET」 버튼 3초 누르기','첫 얼음 한 판은 버리기'],
+    cautions:['교체 중 바닥에 물이 샐 수 있어 행주를 깔아 주세요','필터 재고가 1개 이하면 사장님께 알려 주세요'],
+    terms:[['RESET','필터 사용 기간을 초기화하는 버튼']],views:12},
+  'm-group':{title:'단체 주문 준비',type:'주문·예약',loc:'counter',locText:'카운터 하부 수납장 · 포스 「예약」 메모',
+    purpose:'10잔 이상 단체 주문은 미리 컵·홀더·캐리어를 준비해 두면 제조 시간을 절반으로 줄일 수 있어요.',
+    steps:['포스 「예약」 메모에서 메뉴·수량·시간 확인','전날 마감조가 컵·뚜껑·홀더를 수량+10% 준비','당일 30분 전 얼음 2통 추가 확보','음료 순서: 라떼 → 아메리카노 (얼음 녹음 방지)','캐리어 4구 기준으로 포장, 영수증 부착'],
+    cautions:['원두가 1kg 이하면 사장님께 미리 알려 주세요'],terms:[['캐리어','컵 4개를 담는 종이 운반 상자']],views:9},
+  'm-grinder':{title:'그라인더 호퍼 청소',type:'청소·위생',loc:'grinder',locText:'에스프레소 머신 오른쪽 그라인더 2대',
+    purpose:'원두 기름이 쌓이면 맛이 변하므로 매주 월요일 마감 때 호퍼를 청소해요.',
+    steps:['호퍼 셔터 닫고 남은 원두를 밀폐 용기에 옮기기','호퍼 분리 후 미온수로 세척 (세제 X)','마른 행주로 완전히 건조','재조립 후 원두 다시 채우기'],
+    cautions:['물기가 남아 있으면 원두가 뭉쳐요'],terms:[['호퍼','원두를 담아 두는 투명 통']],views:6},
+  'm-espresso':{title:'스팀 노즐 누수 응급 조치',type:'장비 이상',loc:'espresso',locText:'에스프레소 머신 2번 그룹 오른쪽 스팀 노즐',
+    purpose:'스팀 노즐에서 물이나 증기가 계속 새면 화상 위험이 있고 보일러 압력이 떨어져요. 수리 기사가 오기 전까지 안전하게 운영하는 방법이에요.',
+    steps:['스팀 밸브를 끝까지 잠그고 젖은 행주로 노즐을 감싸기','서랍 1번 칸의 「사용 중지」 표시를 2번 그룹에 걸기','1번 그룹만으로 운영 (스팀도 1번 노즐 사용)','공용 패드로 사장님께 상황과 사진 보내기','수리 기사 방문 시간을 카드에 기록'],
+    cautions:['노즐을 맨손으로 만지지 마세요 (화상 위험)','머신 전원은 끄지 마세요 (다시 데우는 데 30분)'],
+    terms:[['그룹(그룹헤드)','포터필터를 끼워 커피를 추출하는 부분'],['스팀 노즐','우유 거품을 내는 금속 관']],views:3}
+};
+const PLANS={fridge:'워크인 냉장고',storage:'창고',espresso:'에스프레소 머신',grinder:'그라인더',ice:'제빙기',counter:'카운터·포스',showcase:'쇼케이스'};
+
+function seed(){
+  return {
+    view:'login', worker:null, nextWorker:'jy', shiftNo:0, filter:'all', sel:null, manual:null, mFrom:null,
+    phone:true, phoneTab:'noti', phoneThread:'notice', phonePush:null,
+    chatThread:'notice', bannerCarry:0, draft:null, rec:null,
+    clock:new Date(2026,10,19,12,51,30).getTime(),
+    manuals:JSON.parse(JSON.stringify(MANUALS0)),
+    cards:[
+      {id:'c1',type:'재고·발주',title:'우유 재고 부족 · 오늘 발주 필요',qty:'1L 2팩 남음 → 12팩 발주',loc:'워크인 냉장고 2번 칸',next:'발주 앱에서 12팩 주문',due:'오늘 14:00 전',urgent:true,status:0,from:'박서빈',at:'어제 22:41',
+        src:{kind:'voice',text:'우유 두 팩밖에 안 남았어요. 내일 두 시 전에 발주 넣어야 토요일 단체 주문 맞출 수 있어요.',dur:'0:09'},manual:'m-milk',carry:0,assignee:null,shift:-1},
+      {id:'c2',type:'장비 이상',title:'제빙기 필터 교체 경고등',qty:'필터 1개 (창고 C)',loc:'바 하부 제빙기',next:'필터 교체 후 RESET',due:'11/20(금)까지',urgent:false,status:2,from:'김지윤',at:'어제 12:58',
+        src:{kind:'photo',photo:'ice',text:'필터 경고등 켜짐'},manual:'m-ice',carry:1,assignee:'박서빈',shift:-1},
+      {id:'c3',type:'주문·예약',title:'토요일 14시 단체 주문 30잔',qty:'아이스 아메리카노 20 · 라떼 10',loc:'포스 「예약」 메모',next:'금요일 마감조가 컵·홀더 33세트 준비',due:'11/21(토) 14:00',urgent:false,status:1,from:'박서빈',at:'어제 21:15',
+        src:{kind:'text',text:'토욜 2시 단체 30잔 (아아20 라떼10) 컵 미리'},manual:'m-group',carry:0,assignee:null,shift:-1},
+      {id:'c4',type:'청소·위생',title:'그라인더 호퍼 주간 청소',qty:'그라인더 2대',loc:'에스프레소 머신 오른쪽',next:'-',due:'완료됨',urgent:false,status:4,from:'박서빈',at:'어제 22:50',
+        src:{kind:'text',text:'그라인더 청소 끝'},manual:'m-grinder',carry:0,assignee:'박서빈',shift:-1}
+    ],
+    notice:'토요일(11/21) 14시 단체 주문 30잔 있어요. 금요일 마감조는 컵·홀더 미리 준비 부탁해요 🙏',
+    chats:{
+      notice:[{from:'owner',text:'이번 주 토요일 단체 주문 있어요. 원두 여유분도 확인 부탁해요!',t:'어제 18:02'},{from:'w',who:'박서빈',text:'넵 원두 2kg 남아 있어요!',t:'어제 18:10'}],
+      c2:[{from:'w',who:'김지윤',text:'제빙기 필터 경고등 들어왔어요. 필터 재고 1개 남았습니다.',t:'어제 12:59'},{from:'owner',text:'고마워요. 필터 2개 더 주문해 둘게요.',t:'어제 13:20'}]
+    },
+    notis:[
+      {t:'어제 22:41',title:'📦 새 인수인계 카드',text:'우유 재고 부족 · 오늘 발주 필요 (박서빈)'},
+      {t:'어제 22:50',title:'✅ 완료',text:'그라인더 호퍼 주간 청소 (박서빈)'}
+    ],
+    faqs:[
+      {id:'f1',q:'영수증 용지 어디 있어요?',n:7,who:3,approved:false},
+      {id:'f2',q:'오트밀크 재고는 어디서 확인해요?',n:4,who:2,approved:false},
+      {id:'f3',q:'마감 때 쇼케이스 온도는 몇 도로 맞춰요?',n:3,who:2,approved:false}
+    ]
+  };
+}
+let S=seed();
+
+/* ===================== 유틸 ===================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const W=id=>WORKERS.find(w=>w.id===id);
+function hhmm(ts){const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function now(){return hhmm(S.clock)}
+function toast(t){const el=document.createElement('div');el.className='toast';el.textContent=t;$('#toasts').appendChild(el);setTimeout(()=>el.remove(),2800)}
+function card(id){return S.cards.find(c=>c.id===id)}
+function openCount(){return S.cards.filter(c=>c.status<4).length}
+function typeBadge(t){const T=TYPES[t]||TYPES['기타'];return `<span class="type" style="color:${T.c};background:${T.bg}">${T.ic} ${esc(t)}</span>`}
+function stBadge(s){return `<span class="st st-${s}"><i></i>${STATUS[s]}</span>`}
+function notify(title,text){S.notis.unshift({t:now(),title,text,fresh:true});S.phonePush={title,text};renderPhone();setTimeout(()=>{S.phonePush=null;renderPhone()},3200)}
+setInterval(()=>{S.clock+=1000;const c=$('#clk');if(c)c.textContent=now()},1000);
+
+/* 매장 도면 (위치 안내) */
+function plan(hl){
+  const Z=[['fridge',10,10,92,110,'워크인 냉장고'],['storage',10,130,92,100,'창고'],['espresso',122,10,128,46,'에스프레소 머신'],['grinder',258,10,62,46,'그라인더'],['ice',328,10,62,46,'제빙기'],['showcase',122,96,96,40,'쇼케이스'],['counter',226,96,164,40,'카운터·포스']];
+  let s=`<svg class="plan" viewBox="0 0 400 240" role="img" aria-label="매장 도면">`;
+  s+=`<rect x="122" y="150" width="268" height="80" rx="8" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/><text x="256" y="196" text-anchor="middle">홀 (손님 좌석)</text>`;
+  for(const [k,x,y,w,h,l] of Z){const on=k===hl;s+=`<rect class="z ${on?'hl':''}" x="${x}" y="${y}" width="${w}" height="${h}" rx="8"/><text class="${on?'hl':''}" x="${x+w/2}" y="${y+h/2+4}" text-anchor="middle">${l}</text>`;
+    if(on){s+=`<circle class="pulse" cx="${x+w/2}" cy="${y+h/2-14}" r="8"/><circle cx="${x+w/2}" cy="${y+h/2-14}" r="6" fill="var(--brand)"/>`}}
+  return s+`</svg>`;
+}
+/* 데모용 사진 (일러스트) */
+function photo(k){
+  const P={
+    milk:{bg:'#DCEBFF',em:'🥛',lab:'냉장고 선반 · 우유 2팩'},
+    ice:{bg:'#E3F6F5',em:'🧊',lab:'제빙기 · 필터 경고등'},
+    receipt:{bg:'#FFF3DC',em:'🧾',lab:'포스 · 영수증 용지 없음'},
+    leak:{bg:'#FDE7E7',em:'☕',lab:'머신 2번 그룹 · 노즐 누수'}
+  }[k];
+  return `<svg viewBox="0 0 240 150"><rect width="240" height="150" fill="${P.bg}"/><rect x="18" y="18" width="204" height="114" rx="10" fill="rgba(255,255,255,.55)"/><text x="120" y="86" font-size="54" text-anchor="middle">${P.em}</text><rect x="12" y="120" width="${P.lab.length*9+20}" height="22" rx="11" fill="rgba(0,0,0,.55)"/><text x="22" y="135" font-size="11" fill="#fff" font-family="Noto Sans KR,sans-serif">${P.lab}</text></svg>`;
+}
+
+/* ===================== AI 분석 (데모용 규칙 기반 + 시나리오) ===================== */
+const KNUM={'한':1,'두':2,'세':3,'네':4,'다섯':5,'여섯':6,'일곱':7,'여덟':8,'아홉':9,'열':10};
+function analyze(text,preset){
+  if(preset) return JSON.parse(JSON.stringify(preset));
+  const t=text.replace(/\s+/g,' ').trim();
+  let type='기타';
+  if(/발주|재고|떨어|남았|부족|채워|모자/.test(t))type='재고·발주';
+  if(/예약|단체|픽업/.test(t))type='주문·예약';
+  if(/청소|위생|쓰레기|닦|소독/.test(t))type='청소·위생';
+  if(/고장|새요|새고|샌다|누수|안 ?돼|안 ?나와|에러|경고|이상한 소리|멈췄|작동/.test(t))type='장비 이상';
+  const qm=t.match(/(\d+|한|두|세|네|다섯|여섯|일곱|여덟|아홉|열)\s*(팩|개|박스|잔|봉지|봉|통|병|롤|장|kg|L|리터)/);
+  const qty=qm?((KNUM[qm[1]]||qm[1])+qm[2]):'';
+  const LOCS=['워크인 냉장고','냉장고','냉동고','창고','카운터','포스','에스프레소 머신','그라인더','제빙기','스팀 노즐','그룹','화장실','홀','테라스','오븐','쇼케이스','선반'];
+  const loc=(LOCS.find(l=>t.includes(l))||'');
+  const dm=t.match(/(오늘|내일|모레|이번 ?주|주말|[월화수목금토일]요일)?\s*(오전|오후)?\s*(\d{1,2}|한|두|세|네|다섯|여섯|일곱|여덟|아홉|열|열한|열두)\s*시\s*(반)?\s*(전|까지)?/);
+  let due='';
+  if(dm&&dm[0].trim().length>1){due=dm[0].trim().replace(/(한|두|세|네|다섯|여섯|일곱|여덟|아홉|열한|열두|열)(?=\s*시)/,m=>({'한':1,'두':2,'세':3,'네':4,'다섯':5,'여섯':6,'일곱':7,'여덟':8,'아홉':9,'열':10,'열한':11,'열두':12}[m]))}
+  else{const d2=t.match(/오늘|내일|모레|이번 ?주|주말/);if(d2)due=d2[0]}
+  let first=t.split(/[.!?。\n]/)[0].trim(); if(first.length>26)first=first.slice(0,25)+'…';
+  const nextMap={'재고·발주':'수량 확인 후 발주','장비 이상':'사용 중지 표시 후 사장님께 알리기','주문·예약':'예약 내용 확인 · 준비물 체크','청소·위생':'청소 후 완료 체크','기타':'내용 확인 후 처리'};
+  const manMap={'재고·발주':'m-milk','장비 이상':'m-espresso','주문·예약':'m-group','청소·위생':'m-grinder','기타':null};
+  return {type,title:first||'새 인수인계',qty:qty||'-',loc,next:nextMap[type],due,urgent:/급|빨리|당장|지금/.test(t),manual:manMap[type],
+    ask:!due?{q:'언제까지 처리해야 하나요?',opts:['오늘 중','다음 교대 시작 전','이번 주 안','급하지 않음']}:(!loc?{q:'어디에서 생긴 일인가요?',opts:['카운터·포스','에스프레소 머신','워크인 냉장고','창고'],field:'loc'}:null)};
+}
+const SCRIPT_VOICE='2번 그룹 스팀 노즐에서 물이 계속 새요. 일단 행주로 감싸 놨는데 수리 기사님 불러야 할 것 같아요. 바쁠 때는 1번 그룹만 쓰면 돼요.';
+const PRESET_VOICE={type:'장비 이상',title:'에스프레소 머신 2번 그룹 스팀 노즐 누수',qty:'-',loc:'에스프레소 머신 2번 그룹',next:'1번 그룹만 사용 · 사장님께 수리 기사 요청',due:'',urgent:false,manual:'m-espresso',
+  ask:{q:'수리 요청은 언제까지 필요할까요?',opts:['오늘 중 (영업에 지장)','내일 오픈 전','이번 주 안','급하지 않음']}};
+const PRESET_PHOTO={
+  milk:{type:'재고·발주',title:'우유 재고 2팩 · 발주 필요',qty:'1L 2팩 남음',loc:'워크인 냉장고 2번 칸',next:'발주 앱에서 12팩 주문',due:'',urgent:false,manual:'m-milk',ask:{q:'언제까지 발주해야 하나요?',opts:['오늘 14시 전','내일 오전','이번 주 안']},vision:'우유 팩 2개 인식 · 선반 빈 칸 70%'},
+  receipt:{type:'재고·발주',title:'포스 영수증 용지 소진',qty:'용지 0롤',loc:'카운터·포스',next:'창고에서 용지 롤 교체',due:'지금 바로',urgent:true,manual:null,ask:{q:'창고에 여분 용지가 있었나요?',opts:['있음 (교체 완료)','없음 · 주문 필요','확인 못 함'],field:'qty'},vision:'포스 프린터 · 용지 없음 표시등 인식'},
+  ice:{type:'장비 이상',title:'제빙기 필터 경고등',qty:'필터 1개',loc:'바 하부 제빙기',next:'필터 교체 후 RESET',due:'',urgent:false,manual:'m-ice',ask:{q:'언제까지 교체해야 하나요?',opts:['오늘 중','이번 주 안','급하지 않음']},vision:'제빙기 패널 · 주황색 필터 경고등 인식'}
+};
+
+/* ===================== 렌더 ===================== */
+function render(){
+  const r=$('#root');
+  if(S.view==='login'){r.innerHTML=viewLogin();return}
+  r.innerHTML=`<div class="app ${S.phone?'with-phone':''}">${side()}<main class="main">${topbar()}<div class="content" id="content">${body()}</div></main>${S.phone?'<aside class="phone-wrap" id="phone"></aside>':''}</div>${S.modal?S.modal():''}`;
+  renderPhone();
+  if(S.afterRender){const f=S.afterRender;S.afterRender=null;f()}
+}
+function side(){
+  const unread=S.cards.filter(c=>c.status===0).length;
+  const n=(v,ic,l)=>`<button class="nav ${S.view===v||(v==='home'&&S.view==='card')||(v==='manuals'&&S.view==='manual')||(v==='record'&&S.view.startsWith('rec'))||(v==='record'&&S.view==='review')?'on':''}" onclick="go('${v}')"><span class="ic">${ic}</span><span class="lb">${l}</span><span class="lbm">${l.split(' ')[0]}</span>${v==='home'&&unread?`<span class="badge">${unread}</span>`:''}</button>`;
+  return `<nav class="side"><div class="logo"><div class="logo-mark">S</div><div><b>슬라이딩시프트</b><small>AI 인수인계 · 업무 매뉴얼</small></div></div>
+  ${n('home','🏠','오늘의 인수인계')}${n('record','🎙️','빠른 기록')}${n('manuals','📘','업무 매뉴얼')}${n('chat','💬','실시간 소통')}<div class="sep"></div>${n('admin','📊','점주 대시보드')}
+  <div class="foot">MONEY팀 시연용 데모 · 데이터는 가상입니다<br><button onclick="resetDemo()">데모 처음부터</button> · <span class="kbd">?</span> 시연 순서</div></nav>`;
+}
+function topbar(){
+  const w=W(S.worker);
+  return `<header class="top"><div class="store">카페 온기 성수점<small>매장 공용 패드 · 교대 ${S.shiftNo+1}</small></div>
+  <span class="chip hide-m">🕐 <span class="clock" id="clk">${now()}</span></span>
+  <span class="chip"><span style="width:20px;height:20px;border-radius:50%;background:${w.color};color:#fff;display:inline-grid;place-items:center;font-size:11px;font-weight:800">${w.name[0]}</span>${w.name} · ${w.shift.split(' ')[0]}</span>
+  <span class="grow"></span>
+  <button class="btn ghost hide-m" onclick="togglePhone()">📱 점주 폰 ${S.phone?'숨기기':'보기'}</button>
+  <button class="btn dark" onclick="endShift()">교대 마감 ➜</button></header>`;
+}
+function body(){
+  return ({home:viewHome,card:viewCard,record:viewRecord,'rec-voice':viewVoice,'rec-photo':viewPhoto,'rec-text':viewText,'rec-ai':viewAI,review:viewReview,manuals:viewManuals,manual:viewManual,chat:viewChat,admin:viewAdmin}[S.view]||viewHome)();
+}
+
+/* ---- 로그인 ---- */
+function viewLogin(){
+  const carry=S.cards.filter(c=>c.status<4).length;
+  return `<div class="login"><div class="lbox panel">
+   <div class="row" style="gap:12px"><div class="logo-mark" style="width:48px;height:48px;font-size:20px;border-radius:14px">S</div><div><div class="h1" style="margin:0">카페 온기 성수점</div><div class="muted">슬라이딩시프트 · 매장 공용 패드</div></div><span class="grow" style="flex:1"></span><span class="chip">🕐 <span class="clock" id="clk">${now()}</span></span></div>
+   <p style="font-size:18px;font-weight:700;margin:26px 0 0">지금 근무하는 분을 눌러 시작하세요</p>
+   <p class="muted" style="margin:4px 0 0">앱 설치·비밀번호 없이, 이름만 누르면 오늘의 인수인계가 열려요.</p>
+   <div class="wk">${WORKERS.map(w=>`<button class="wbtn ${S.nextWorker===w.id?'next':''}" onclick="login('${w.id}')">${S.nextWorker===w.id?'<span class="tag brand nb">지금 교대</span>':''}<div class="av" style="background:${w.color}">${w.name[0]}</div><b>${w.name}</b><small>${w.shift}</small></button>`).join('')}</div>
+   <div class="banner info" style="margin:16px 0 0">📋 확인할 인수인계 카드 <b>${carry}개</b>가 기다리고 있어요.</div>
+  </div></div>`;
+}
+function login(id){S.worker=id;S.view='home';S.filter='all';render();toast(`${W(id).name}님, 출근 확인됐어요 👋`)}
+
+/* ---- 홈 ---- */
+function viewHome(){
+  const w=W(S.worker);
+  let list=[...S.cards].sort((a,b)=>(a.status===4)-(b.status===4)||(b.urgent-a.urgent)||(b.carry-a.carry)||(a.status-b.status));
+  const f=S.filter;
+  if(f==='open')list=list.filter(c=>c.status<4);
+  if(f==='urgent')list=list.filter(c=>c.urgent&&c.status<4);
+  if(f==='mine')list=list.filter(c=>c.assignee===w.name);
+  const open=openCount(), urg=S.cards.filter(c=>c.urgent&&c.status<4).length;
+  const fb=(k,l)=>`<button class="fbtn ${f===k?'on':''}" onclick="S.filter='${k}';render()">${l}</button>`;
+  return `${S.bannerCarry?`<div class="banner">🔁 이전 교대에서 끝나지 않은 <b>${S.bannerCarry}건</b>이 자동으로 승계됐어요. <button class="x muted" onclick="S.bannerCarry=0;render()">✕</button></div>`:''}
+  <div class="pin">📌 <div><b>공지</b> · ${esc(S.notice)}</div></div>
+  <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:6px">
+   <div><h1 class="h1">${w.name}님, 오늘의 인수인계</h1><p class="sub" style="margin:0">미해결 <b>${open}</b>건 · 긴급 <b style="color:var(--red)">${urg}</b>건 — 긴급하고 오래된 카드가 맨 위에 와요.</p></div>
+   <button class="btn primary lg" onclick="go('record')">🎙️ 빠른 기록</button></div>
+  <div class="filters">${fb('all','전체')}${fb('open','미해결')}${fb('urgent','긴급')}${fb('mine','내 담당')}</div>
+  <div class="cards">${list.map(hcard).join('')||'<p class="muted">해당하는 카드가 없어요.</p>'}</div>`;
+}
+function hcard(c){
+  const msgs=(S.chats[c.id]||[]).length;
+  return `<button class="panel hcard ${c.urgent&&c.status<4?'urgent':''} ${c.status===4?'done':''} ${c.fresh?'newin':''}" onclick="openCard('${c.id}')">
+   <div class="tline">${typeBadge(c.type)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}${c.carry?`<span class="tag orange">🔁 ${c.carry}회 이월</span>`:''}${c.shift===S.shiftNo-1&&c.shift>=0?'<span class="tag brand">방금 넘어옴</span>':''}<span style="margin-left:auto">${stBadge(c.status)}</span></div>
+   <div class="title">${esc(c.title)}</div>
+   <dl class="meta"><dt>수량</dt><dd>${esc(c.qty)}</dd><dt>위치</dt><dd>${esc(c.loc||'-')}</dd><dt>기한</dt><dd ${c.urgent&&c.status<4?'style="color:var(--red)"':''}>${esc(c.due||'-')}</dd><dt>다음 행동</dt><dd>${esc(c.next)}</dd></dl>
+   <div class="foot"><span>${c.src.kind==='voice'?'🎙️ 음성':c.src.kind==='photo'?'📷 사진':'⌨️ 메모'} · ${esc(c.from)} · ${esc(c.at)}</span><span>${c.assignee?'👤 '+esc(c.assignee):''} ${msgs?'💬 '+msgs:''} ${c.manual?'📘':''}</span></div></button>`;
+}
+
+/* ---- 카드 상세 ---- */
+function openCard(id){const c=card(id);c.fresh=false;if(c.status===0){c.status=1;c.seenBy=W(S.worker).name}S.sel=id;S.view='card';S.chatThread=id;render()}
+function viewCard(){
+  const c=card(S.sel), m=c.manual&&S.manuals[c.manual];
+  const me=W(S.worker).name;
+  const acts=[];
+  if(c.status<2)acts.push(`<button class="btn primary lg" onclick="setSt(2)">🙋 내가 담당할게요</button>`);
+  if(c.status===2)acts.push(`<button class="btn primary lg" onclick="setSt(3)">▶ 처리 시작</button>`);
+  if(c.status===3)acts.push(`<button class="btn primary lg" style="background:var(--green);border-color:var(--green)" onclick="setSt(4)">✅ 완료</button>`);
+  return `<button class="btn ghost" onclick="go('home')" style="margin:-6px 0 12px -10px">← 오늘의 인수인계</button>
+  <div class="grid2"><section class="panel" style="padding:20px;display:flex;flex-direction:column;gap:14px">
+   <div class="tline">${typeBadge(c.type)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}${c.carry?`<span class="tag orange">🔁 ${c.carry}회 이월</span>`:''}<span class="ai-tag">AI 정리</span><span style="margin-left:auto" class="muted">${esc(c.from)} · ${esc(c.at)}</span></div>
+   <h1 class="h1" style="margin:0">${esc(c.title)}</h1>
+   <div><div class="sec-t" style="margin-bottom:4px">상태 <span class="muted" style="font-weight:500;font-size:13px">눌러서 바꿀 수 있어요${c.assignee?` · 담당 ${esc(c.assignee)}`:''}</span></div>
+    <div class="stepper">${STATUS.map((s,i)=>`<button class="step ${i<c.status?'past':''} ${i===c.status?'cur':''}" onclick="setSt(${i})"><span class="n">${i<c.status?'✓':i+1}</span>${s}</button>`).join('')}</div></div>
+   <div class="fields"><div class="field"><label>수량</label><div class="v">${esc(c.qty)}</div></div><div class="field"><label>기한</label><div class="v" ${c.urgent?'style="color:var(--red)"':''}>${esc(c.due||'-')}</div></div>
+    <div class="field"><label>위치</label><div class="v">${esc(c.loc||'-')}</div></div><div class="field"><label>다음 행동</label><div class="v">${esc(c.next)}</div></div></div>
+   <div><div class="sec-t">원본 기록</div>${origin(c)}</div>
+   <div class="row">${acts.join('')}${c.status===4?'<span class="st st-4" style="font-size:15px;padding:8px 14px"><i></i>처리 완료된 카드예요</span>':''}</div>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:14px">
+   ${m?`<button class="mlink panel" onclick="openManual('${c.manual}','card')"><span class="ic">📘</span><span><span class="muted" style="font-size:12.5px">처음 하는 업무라면?</span><b>${esc(m.title)} 매뉴얼 열기</b><span class="muted" style="font-size:12.5px">위치 안내 · ${m.steps.length}단계 방법 · 주의사항</span></span><span style="margin-left:auto;font-size:20px">›</span></button>`:''}
+   <div class="panel" style="padding:16px"><div class="sec-t">💬 이 카드로 사장님과 대화 <span class="live" title="실시간"></span></div>${chatBox(c.id)}</div>
+  </section></div>`;
+}
+function origin(c){
+  const s=c.src;
+  if(s.kind==='voice')return `<div class="origin"><div class="ic">🎙️</div><div><div class="quote">“${esc(s.text)}”</div><div class="audio">▶ <span class="bars">${Array.from({length:28},(_,i)=>`<i style="height:${4+Math.abs(Math.sin(i*1.7))*12}px"></i>`).join('')}</span> ${s.dur||'0:12'} · 음성 원본</div></div></div>`;
+  if(s.kind==='photo')return `<div class="origin"><div style="width:150px;flex:none;border-radius:10px;overflow:hidden">${photo(s.photo)}</div><div class="quote">${esc(s.text)}${s.vision?`<div class="audio">🔎 ${esc(s.vision)}</div>`:''}</div></div>`;
+  return `<div class="origin"><div class="ic">⌨️</div><div class="quote">“${esc(s.text)}”</div></div>`;
+}
+function setSt(i){
+  const c=card(S.sel), me=W(S.worker).name;
+  if(i>=2&&!c.assignee)c.assignee=me;
+  if(i<2)c.assignee=null;
+  c.status=i;
+  if(i===2){toast(`👤 ${me}님이 담당했어요`);}
+  if(i===3){toast('⏳ 처리 중으로 바꿨어요');}
+  if(i===4){toast('✅ 완료! 사장님 폰에도 바로 반영돼요');notify('✅ 완료',`${c.title} (${me})`);sysMsg(c.id,`${me}님이 완료 처리했어요`)}
+  render();
+}
+
+/* ---- 채팅 ---- */
+function chatBox(th,compact){
+  const L=S.chats[th]||[];
+  const me=!compact;
+  const q=th==='notice'?['확인했습니다!','원두 2kg 남았어요']:['사진 보내드릴게요','확인했어요','지금 처리 중이에요','도움이 필요해요'];
+  return `<div class="chat"><div class="msgs" id="msgs-${th}">${L.length?L.map(m=>bubble(m,false)).join(''):'<div class="msg sys"><div class="bub">아직 대화가 없어요. 급한 일은 여기서 바로 사장님께 보내세요.</div></div>'}${S.typing===th?'<div class="msg typing"><span class="who">'+OWNER+'</span><div class="bub"><i></i><i></i><i></i></div></div>':''}</div>
+  <div class="quick">${q.map(x=>`<button onclick="sendW('${th}','${x}')">${x}</button>`).join('')}</div>
+  <form class="send" onsubmit="event.preventDefault();sendW('${th}',this.m.value);"><input name="m" placeholder="사장님께 메시지 보내기…" autocomplete="off"><button class="btn primary">보내기</button></form></div>`;
+}
+function bubble(m,ownerView){
+  if(m.from==='sys')return `<div class="msg sys ${m.fresh?'new':''}"><div class="bub">${esc(m.text)}</div></div>`;
+  const mine=ownerView?m.from==='owner':m.from!=='owner';
+  return `<div class="msg ${mine?'me':''} ${m.fresh?'new':''}"><span class="who">${m.from==='owner'?'👑 '+OWNER:esc(m.who)} · ${esc(m.t)}</span><div class="bub">${esc(m.text)}</div></div>`;
+}
+function scrollMsgs(){document.querySelectorAll('.msgs').forEach(e=>e.scrollTop=e.scrollHeight)}
+function sysMsg(th,text){(S.chats[th]=S.chats[th]||[]).push({from:'sys',text,t:now()})}
+function sendW(th,text){
+  text=(text||'').trim();if(!text)return;
+  const me=W(S.worker).name;
+  (S.chats[th]=S.chats[th]||[]).forEach(m=>m.fresh=false);
+  S.chats[th].push({from:'w',who:me,text,t:now(),fresh:true});
+  const c=card(th);
+  notify(`💬 ${me}${c?' · '+c.title:' · 공지'}`,text);
+  S.phoneThread=th;
+  S.afterRender=scrollMsgs;render();
+  // 점주 자동 응답 (데모 시나리오)
+  if(S.autoReplied&&S.autoReplied[th])return;
+  S.autoReplied=S.autoReplied||{};S.autoReplied[th]=true;
+  let reply='확인했어요, 고마워요 👍';
+  if(c&&c.manual==='m-espresso')reply='헉 고마워요! 수리 기사님 오늘 4시에 오시기로 했어요. 그때까지 2번 그룹은 쓰지 말아 주세요 🙏';
+  else if(c&&c.type==='재고·발주')reply='고마워요! 주말 전이니까 16팩으로 넣어 주세요.';
+  else if(th==='notice')reply='좋아요 👍 다들 고마워요!';
+  setTimeout(()=>{S.typing=th;S.phoneTyping=true;S.afterRender=scrollMsgs;render()},1400);
+  setTimeout(()=>{S.typing=null;S.phoneTyping=false;ownerSend(th,reply)},3600);
+}
+function ownerSend(th,text){
+  text=(text||'').trim();if(!text)return;
+  (S.chats[th]=S.chats[th]||[]).forEach(m=>m.fresh=false);
+  S.chats[th].push({from:'owner',text,t:now(),fresh:true});
+  if(S.view!=='card'||S.sel!==th)toast(`👑 사장님: ${text.slice(0,30)}${text.length>30?'…':''}`);
+  S.afterRender=scrollMsgs;render();
+}
+function viewChat(){
+  const ths=['notice',...S.cards.filter(c=>(S.chats[c.id]||[]).length||c.status<4).map(c=>c.id)];
+  const cur=S.chatThread||'notice';
+  const name=th=>th==='notice'?'📌 매장 공지':(TYPES[card(th).type].ic+' '+card(th).title);
+  const last=th=>{const L=S.chats[th]||[];return L.length?L[L.length-1].text:'대화 없음'};
+  return `<h1 class="h1">실시간 소통</h1><p class="sub">카드별로 사장님과 대화해요. 근무 중 개인 폰을 못 봐도 공용 패드에서 바로 확인할 수 있어요.</p>
+  <div class="grid2" style="grid-template-columns:320px 1fr"><div class="panel" style="padding:10px"><div class="threads">${ths.map(th=>`<button class="thr ${th===cur?'on':''}" onclick="S.chatThread='${th}';render();scrollMsgs()"><div style="min-width:0"><div class="t">${esc(name(th))}</div><div class="p">${esc(last(th))}</div></div></button>`).join('')}</div></div>
+  <div class="panel" style="padding:16px">${cur==='notice'?`<div class="pin">📌 <div><b>고정 공지</b> · ${esc(S.notice)}</div></div>`:`<div class="row" style="margin-bottom:10px">${typeBadge(card(cur).type)}<b>${esc(card(cur).title)}</b><span style="margin-left:auto">${stBadge(card(cur).status)}</span><button class="btn" onclick="openCard('${cur}')">카드 보기</button></div>`}${chatBox(cur)}</div></div>`;
+}
+
+/* ---- 빠른 기록 ---- */
+function viewRecord(){
+  const mine=S.cards.filter(c=>c.shift===S.shiftNo);
+  return `<h1 class="h1">빠른 기록</h1><p class="sub">바쁜 근무 중엔 말하거나 사진 한 장만 남기세요. 정리는 AI가 해요.</p>
+  <div class="recbig">
+   <button class="panel rb" onclick="startVoice()"><span class="ic" style="background:var(--red-weak)">🎙️</span><b>음성으로 남기기</b><small>버튼 누르고 말하기 · 10초면 충분</small></button>
+   <button class="panel rb" onclick="go('rec-photo')"><span class="ic" style="background:var(--blue-weak)">📷</span><b>사진 찍기</b><small>재고·고장 상황을 한 장으로</small></button>
+   <button class="panel rb" onclick="go('rec-text')"><span class="ic" style="background:var(--green-weak)">⌨️</span><b>짧은 문장</b><small>“우유 2팩 발주” 정도면 OK</small></button>
+  </div>
+  <div class="panel" style="padding:18px"><div class="sec-t">이번 근무에 남긴 기록</div>${mine.length?`<div class="cards">${mine.map(hcard).join('')}</div>`:'<p class="muted" style="margin:0">아직 없어요. 특이사항이 생기면 바로 남겨 주세요.</p>'}</div>`;
+}
+function startVoice(){S.rec={text:'',done:false,live:false};S.view='rec-voice';render();
+  let i=0;clearInterval(S.recTimer);
+  S.recTimer=setInterval(()=>{ if(S.view!=='rec-voice'){clearInterval(S.recTimer);return}
+    i+=2;S.rec.text=SCRIPT_VOICE.slice(0,i);
+    const el=$('#tr');if(el)el.innerHTML=esc(S.rec.text)+'<span class="cur"></span>';
+    const sec=$('#rsec');if(sec)sec.textContent='0:'+String(Math.min(12,Math.floor(i/6))).padStart(2,'0');
+    if(i>=SCRIPT_VOICE.length){clearInterval(S.recTimer);S.rec.done=true;const b=$('#stopb');if(b){b.classList.add('primary');b.textContent='■ 녹음 끝내고 AI로 정리하기'}}
+  },70);
+}
+function startLiveVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('이 브라우저는 음성 인식을 지원하지 않아요 (Chrome 권장)');return}
+  clearInterval(S.recTimer);S.rec={text:'',done:false,live:true};render();
+  const r=new SR();r.lang='ko-KR';r.interimResults=true;r.continuous=true;S.sr=r;
+  r.onresult=e=>{let t='';for(const x of e.results)t+=x[0].transcript;S.rec.text=t;const el=$('#tr');if(el)el.innerHTML=esc(t)+'<span class="cur"></span>'};
+  r.onerror=()=>toast('마이크 권한을 확인해 주세요');
+  r.start();
+}
+function viewVoice(){
+  const live=S.rec&&S.rec.live;
+  return `<div class="recwrap"><h1 class="h1">듣고 있어요…</h1><p class="sub">편하게 말하세요. 수량·위치·기한은 AI가 찾아내요.</p>
+  <div class="mic">🎙️</div><div class="wave">${Array.from({length:22},(_,i)=>`<i style="animation-delay:${(i%7)*.11}s"></i>`).join('')}</div>
+  <div class="muted" style="margin-bottom:8px">● 녹음 중 <b id="rsec">0:00</b> ${live?'· 실제 마이크':''}</div>
+  <div class="transcript" id="tr">${esc(S.rec.text)}<span class="cur"></span></div>
+  <div class="row" style="justify-content:center;margin-top:18px"><button class="btn" onclick="go('record')">취소</button><button id="stopb" class="btn lg ${S.rec.done||live?'primary':''}" onclick="stopVoice()">${S.rec.done||live?'■ 녹음 끝내고 AI로 정리하기':'■ 녹음 끝내기'}</button></div>
+  ${live?'':`<p style="margin-top:18px"><button class="muted" style="text-decoration:underline;font-size:13px" onclick="startLiveVoice()">실제 마이크로 말해 보기 (Chrome)</button></p>`}</div>`;
+}
+function stopVoice(){
+  clearInterval(S.recTimer);if(S.sr){try{S.sr.stop()}catch(e){}S.sr=null}
+  const live=S.rec.live, text=live?S.rec.text:SCRIPT_VOICE;
+  if(!text.trim()){toast('녹음된 내용이 없어요');return}
+  runAI({kind:'voice',text,dur:'0:12'},analyze(text,live?null:PRESET_VOICE),['음성 → 텍스트 변환 (STT)','문제 유형 분류','수량 · 위치 · 기한 추출','빠진 정보 확인','관련 업무 매뉴얼 연결']);
+}
+function viewPhoto(){
+  return `<button class="btn ghost" onclick="go('record')" style="margin:-6px 0 12px -10px">← 빠른 기록</button><h1 class="h1">사진 찍기</h1><p class="sub">카메라로 찍거나, 시연용 샘플 사진을 골라 보세요.</p>
+  <div class="photos">${['milk','receipt','ice'].map(k=>`<button class="ph" onclick="pickPhoto('${k}')">${photo(k)}<div>${{milk:'냉장고 선반 (우유)',receipt:'포스 영수증 프린터',ice:'제빙기 패널'}[k]}</div></button>`).join('')}</div>
+  <label class="btn lg" style="margin-top:16px">📷 카메라 / 앨범에서 선택<input type="file" accept="image/*" capture="environment" hidden onchange="realPhoto(this)"></label>`;
+}
+function pickPhoto(k){const p=PRESET_PHOTO[k];runAI({kind:'photo',photo:k,text:p.title,vision:p.vision},analyze('',p),['사진 업로드','이미지 속 물품·장비 인식','문제 유형 분류','빠진 정보 확인','관련 업무 매뉴얼 연결'])}
+function realPhoto(inp){const f=inp.files&&inp.files[0];if(!f)return;toast('사진을 받았어요. 한 줄 설명을 덧붙이면 더 정확해요.');S.view='rec-text';S.photoHint=true;render()}
+function viewText(){
+  return `<button class="btn ghost" onclick="go('record')" style="margin:-6px 0 12px -10px">← 빠른 기록</button><h1 class="h1">짧은 문장으로 남기기</h1><p class="sub">대충 써도 괜찮아요. 아래 예시를 눌러 봐도 돼요.</p>
+  <textarea class="big" id="tx" placeholder="예) 오트밀크 3팩 남음 내일 오전까지 발주"></textarea>
+  <div class="quick" style="margin-top:10px">${['오트밀크 3팩 남음 내일 오전까지 발주','화장실 휴지 다 떨어짐 창고에 없음','포스 카드 단말기 에러 계속 남 지금','일요일 오후 3시 케이크 2개 픽업 예약'].map(x=>`<button onclick="$('#tx').value='${x}'">${x}</button>`).join('')}</div>
+  <div class="row" style="margin-top:16px"><button class="btn primary lg" onclick="submitText()">✨ AI로 카드 만들기</button></div>`;
+}
+function submitText(){const t=$('#tx').value.trim();if(!t){toast('내용을 입력해 주세요');return}
+  runAI({kind:'text',text:t},analyze(t),['문장 이해','문제 유형 분류','수량 · 위치 · 기한 추출','빠진 정보 확인','관련 업무 매뉴얼 연결'])}
+function runAI(src,result,steps){
+  S.draft={src,...result,answer:null};S.aiSteps=steps;S.aiIdx=0;S.view='rec-ai';render();
+  const tick=()=>{S.aiIdx++;if(S.view!=='rec-ai')return;if(S.aiIdx>steps.length){S.view='review';render();return}const el=$('#content');if(el)el.innerHTML=viewAI();setTimeout(tick,520)};
+  setTimeout(tick,520);
+}
+function viewAI(){
+  return `<div class="recwrap"><div style="font-size:46px">✨</div><h1 class="h1">AI가 인수인계 카드로 정리하고 있어요</h1><p class="sub">원본 기록은 그대로 함께 저장돼요.</p>
+  <ul class="ai-steps">${S.aiSteps.map((s,i)=>`<li class="${i<S.aiIdx?'ok':i===S.aiIdx?'run':''}"><span class="d">${i<S.aiIdx?'✓':''}</span>${s}</li>`).join('')}</ul></div>`;
+}
+function viewReview(){
+  const d=S.draft;const m=d.manual&&S.manuals[d.manual];
+  const askField=d.ask&&(d.ask.field||'due');
+  const fld=(k,l)=>`<div class="field ${(!d[k]&&d.ask&&askField===k)?'miss':''}"><label>${l}${(!d[k]&&d.ask&&askField===k)?' · 비어 있음':''}</label><input value="${esc(d[k])}" oninput="S.draft['${k}']=this.value" placeholder="—"></div>`;
+  return `<h1 class="h1">퇴근 전, AI 카드를 확인해 주세요</h1><p class="sub">틀린 부분은 눌러서 바로 고칠 수 있어요. 확인하면 다음 근무자에게 넘어가요.</p>
+  <div class="grid2"><section class="panel" style="padding:20px;display:flex;flex-direction:column;gap:14px">
+   <div class="tline"><select onchange="S.draft.type=this.value;render()" style="border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--surface);font-weight:700">${Object.keys(TYPES).map(t=>`<option ${t===d.type?'selected':''}>${t}</option>`).join('')}</select><span class="ai-tag">AI 자동 분류</span>
+    <label style="margin-left:auto;display:flex;gap:6px;align-items:center;font-weight:700;font-size:14px"><input type="checkbox" ${d.urgent?'checked':''} onchange="S.draft.urgent=this.checked"> 🚨 긴급</label></div>
+   <div class="field wide"><label>제목</label><input value="${esc(d.title)}" oninput="S.draft.title=this.value" style="font-size:18px"></div>
+   <div class="fields">${fld('qty','수량')}${fld('due','기한')}${fld('loc','위치')}${fld('next','다음 행동')}</div>
+   ${d.ask?`<div class="ask"><b>🤖 하나만 더 알려 주세요 — ${esc(d.ask.q)}</b><div class="opts">${d.ask.opts.map(o=>`<button class="${d.answer===o?'on':''}" onclick="answer('${o}')">${o}</button>`).join('')}</div></div>`:''}
+   <div class="row"><button class="btn primary lg" ${d.ask&&!d.answer?'disabled':''} onclick="commitDraft()">✔ 확인 · 다음 교대로 넘기기</button><button class="btn" onclick="go('record')">다시 기록</button></div>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:14px"><div class="panel" style="padding:16px"><div class="sec-t">원본 기록 <span class="muted" style="font-weight:500;font-size:13px">AI가 틀려도 원본이 함께 전달돼요</span></div>${origin({src:d.src})}</div>
+   ${m?`<div class="mlink panel"><span class="ic">📘</span><span><span class="muted" style="font-size:12.5px">자동 연결된 매뉴얼</span><b>${esc(m.title)}</b><span class="muted" style="font-size:12.5px">다음 근무자가 카드에서 바로 열 수 있어요</span></span></div>`:`<div class="panel" style="padding:16px"><span class="muted">연결할 매뉴얼이 아직 없어요. 반복되면 점주가 매뉴얼로 승인할 수 있어요.</span></div>`}
+  </section></div>`;
+}
+function answer(o){const d=S.draft;d.answer=o;const f=(d.ask.field||'due');d[f]=o.replace(/ \(.*\)/,'');if(/오늘|지금|14시/.test(o))d.urgent=true;if(f==='qty'&&/없음/.test(o)){d.next='사장님께 용지 주문 요청';d.urgent=true}render()}
+function commitDraft(){
+  const d=S.draft,me=W(S.worker).name;
+  const id='n'+Date.now();
+  S.cards.unshift({id,type:d.type,title:d.title,qty:d.qty||'-',loc:d.loc,next:d.next,due:d.due,urgent:d.urgent,status:0,from:me,at:'오늘 '+now(),src:d.src,manual:d.manual,carry:0,assignee:null,shift:S.shiftNo,fresh:true});
+  notify(d.urgent?'🚨 긴급 인수인계 카드':'📦 새 인수인계 카드',`${d.title} (${me})`);
+  S.draft=null;S.view='home';S.filter='all';render();toast('🗂️ 카드가 등록됐어요 · 사장님 폰에도 알림이 갔어요');
+}
+
+/* ---- 매뉴얼 ---- */
+function viewManuals(){
+  const L=Object.entries(S.manuals);
+  return `<h1 class="h1">업무 매뉴얼</h1><p class="sub">우리 매장만의 노하우가 쌓여요. 카드에서 바로 열리고, 반복 질문은 점주 승인 후 매뉴얼이 돼요.</p>
+  <div class="mgrid">${L.map(([k,m])=>`<button class="panel mcard" onclick="openManual('${k}','list')"><div class="tline">${typeBadge(m.type)}${m.isNew?'<span class="tag brand">NEW · 질문에서 생성</span>':''}</div><b style="font-size:16px">${esc(m.title)}</b><span class="muted" style="font-size:13px">📍 ${esc(m.locText)}</span><span class="muted" style="font-size:12.5px">${m.steps.length}단계 · 조회 ${m.views}회</span></button>`).join('')}</div>`;
+}
+function openManual(k,from){S.manual=k;S.mFrom=from;S.mDone={};S.manuals[k].views++;S.view='manual';render()}
+function viewManual(){
+  const m=S.manuals[S.manual];
+  const back=S.mFrom==='card'?`<button class="btn ghost" onclick="S.view='card';render()" style="margin:-6px 0 12px -10px">← 카드로 돌아가기</button>`:`<button class="btn ghost" onclick="go('manuals')" style="margin:-6px 0 12px -10px">← 업무 매뉴얼</button>`;
+  const done=Object.values(S.mDone||{}).filter(Boolean).length;
+  return `${back}<div class="tline" style="margin-bottom:6px">${typeBadge(m.type)}<span class="muted" style="font-size:13px">조회 ${m.views}회 · 점주 승인됨 ✓</span></div><h1 class="h1">${esc(m.title)}</h1><p class="sub">${esc(m.purpose)}</p>
+  <div class="grid2"><section class="panel" style="padding:18px"><div class="sec-t">단계별 방법 <span class="muted" style="font-weight:500;font-size:13px">${done}/${m.steps.length} 완료 · 눌러서 체크</span></div>
+   <ol class="steps">${m.steps.map((s,i)=>`<li class="${S.mDone[i]?'ok':''}" onclick="S.mDone[${i}]=!S.mDone[${i}];render()"><span class="n">${S.mDone[i]?'✓':i+1}</span><span>${esc(s)}</span></li>`).join('')}</ol>
+   ${done===m.steps.length&&S.mFrom==='card'?`<div class="banner info" style="margin:14px 0 0">🎉 모든 단계를 마쳤어요! <button class="btn primary" style="margin-left:auto" onclick="S.view='card';render()">카드로 돌아가 완료하기</button></div>`:''}
+   <div class="sec-t" style="margin-top:18px">⚠️ 주의사항</div><ul class="warn" style="margin:0;padding-left:30px">${m.cautions.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>
+   <div class="sec-t" style="margin-top:18px">📖 매장 용어</div><dl class="terms">${m.terms.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></section>
+  <section class="panel" style="padding:18px;display:flex;flex-direction:column;gap:12px"><div class="sec-t" style="margin:0">📍 위치 안내</div><div style="font-weight:700">${esc(m.locText)}</div>${plan(m.loc)}
+   <div class="video"><div class="play">▶</div><small>🎬 점주가 찍은 30초 시연 영상</small></div></section></div>`;
+}
+
+/* ---- 점주 대시보드 ---- */
+function viewAdmin(){
+  const C=S.cards, open=C.filter(c=>c.status<4).length, done=C.filter(c=>c.status===4).length, carry=C.filter(c=>c.carry&&c.status<4).length;
+  return `<div class="row" style="justify-content:space-between;align-items:flex-end"><div><h1 class="h1">점주 대시보드</h1><p class="sub" style="margin:0">매장에 없어도 지금 상황을 한눈에. ${OWNER} 계정으로 보는 화면이에요.</p></div><span class="chip">👑 점주 모드</span></div>
+  <div class="kpis" style="margin-top:16px">
+   <div class="panel kpi"><small>오늘 인수인계 카드</small><div class="v">${C.length}</div><div class="d muted">완료 ${done} · 진행 ${open}</div></div>
+   <div class="panel kpi"><small>미해결 · 이월 중</small><div class="v">${open}<span style="font-size:16px;color:var(--orange)"> / ${carry}</span></div><div class="d muted">완료 전까지 자동 승계</div></div>
+   <div class="panel kpi"><small>카드 확인까지 평균</small><div class="v">4분</div><div class="d up">▼ 단톡방 대비 -78%</div></div>
+   <div class="panel kpi"><small>반복 질문 (이번 달)</small><div class="v">${14-S.faqs.filter(f=>f.approved).reduce((a,f)=>a+f.n,0)}건</div><div class="d up">▼ 지난달 대비 -42%</div></div></div>
+  <div class="grid2"><section class="panel" style="padding:18px"><div class="sec-t">🙋 자주 나오는 질문 → 매뉴얼로 승인</div><p class="muted" style="margin:-4px 0 12px;font-size:13px">근무자들이 반복해서 물어본 질문을 AI가 모았어요. 승인하면 AI가 쓴 초안이 매장 매뉴얼이 돼요.</p>
+   ${S.faqs.map(f=>`<div class="faq"><div><div class="q">“${esc(f.q)}”</div><div class="c">${f.n}회 질문 · 근무자 ${f.who}명</div></div>${f.approved?'<span class="st st-4" style="margin-left:auto"><i></i>매뉴얼 등록됨</span>':`<button class="btn primary" onclick="draftManual('${f.id}')">✨ 매뉴얼 초안 보기</button>`}</div>`).join('')}
+   <div class="sec-t" style="margin-top:18px">📌 공지 고정</div><form class="send" style="margin:0" onsubmit="event.preventDefault();S.notice=this.n.value;notify('📌 공지 변경',S.notice);toast('공용 패드 맨 위에 고정됐어요');render()"><input name="n" value="${esc(S.notice)}"><button class="btn">고정</button></form></section><section class="panel" style="padding:18px"><div class="sec-t">📉 인수인계 누락 건수 (파일럿 가정치)</div>
+   <div class="bars">${[['도입 전 1주',9,1],['도입 전 2주',11,1],['도입 1주',5,0],['도입 2주',3,0],['도입 3주',2,0],['도입 4주',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*8}px"></i>${l}</div>`).join('')}</div></section></div><div style="margin-top:18px"><section class="panel" style="padding:18px"><div class="sec-t">카드 상태 보드</div><div class="board">${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="col"><h4>${stBadge(i)}<span class="muted">${L.length}</span></h4>${L.map(c=>`<div class="mini" ${c.urgent&&c.status<4?'style="border-color:var(--red)"':''}>${TYPES[c.type].ic} ${esc(c.title)}${c.assignee?`<div class="muted" style="font-size:11.5px">👤 ${esc(c.assignee)}</div>`:''}</div>`).join('')}</div>`}).join('')}</div>
+   </section></div>`;
+}
+const FAQ_DRAFT={
+  f1:{key:'m-receipt',title:'영수증 용지 교체',type:'재고·발주',loc:'storage',locText:'창고 선반 A 맨 위 (흰 상자) · 프린터는 포스 오른쪽',purpose:'영수증 용지가 떨어지면 카드 결제 영수증을 못 뽑아요. 프린터 빨간불이 깜빡이면 바로 교체해요.',steps:['포스 오른쪽 프린터 덮개 버튼 누르기','다 쓴 심 빼고 새 롤을 종이 끝이 위로 오게 넣기','종이를 2cm 빼고 덮개 닫기','「FEED」 버튼으로 시험 출력','창고 재고가 3롤 이하면 사장님께 알리기'],cautions:['감열지라 거꾸로 넣으면 글자가 안 나와요'],terms:[['감열지','열로 글자가 찍히는 영수증 용지']]},
+  f2:{key:'m-oat',title:'오트밀크 재고 확인',type:'재고·발주',loc:'storage',locText:'창고 선반 B (두유 옆)',purpose:'오트밀크는 우유와 다른 거래처라 별도로 확인해요.',steps:['창고 선반 B에서 남은 팩 수 확인','4팩 이하면 발주 앱 「오트」 거래처 선택','6팩 단위로 발주'],cautions:['개봉 후 냉장 5일 이내 사용'],terms:[['거래처','물건을 납품하는 업체']]},
+  f3:{key:'m-showcase',title:'마감 시 쇼케이스 온도 설정',type:'청소·위생',loc:'showcase',locText:'카운터 앞 쇼케이스 하단 패널',purpose:'마감 후 케이크 보관 온도를 지켜야 다음 날 판매할 수 있어요.',steps:['하단 패널 「SET」 3초','온도를 3℃로 맞추기','조명 OFF, 커튼 내리기'],cautions:['5℃ 이상이면 사장님께 알리기'],terms:[['SET','설정 모드 버튼']]}
+};
+function draftManual(fid){
+  const f=S.faqs.find(x=>x.id===fid), d=FAQ_DRAFT[fid];
+  S.modal=()=>`<div class="scrim" onclick="if(event.target===this){S.modal=null;render()}"><div class="modal"><span class="ai-tag">AI가 쓴 매뉴얼 초안</span><h2 class="h1" style="margin:10px 0 2px">${esc(d.title)}</h2><p class="muted" style="margin:0 0 12px">근무자 질문 “${esc(f.q)}” ${f.n}회에서 생성</p>
+   <p style="margin:0 0 10px">${esc(d.purpose)}</p><div style="font-weight:700;margin-bottom:6px">📍 ${esc(d.locText)}</div>
+   <ol class="steps">${d.steps.map((s,i)=>`<li><span class="n">${i+1}</span><span>${esc(s)}</span></li>`).join('')}</ol>
+   <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" onclick="S.modal=null;render()">나중에</button><button class="btn primary lg" onclick="approve('${fid}')">✔ 승인하고 매뉴얼에 추가</button></div></div></div>`;
+  render();
+}
+function approve(fid){const f=S.faqs.find(x=>x.id===fid),d=FAQ_DRAFT[fid];f.approved=true;S.manuals[d.key]={...d,views:0,isNew:true};S.modal=null;render();toast(`📘 「${d.title}」 매뉴얼이 등록됐어요. 이제 모든 근무자가 볼 수 있어요`)}
+
+/* ---- 교대 마감 / 자동 승계 ---- */
+function endShift(){
+  const me=W(S.worker), idx=WORKERS.indexOf(me), nxt=WORKERS[(idx+1)%3];
+  const open=S.cards.filter(c=>c.status<4), mine=S.cards.filter(c=>c.shift===S.shiftNo), done=S.cards.filter(c=>c.status===4);
+  S.modal=()=>`<div class="scrim"><div class="modal"><h2 class="h1" style="margin:0">${me.name}님, 수고하셨어요 👋</h2><p class="muted" style="margin:4px 0 0">${me.shift} 근무를 마감할게요.</p>
+   <div class="kpis" style="grid-template-columns:repeat(3,1fr);margin:16px 0 4px"><div class="panel kpi"><small>내가 남긴 카드</small><div class="v">${mine.length}</div></div><div class="panel kpi"><small>완료</small><div class="v" style="color:var(--green)">${done.length}</div></div><div class="panel kpi"><small>다음 교대로 승계</small><div class="v" style="color:var(--orange)">${open.length}</div></div></div>
+   <div class="sec-t" style="margin-top:14px">🔁 ${nxt.name}님(${nxt.shift.split(' ')[0]})에게 넘어가는 카드</div>
+   <div class="hand" id="hand">${open.map(c=>`<div class="it">${TYPES[c.type].ic} <b style="flex:1">${esc(c.title)}</b>${stBadge(c.status)}${c.shift===S.shiftNo?'<span class="tag brand">새 카드</span>':`<span class="tag orange">이월 ${c.carry+1}회차</span>`}</div>`).join('')}</div>
+   <div class="row" style="justify-content:flex-end"><button class="btn" onclick="S.modal=null;render()">계속 근무</button><button class="btn primary lg" onclick="doHandover('${nxt.id}')">교대 마감하고 넘기기 ➜</button></div></div></div>`;
+  render();
+}
+function doHandover(nid){
+  document.querySelectorAll('#hand .it').forEach((e,i)=>{e.style.animationDelay=(i*.12)+'s';e.classList.add('go')});
+  setTimeout(()=>{
+    const me=W(S.worker).name;let n=0;
+    S.cards.forEach(c=>{c.fresh=false;if(c.status<4){if(c.shift!==S.shiftNo)c.carry++;n++;if(c.status===1)c.status=0}});
+    notify('🔁 교대 완료',`${me} → ${W(nid).name} · 미해결 ${n}건 자동 승계`);
+    S.shiftNo++;S.bannerCarry=n;S.modal=null;S.worker=null;S.nextWorker=nid;S.view='login';
+    S.clock=new Date(2026,10,19,13,1,10).getTime();render();
+  },900);
+}
+
+/* ---- 점주 폰 (실시간 동기화 미리보기) ---- */
+function renderPhone(){
+  const el=$('#phone');if(!el)return;
+  const th=S.phoneThread;const c=card(th);
+  const L=S.chats[th]||[];
+  el.innerHTML=`<div class="lbl"><span class="live"></span> 점주 휴대폰 · 실시간 동기화</div><div class="phone"><div class="notch"></div>
+  ${S.phonePush?`<div class="banner-push"><b>슬라이딩시프트 · 지금</b>${esc(S.phonePush.title)}<br>${esc(S.phonePush.text)}</div>`:''}
+  <div class="ph-top"><b>👑 ${OWNER}</b><div class="muted" style="font-size:11.5px">카페 온기 성수점 · 미해결 ${openCount()}건</div>
+  <div class="tabs"><button class="${S.phoneTab==='noti'?'on':''}" onclick="S.phoneTab='noti';renderPhone()">알림 ${S.notis.filter(n=>n.fresh).length?'•':''}</button><button class="${S.phoneTab==='chat'?'on':''}" onclick="S.phoneTab='chat';renderPhone()">대화</button></div></div>
+  ${S.phoneTab==='noti'?`<div class="body">${S.notis.map(n=>`<div class="noti ${n.fresh?'new':''}"><b>${esc(n.title)}</b>${esc(n.text)}<br><small>${esc(n.t)}</small></div>`).join('')}</div>`:
+   `<div class="body" style="padding:0"><div style="padding:8px 12px;font-size:12px;font-weight:700;border-bottom:1px solid var(--line)">${c?TYPES[c.type].ic+' '+esc(c.title):'📌 매장 공지'}</div><div class="msgs" id="pmsgs">${L.map(m=>bubble(m,true)).join('')}${S.phoneTyping?'<div class="msg me typing"><div class="bub" style="background:var(--brand)"><i style="background:#fff"></i><i style="background:#fff"></i><i style="background:#fff"></i></div></div>':''}</div></div>
+   <form class="send" onsubmit="event.preventDefault();ownerSend('${th}',this.m.value)"><input name="m" placeholder="답장 보내기…" autocomplete="off"><button class="btn primary" style="padding:8px 12px">↑</button></form>`}
+  </div>`;
+  S.notis.forEach(n=>{if(n.fresh)setTimeout(()=>{n.fresh=false},1500)});
+  const pm=$('#pmsgs');if(pm)pm.scrollTop=pm.scrollHeight;
+}
+function togglePhone(){S.phone=!S.phone;render()}
+
+/* ---- 네비게이션 ---- */
+function go(v){if(v!=='rec-voice'){clearInterval(S.recTimer);if(S.sr){try{S.sr.stop()}catch(e){}S.sr=null}}S.view=v;if(v==='chat')S.afterRender=scrollMsgs;render();const c=$('#content');if(c)c.scrollTop=0}
+function resetDemo(){clearInterval(S.recTimer);S=seed();render();toast('데모를 처음 상태로 되돌렸어요')}
+// 메시지 보내면 폰은 자동으로 대화 탭으로
+const _notify=notify;notify=function(t,x){_notify(t,x);if(/💬/.test(t)){S.phoneTab='chat';renderPhone()}};
+
+/* 시연 순서 도우미 (? 키) */
+document.addEventListener('keydown',e=>{
+  if(e.target.matches('input,textarea'))return;
+  if(e.key==='?'){S.modal=S.modal?null:()=>`<div class="scrim" onclick="S.modal=null;render()"><div class="modal"><h2 class="h1">3분 시연 순서</h2><ol style="line-height:2;padding-left:20px;margin:10px 0 0">
+   <li><b>김지윤(오픈조)</b> 선택 → 오늘의 인수인계 둘러보기</li><li><b>빠른 기록 → 음성</b> → 녹음 끝내기 → AI 정리 과정</li><li>카드 검토 → AI 추가 질문 「오늘 중」 → 넘기기 (점주 폰 알림 확인)</li>
+   <li><b>교대 마감</b> → 미해결 카드 자동 승계 → <b>이민호</b> 선택</li><li>우유 카드 → 매뉴얼 열기 (위치 도면·단계) → 담당 → 처리 중 → 완료</li><li>누수 카드 → 사장님께 메시지 → 폰에서 실시간 답장</li><li><b>점주 대시보드</b> → 반복 질문 → 매뉴얼 승인</li></ol>
+   <p class="muted" style="font-size:13px;margin-top:14px">단축키: <span class="kbd">?</span> 이 창 · 왼쪽 아래 「데모 처음부터」로 초기화</p></div></div>`;
+   if(S.view==='login'){S.view_='login'}render()}
+});
+render();
+</script>
+</body>
+</html>
