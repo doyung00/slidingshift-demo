@@ -55,7 +55,7 @@ input,textarea,select{font:inherit;color:var(--ink)}
 /* main */
 .main{display:flex;flex-direction:column;min-width:0;height:100vh}
 .top{display:flex;align-items:center;gap:14px;padding:14px 26px;background:var(--surface);border-bottom:1px solid var(--line)}
-.store{font-weight:700}
+.store{font-weight:700;white-space:nowrap}
 .store small{display:block;font-weight:400;color:var(--muted);font-size:12px}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:var(--surface2);border:1px solid var(--line);font-size:13px;font-weight:500;white-space:nowrap}
 .top .grow{flex:1}
@@ -282,8 +282,59 @@ textarea.big:focus{border-color:var(--brand)}
 @keyframes drop{from{transform:translateY(-30px);opacity:0}}
 .help{position:fixed;right:14px;bottom:14px;z-index:40}
 .kbd{font-size:11px;padding:1px 6px;border-radius:5px;border:1px solid var(--line);background:var(--surface2)}
+/* [테스트] 출퇴근 */
+.att{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:18px 0 6px}
+.atc{padding:16px;display:flex;flex-direction:column;gap:10px;border:2px solid var(--line);border-radius:18px;background:var(--surface)}
+.atc.on{border-color:color-mix(in srgb,var(--green) 55%,var(--line))}
+.atc.next{border-color:var(--brand);box-shadow:0 0 0 5px var(--brand-weak)}
+.atc .who{display:flex;gap:12px;align-items:center}
+.atc .av{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:19px;font-weight:800;color:#fff;flex:none}
+.atc b{font-size:17px;display:block}
+.atc small{color:var(--muted);font-size:12.5px}
+.atc .btns{display:flex;gap:8px}
+.atc .btns .btn{flex:1;padding:9px 10px}
+.duty{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:99px;border:1.5px solid var(--line);background:var(--surface);font-size:13px;font-weight:700;white-space:nowrap}
+.duty .d{width:22px;height:22px;border-radius:50%;color:#fff;display:inline-grid;place-items:center;font-size:11px;font-weight:800}
+.duty.on{border-color:var(--brand);background:var(--brand-weak);color:var(--brand-ink)}
+.alog{width:100%;border-collapse:collapse;font-size:14px}
+.alog th,.alog td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+.alog th{color:var(--muted);font-weight:500;font-size:12.5px}
+/* [테스트] 매뉴얼 카테고리 · 레시피 */
+.ctabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.ctab{padding:9px 15px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:14px;display:inline-flex;gap:6px;align-items:center}
+.ctab em{font-style:normal;font-size:12px;color:var(--muted);font-weight:500}
+.ctab.on{background:var(--ink);color:var(--surface);border-color:var(--ink)} .ctab.on em{color:inherit;opacity:.7}
+.msearch{width:100%;max-width:360px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface);outline:none;margin-bottom:14px}
+.mgroup{margin:4px 0 22px}
+.rcard .em{font-size:30px;line-height:1}
+.vtabs{display:inline-flex;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.vtabs button{padding:7px 16px;border-radius:9px;font-weight:800;font-size:14px}
+.vtabs button.on{background:var(--surface);box-shadow:var(--shadow)}
+.vtabs button.hot.on{color:var(--red)} .vtabs button.ice.on{color:var(--blue)}
+.ings{width:100%;border-collapse:collapse;font-size:15px}
+.ings td{padding:10px 4px;border-bottom:1px dashed var(--line)}
+.ings td:last-child{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.cupwrap{display:flex;gap:16px;align-items:center}
+.cupwrap svg{width:130px;flex:none}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line)}
+.rlinks{display:flex;gap:8px;flex-wrap:wrap}
+.rlinks button{padding:7px 12px;border-radius:99px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:13px}
+/* [테스트] 단체방 + 기록 */
+.room{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+.room .msgs{max-height:none;flex:none;height:calc(100vh - 420px);min-height:300px}
+.tools{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tools .btn{padding:8px 12px;font-size:13.5px}
+.mcardmsg{display:flex;flex-direction:column;gap:6px;text-align:left;padding:11px 13px;border-radius:14px;border:1.5px solid var(--brand);background:var(--surface);min-width:240px;font-size:13.5px}
+.mcardmsg b{font-size:14.5px}
+.ctag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;background:var(--brand-weak);color:var(--brand-ink);margin-bottom:3px;cursor:pointer}
+.suggest{align-self:center;display:flex;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;background:var(--amber-weak);font-size:13px;max-width:100%;flex-wrap:wrap}
+.suggest .btn{padding:6px 10px;font-size:12.5px}
+.mem{display:flex;gap:10px;align-items:center;padding:7px 4px;font-size:14px}
+.mem .d{width:28px;height:28px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+.testbadge{position:fixed;left:50%;top:0;transform:translateX(-50%);background:#F2711C;color:#fff;font-size:11.5px;font-weight:800;padding:3px 12px;border-radius:0 0 10px 10px;z-index:90;letter-spacing:.2px;pointer-events:none}
 /* responsive */
-@media (max-width:1100px){.app.with-phone{grid-template-columns:200px 1fr 340px}.side{padding:16px 8px}.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:1100px){.room{grid-template-columns:1fr}.app.with-phone{grid-template-columns:200px 1fr 340px}.side{padding:16px 8px}.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:760px){
   .app,.app.with-phone{grid-template-columns:1fr;height:auto}
   .side{position:fixed;bottom:0;left:0;right:0;flex-direction:row;padding:6px;z-index:30;border-right:0;border-top:1px solid var(--line);justify-content:space-around}
@@ -295,6 +346,8 @@ textarea.big:focus{border-color:var(--brand)}
   .content{padding:16px 16px 90px}
   .phone-wrap{display:none}
   .recbig,.photos,.wk{grid-template-columns:1fr}
+  .room .msgs{height:55vh}
+  .cupwrap{flex-direction:column;align-items:flex-start}
   .fields{grid-template-columns:1fr}
   .board{grid-template-columns:repeat(2,1fr)}
   .stepper{grid-template-columns:repeat(5,1fr)}
@@ -317,66 +370,179 @@ const TYPES={
   '청소·위생':{ic:'🧽',c:'var(--green)',bg:'var(--green-weak)'},
   '기타':{ic:'📌',c:'var(--muted)',bg:'var(--gray-weak)'}
 };
+/* [테스트] 매뉴얼 카테고리 */
+const CATS={
+  recipe:{l:'음료 레시피',ic:'🥤',c:'var(--orange)',bg:'var(--orange-weak)'},
+  order:{l:'주문·결제',ic:'🧾',c:'var(--violet)',bg:'var(--violet-weak)'},
+  equip:{l:'장비',ic:'🛠️',c:'var(--red)',bg:'var(--red-weak)'},
+  clean:{l:'청소',ic:'🧽',c:'var(--green)',bg:'var(--green-weak)'},
+  etc:{l:'기타',ic:'📌',c:'var(--muted)',bg:'var(--gray-weak)'}
+};
+/* [테스트] 여러 명이 함께 근무 */
 const WORKERS=[
-  {id:'jy',name:'김지윤',shift:'오픈 07:00–13:00',color:'#F2711C'},
-  {id:'mh',name:'이민호',shift:'미들 13:00–19:00',color:'#5146E5'},
-  {id:'sb',name:'박서빈',shift:'마감 19:00–23:00',color:'#12A150'}
+  {id:'jy',name:'김지윤',shift:'오픈 07:00–13:00',color:'#F2711C',next:'mh'},
+  {id:'hn',name:'정하늘',shift:'파트 10:00–15:00',color:'#0EA5E9',next:'mh'},
+  {id:'mh',name:'이민호',shift:'미들 13:00–19:00',color:'#5146E5',next:'sb'},
+  {id:'sj',name:'오세진',shift:'파트 17:00–22:00',color:'#D946EF',next:'sb'},
+  {id:'sb',name:'박서빈',shift:'마감 19:00–23:00',color:'#12A150',next:'jy'}
 ];
 const OWNER='최은영 사장님';
 
 const MANUALS0={
-  'm-milk':{title:'우유 발주하기',type:'재고·발주',loc:'fridge',locText:'워크인 냉장고 2번 칸 (문 열고 왼쪽 두 번째)',
-    purpose:'우유는 하루 평균 10팩을 사용해요. 발주하면 다음 날 오전 9시에 도착하므로, 재고가 3팩 이하면 당일 14시 전에 발주해야 해요.',
-    steps:['워크인 냉장고 2번 칸에서 남은 팩 수 확인 (유통기한 빠른 것을 앞으로)','카운터 태블릿 홈 화면의 「발주」 즐겨찾기 → 「한빛유업 대리점」 선택','기본 수량 12팩 입력 (주말 전날은 16팩)','발주 완료 화면을 캡처해 이 카드에 첨부','카드를 「완료」로 변경'],
-    cautions:['14시 이후 발주는 다음다음 날 도착해요','두유·오트밀크는 다른 거래처예요 (창고 선반 B)'],
-    terms:[['대리점','우유를 매일 배송해 주는 거래처'],['선입선출','먼저 들어온 재고를 먼저 쓰는 것']],views:41},
-  'm-ice':{title:'제빙기 필터 교체',type:'장비 이상',loc:'ice',locText:'바 하부 오른쪽 제빙기, 필터는 창고 선반 C',
+  /* ---------- 음료 레시피 ---------- */
+  'r-americano':{cat:'recipe',em:'☕',title:'아메리카노',sub:'원두: 하우스 블렌드(다크) · 기본 2샷, 연하게 요청 시 1샷',loc:'espresso',locText:'에스프레소 머신 · 온수기는 머신 왼쪽',views:58,
+    vars:{HOT:{cup:'12oz 머그 / 종이컵',ings:[['뜨거운 물 (온수기 92℃)','250ml'],['에스프레소','2샷 (40ml)']],
+      steps:['컵에 뜨거운 물 250ml 먼저 붓기 (컵 안쪽 1번 선)','에스프레소 2샷 추출 (25~30초)','물 위에 샷을 천천히 부어 크레마 살리기','뚜껑 · 슬리브 끼워 제공'],
+      layers:[['크레마',.06,'#C8955C'],['아메리카노',.78,'#5A3A22']]},
+     ICE:{cup:'16oz 아이스컵',ice:true,ings:[['얼음','컵 가득 (약 180g)'],['정수 (찬물)','220ml'],['에스프레소','2샷 (40ml)']],
+      steps:['16oz 컵에 얼음을 가득 담기','정수를 컵 2번 선(220ml)까지 붓기','에스프레소 2샷을 마지막에 올리기','빨대 꽂고 뚜껑 닫아 제공'],
+      layers:[['에스프레소',.12,'#6B4226'],['물 + 얼음',.75,'#8A5A33']]}},
+    tips:['물을 먼저 넣어야 샷이 컵 바닥에 바로 닿지 않아 덜 써요','샷은 추출 후 10초 안에 사용 (시간이 지나면 신맛이 올라와요)']},
+  'r-latte':{cat:'recipe',em:'🥛',title:'카페라떼',sub:'우유: 한빛유업 일반우유 · 오트밀크 변경 +500원',loc:'espresso',locText:'에스프레소 머신 · 우유는 바 하부 냉장고',views:44,
+    vars:{HOT:{cup:'12oz 머그 / 종이컵',ings:[['에스프레소','2샷 (40ml)'],['우유 (스팀)','220ml · 60~65℃']],
+      steps:['스팀 피처에 차가운 우유 220ml 담기','스팀 노즐로 공기 2~3초 넣고 60~65℃까지 데우기 (피처를 잡기 뜨거울 정도)','컵에 에스프레소 2샷 추출','우유를 부어 거품 1cm로 마무리 (가능하면 하트 라떼아트)'],
+      layers:[['우유 거품',.08,'#F6EEDF'],['스팀 우유',.6,'#E8D2B0'],['에스프레소',.16,'#8A5A33']]},
+     ICE:{cup:'16oz 아이스컵',ice:true,ings:[['얼음','컵 2/3 (약 150g)'],['우유','200ml'],['에스프레소','2샷 (40ml)']],
+      steps:['16oz 컵에 얼음 2/3 담기','우유를 컵 2번 선(200ml)까지 붓기','에스프레소 2샷을 위에 올려 층 만들기','뚜껑 · 빨대 끼워 제공'],
+      layers:[['에스프레소',.13,'#7A4B2A'],['우유 + 얼음',.72,'#F2E6D3']]}},
+    tips:['스팀 후 노즐은 바로 젖은 행주로 닦고 1초 퍼지 (우유가 굳어요)','오트밀크는 65℃가 넘으면 분리돼요 → 55~60℃까지만']},
+  'r-vanilla':{cat:'recipe',em:'🍦',title:'바닐라라떼',sub:'시럽 펌프 1회 = 10ml · 덜 달게 요청 시 1펌프 빼기',loc:'espresso',locText:'시럽 랙은 머신 왼쪽 (바닐라 = 흰 라벨)',views:31,
+    vars:{HOT:{cup:'12oz 머그 / 종이컵',ings:[['바닐라 시럽','2펌프 (20ml)'],['에스프레소','2샷 (40ml)'],['우유 (스팀)','200ml']],
+      steps:['컵에 바닐라 시럽 2펌프','에스프레소 2샷을 시럽 위로 추출 후 저어 섞기','스팀 우유를 부어 마무리'],
+      layers:[['우유 거품',.08,'#F6EEDF'],['스팀 우유',.56,'#EAD6B5'],['에스프레소 + 시럽',.2,'#9A6A3E']]},
+     ICE:{cup:'16oz 아이스컵',ice:true,ings:[['바닐라 시럽','3펌프 (30ml)'],['우유','180ml'],['얼음','컵 2/3'],['에스프레소','2샷 (40ml)']],
+      steps:['컵에 시럽 3펌프 + 우유 180ml 넣고 저어 섞기','얼음 2/3 담기','에스프레소 2샷 올리기'],
+      layers:[['에스프레소',.13,'#7A4B2A'],['바닐라 우유 + 얼음',.72,'#F4E7C9']]}},
+    tips:['아이스는 차가워서 단맛이 덜 느껴지므로 1펌프 더 넣어요','시럽은 우유와 먼저 섞어야 바닥에 가라앉지 않아요']},
+  'r-mocha':{cat:'recipe',em:'🍫',title:'카페모카',sub:'초코 소스 + 에스프레소 · 휘핑 기본 (빼기 가능)',loc:'espresso',locText:'초코 소스는 시럽 랙 맨 오른쪽 · 휘핑기는 바 냉장고 1칸',views:19,
+    vars:{HOT:{cup:'12oz 머그 / 종이컵',ings:[['초코 소스','30ml'],['에스프레소','2샷 (40ml)'],['우유 (스팀)','200ml'],['휘핑크림','컵 위 2바퀴']],
+      steps:['컵에 초코 소스 30ml','에스프레소를 추출해 소스와 완전히 섞기','스팀 우유 붓기 (거품은 적게)','휘핑 2바퀴 + 초코 드리즐'],
+      layers:[['휘핑',.12,'#FFFFFF'],['초코 우유',.56,'#B07A55'],['초코 + 에스프레소',.18,'#5A3524']]},
+     ICE:{cup:'16oz 아이스컵 (돔 뚜껑)',ice:true,ings:[['초코 소스','30ml'],['에스프레소','2샷 (40ml)'],['우유','180ml'],['얼음','컵 2/3'],['휘핑크림','2바퀴']],
+      steps:['초코 소스와 뜨거운 샷을 먼저 섞어 녹이기','우유 붓고 저은 뒤 얼음 담기','휘핑 + 초코 드리즐 · 돔 뚜껑'],
+      layers:[['휘핑',.12,'#FFFFFF'],['초코 우유 + 얼음',.72,'#A8714C']]}},
+    tips:['아이스는 소스를 샷으로 먼저 녹여야 덩어리가 안 져요','휘핑 가스(N₂O) 여분은 창고 선반 C 박스']},
+  'r-coldbrew':{cat:'recipe',em:'🧊',title:'콜드브루',sub:'원액은 제조 후 5일까지 · 오픈조가 날짜 라벨 확인',loc:'fridge',locText:'워크인 냉장고 1번 칸 · 원액 병 (날짜 라벨)',views:22,
+    vars:{ICE:{cup:'16oz 아이스컵',ice:true,ings:[['얼음','컵 가득'],['정수','200ml'],['콜드브루 원액','80ml']],
+      steps:['원액 병 날짜 라벨 확인 (5일 지나면 폐기)','얼음 가득 → 정수 200ml','원액 80ml 붓고 한 번 젓기'],
+      layers:[['콜드브루',.84,'#4A2C1A']]}},
+    tips:['콜드브루 라떼는 정수 대신 우유 200ml','원액이 1병 이하면 단체방에 알려 주세요 (추출에 12시간 걸려요)']},
+  'r-grapefruit':{cat:'recipe',em:'🍊',title:'자몽에이드',sub:'매장 수제 자몽청 · 탄산수는 마지막에',loc:'fridge',locText:'워크인 냉장고 3번 칸 · 자몽청 통 (주황 뚜껑)',views:27,
+    vars:{ICE:{cup:'16oz 아이스컵',ice:true,ings:[['자몽청 (과육 포함)','70g'],['얼음','컵 가득'],['탄산수','200ml'],['자몽 슬라이스 · 로즈마리','1장 · 1줄기']],
+      steps:['컵 바닥에 자몽청 70g (과육 골고루)','얼음 가득 담기','탄산수를 컵 벽을 따라 천천히 200ml','자몽 슬라이스 · 로즈마리 올리고 젓지 않고 제공'],
+      layers:[['탄산수 + 얼음',.6,'#FFE3D6'],['자몽청',.24,'#F26B4E']]}},
+    tips:['탄산수는 개봉 후 냉장 하루까지 · 김 빠진 건 쓰지 않아요','자몽청이 1통 남으면 사장님께 알려 주세요 (담그는 데 3일)']},
+  'r-greentea':{cat:'recipe',em:'🍵',title:'녹차라떼',sub:'제주 녹차 파우더 · 덩어리 없이 개는 게 핵심',loc:'counter',locText:'바 상부 선반 · 파우더 통 (녹색 라벨)',views:16,
+    vars:{HOT:{cup:'12oz 머그 / 종이컵',ings:[['녹차 파우더','20g (스푼 2)'],['뜨거운 물','30ml'],['설탕 시럽','1펌프 (10ml)'],['우유 (스팀)','220ml']],
+      steps:['컵에 파우더 20g + 뜨거운 물 30ml','미니 거품기로 덩어리 없이 개기 (10초)','시럽 1펌프 넣기','스팀 우유 부어 마무리, 위에 파우더 살짝'],
+      layers:[['우유 거품',.08,'#EEF2DF'],['녹차 우유',.66,'#A7C27A'],['녹차 베이스',.1,'#6E9440']]},
+     ICE:{cup:'16oz 아이스컵',ice:true,ings:[['녹차 파우더','20g'],['뜨거운 물','30ml'],['설탕 시럽','2펌프 (20ml)'],['우유','200ml'],['얼음','컵 2/3']],
+      steps:['파우더 + 뜨거운 물로 덩어리 없이 개기','시럽 2펌프 섞고 우유 붓기','얼음 담고 한 번 더 젓기'],
+      layers:[['녹차 우유 + 얼음',.85,'#B5CD8C']]}},
+    tips:['찬 우유에 파우더를 바로 넣으면 안 풀려요','파우더 통은 쓰고 바로 뚜껑 (습기에 굳어요)']},
+  'r-strawberry':{cat:'recipe',em:'🍓',title:'생딸기라떼 (시즌)',sub:'11월~4월 시즌 메뉴 · 딸기청 매장 제조',loc:'fridge',locText:'워크인 냉장고 3번 칸 · 딸기청 통 (빨간 뚜껑)',views:12,isSeason:true,
+    vars:{ICE:{cup:'16oz 아이스컵',ice:true,ings:[['딸기청','90g'],['얼음','컵 1/2'],['우유','200ml']],
+      steps:['컵 바닥에 딸기청 90g','얼음 1/2 담기 (딸기 층이 보이게)','우유를 천천히 부어 층 만들기','빨대 꽂고 「저어서 드세요」 안내'],
+      layers:[['우유 + 얼음',.62,'#FBF3EE'],['딸기청',.24,'#E5484D']]}},
+    tips:['딸기청은 제조일 7일 이내만 사용','우유 대신 오트밀크 변경 가능 (+500원)']},
+  'r-peach':{cat:'recipe',em:'🍑',title:'복숭아 아이스티',sub:'샷 추가 시 「아샷추」',loc:'storage',locText:'창고 선반 B · 아이스티 파우더 박스',views:20,
+    vars:{ICE:{cup:'16oz 아이스컵',ice:true,ings:[['아이스티 파우더','35g (스쿱 1)'],['뜨거운 물','50ml'],['정수','200ml'],['얼음','컵 가득']],
+      steps:['컵에 파우더 + 뜨거운 물 50ml로 완전히 녹이기','정수 200ml 붓고 섞기','얼음 가득 채우기','(아샷추) 에스프레소 1샷을 마지막에 올리기'],
+      layers:[['아이스티',.84,'#F2A65A']]}},
+    tips:['파우더를 찬물에 바로 넣으면 바닥에 가라앉아요']},
+  /* ---------- 주문·결제 ---------- */
+  'm-group':{cat:'order',title:'단체 주문 준비',type:'주문·예약',loc:'counter',locText:'카운터 하부 수납장 · 포스 「예약」 메모',
+    purpose:'10잔 이상 단체 주문은 미리 컵·홀더·캐리어를 준비해 두면 제조 시간을 절반으로 줄일 수 있어요.',
+    steps:['포스 「예약」 메모에서 메뉴·수량·시간 확인','전날 마감조가 컵·뚜껑·홀더를 수량+10% 준비','당일 30분 전 얼음 2통 추가 확보','음료 순서: 라떼 → 아메리카노 (얼음 녹음 방지)','캐리어 4구 기준으로 포장, 영수증 부착'],
+    cautions:['원두가 1kg 이하면 사장님께 미리 알려 주세요'],terms:[['캐리어','컵 4개를 담는 종이 운반 상자']],views:9},
+  'm-refund':{cat:'order',title:'카드 결제 취소 · 환불',loc:'counter',locText:'카운터 포스 · 「취소」 봉투는 돈통 아래',
+    purpose:'메뉴를 잘못 찍었거나 손님이 환불을 요청할 때 결제를 취소하는 방법이에요.',
+    steps:['포스 「매출 조회」에서 해당 결제 찾기 (시간·금액)','「결제 취소」 → 손님 카드를 단말기에 다시 꽂기','취소 영수증 2장 출력 (손님 1 · 매장 1)','매장용 영수증에 사유를 적고 돈통 아래 「취소」 봉투에 넣기'],
+    cautions:['3만 원 이상 취소는 사장님께 먼저 메시지','현금 환불은 혼자 처리하지 않아요'],terms:[['시재','돈통에 있어야 하는 현금 금액']],views:15},
+  'm-delivery':{cat:'order',title:'배달앱 주문 접수',loc:'counter',locText:'카운터 왼쪽 주문 태블릿',
+    purpose:'배달 주문은 알림이 울린 뒤 3분 안에 접수하지 않으면 자동 취소돼요.',
+    steps:['알림음이 울리면 「접수」 → 조리 시간 10분 선택','주문서를 출력해 바에 붙이기','포장: 홀더 + 빨대 따로 + 봉인 스티커','라이더 도착 시 주문번호 뒤 4자리 확인 후 전달'],
+    cautions:['재료가 떨어지면 접수 전에 앱에서 「품절」 처리','매장이 바쁠 땐 조리 시간 15분으로'],terms:[['봉인 스티커','배달 중 개봉을 막는 스티커']],views:11},
+  /* ---------- 장비 ---------- */
+  'm-espresso':{cat:'equip',title:'스팀 노즐 누수 응급 조치',type:'장비 이상',loc:'espresso',locText:'에스프레소 머신 2번 그룹 오른쪽 스팀 노즐',
+    purpose:'스팀 노즐에서 물이나 증기가 계속 새면 화상 위험이 있고 보일러 압력이 떨어져요. 수리 기사가 오기 전까지 안전하게 운영하는 방법이에요.',
+    steps:['스팀 밸브를 끝까지 잠그고 젖은 행주로 노즐을 감싸기','서랍 1번 칸의 「사용 중지」 표시를 2번 그룹에 걸기','1번 그룹만으로 운영 (스팀도 1번 노즐 사용)','단체방에 상황과 사진 올리기','수리 기사 방문 시간을 카드에 기록'],
+    cautions:['노즐을 맨손으로 만지지 마세요 (화상 위험)','머신 전원은 끄지 마세요 (다시 데우는 데 30분)'],
+    terms:[['그룹(그룹헤드)','포터필터를 끼워 커피를 추출하는 부분'],['스팀 노즐','우유 거품을 내는 금속 관']],views:3},
+  'm-ice':{cat:'equip',title:'제빙기 필터 교체',type:'장비 이상',loc:'ice',locText:'바 하부 오른쪽 제빙기, 필터는 창고 선반 C',
     purpose:'필터 경고등이 켜지면 얼음 생성이 느려지고 얼음이 탁해져요. 경고등이 켜진 뒤 1주일 안에 교체해요.',
     steps:['제빙기 전원 스위치 OFF','하부 커버를 앞으로 당겨 분리','기존 필터를 왼쪽으로 90° 돌려 빼기','새 필터를 끼우고 오른쪽으로 90° 돌려 고정','전원 ON 후 「RESET」 버튼 3초 누르기','첫 얼음 한 판은 버리기'],
     cautions:['교체 중 바닥에 물이 샐 수 있어 행주를 깔아 주세요','필터 재고가 1개 이하면 사장님께 알려 주세요'],
     terms:[['RESET','필터 사용 기간을 초기화하는 버튼']],views:12},
-  'm-group':{title:'단체 주문 준비',type:'주문·예약',loc:'counter',locText:'카운터 하부 수납장 · 포스 「예약」 메모',
-    purpose:'10잔 이상 단체 주문은 미리 컵·홀더·캐리어를 준비해 두면 제조 시간을 절반으로 줄일 수 있어요.',
-    steps:['포스 「예약」 메모에서 메뉴·수량·시간 확인','전날 마감조가 컵·뚜껑·홀더를 수량+10% 준비','당일 30분 전 얼음 2통 추가 확보','음료 순서: 라떼 → 아메리카노 (얼음 녹음 방지)','캐리어 4구 기준으로 포장, 영수증 부착'],
-    cautions:['원두가 1kg 이하면 사장님께 미리 알려 주세요'],terms:[['캐리어','컵 4개를 담는 종이 운반 상자']],views:9},
-  'm-grinder':{title:'그라인더 호퍼 청소',type:'청소·위생',loc:'grinder',locText:'에스프레소 머신 오른쪽 그라인더 2대',
+  'm-machine':{cat:'equip',title:'에스프레소 머신 오픈 세팅',loc:'espresso',locText:'에스프레소 머신 · 그라인더 오른쪽',
+    purpose:'매일 아침 추출 테스트로 맛을 맞춰요. 날씨·원두 상태에 따라 분쇄도가 달라져요.',
+    steps:['머신 전원 ON (보일러 예열 20분)','그룹헤드마다 물 5초씩 흘리기','추출 테스트: 원두 18g → 36ml, 25~30초','시간이 벗어나면 분쇄도를 한 칸 조정 후 다시 테스트','테스트 결과를 단체방에 공유'],
+    cautions:['예열 전에는 추출하지 마세요 (맛이 시어요)','테스트 샷은 버려요'],terms:[['분쇄도','원두를 가는 굵기 · 숫자가 작을수록 곱게']],views:24},
+  /* ---------- 청소 ---------- */
+  'm-grinder':{cat:'clean',title:'그라인더 호퍼 청소',type:'청소·위생',loc:'grinder',locText:'에스프레소 머신 오른쪽 그라인더 2대',
     purpose:'원두 기름이 쌓이면 맛이 변하므로 매주 월요일 마감 때 호퍼를 청소해요.',
     steps:['호퍼 셔터 닫고 남은 원두를 밀폐 용기에 옮기기','호퍼 분리 후 미온수로 세척 (세제 X)','마른 행주로 완전히 건조','재조립 후 원두 다시 채우기'],
     cautions:['물기가 남아 있으면 원두가 뭉쳐요'],terms:[['호퍼','원두를 담아 두는 투명 통']],views:6},
-  'm-espresso':{title:'스팀 노즐 누수 응급 조치',type:'장비 이상',loc:'espresso',locText:'에스프레소 머신 2번 그룹 오른쪽 스팀 노즐',
-    purpose:'스팀 노즐에서 물이나 증기가 계속 새면 화상 위험이 있고 보일러 압력이 떨어져요. 수리 기사가 오기 전까지 안전하게 운영하는 방법이에요.',
-    steps:['스팀 밸브를 끝까지 잠그고 젖은 행주로 노즐을 감싸기','서랍 1번 칸의 「사용 중지」 표시를 2번 그룹에 걸기','1번 그룹만으로 운영 (스팀도 1번 노즐 사용)','공용 패드로 사장님께 상황과 사진 보내기','수리 기사 방문 시간을 카드에 기록'],
-    cautions:['노즐을 맨손으로 만지지 마세요 (화상 위험)','머신 전원은 끄지 마세요 (다시 데우는 데 30분)'],
-    terms:[['그룹(그룹헤드)','포터필터를 끼워 커피를 추출하는 부분'],['스팀 노즐','우유 거품을 내는 금속 관']],views:3}
+  'm-backflush':{cat:'clean',title:'마감 머신 청소 (백플러시)',loc:'espresso',locText:'에스프레소 머신 · 세정제는 머신 아래 서랍',
+    purpose:'매일 마감 때 그룹헤드 안쪽 커피 찌꺼기와 기름을 빼 줘요.',
+    steps:['블라인드 바스켓에 세정제 1스푼','그룹에 장착 → 추출 10초 ON/OFF 5회','세정제 없이 물로만 5회 반복','포터필터 · 바스켓은 세정제 물에 담가 두기','스팀 노즐 젖은 행주로 닦고 퍼지'],
+    cautions:['세정제를 너무 많이 넣으면 거품이 넘쳐요'],terms:[['블라인드 바스켓','구멍 없는 청소용 바스켓']],views:18},
+  'm-trash':{cat:'clean',title:'분리수거 · 음식물 처리',loc:'storage',locText:'창고 안쪽 분리수거함 · 배출은 건물 뒤편',
+    purpose:'카페 쓰레기는 컵·뚜껑·우유팩이 많아 분리만 잘해도 양이 절반으로 줄어요.',
+    steps:['컵과 뚜껑 분리 (플라스틱 / 종이)','우유팩은 헹군 뒤 펼쳐서 따로','음식물은 물기를 빼고 노란 통에','화·목·토 저녁 9시 이후 건물 뒤편에 배출'],
+    cautions:['커피 찌꺼기는 일반 쓰레기 (음식물 X)'],terms:[],views:9},
+  /* ---------- 기타 ---------- */
+  'm-open':{cat:'etc',title:'오픈 체크리스트',loc:'counter',locText:'매장 전체 · 체크 후 단체방에 「오픈 완료」',
+    purpose:'오픈조가 8시 개점 전까지 해야 하는 일이에요.',
+    steps:['조명 · 간판 ON, 음악 켜기','에스프레소 머신 오픈 세팅 (장비 매뉴얼)','냉장고 온도 확인 (3℃ 이하)','원두 · 우유 · 시럽 채우기','포스 시재 확인 (10만 원)','단체방에 「오픈 완료」 남기기'],
+    cautions:['냉장고가 5℃ 이상이면 바로 사장님께 알려 주세요'],terms:[['시재','돈통에 있어야 하는 현금 금액']],views:37},
+  'm-milk':{cat:'etc',title:'우유 발주하기',type:'재고·발주',loc:'fridge',locText:'워크인 냉장고 2번 칸 (문 열고 왼쪽 두 번째)',
+    purpose:'우유는 하루 평균 10팩을 사용해요. 발주하면 다음 날 오전 9시에 도착하므로, 재고가 3팩 이하면 당일 14시 전에 발주해야 해요.',
+    steps:['워크인 냉장고 2번 칸에서 남은 팩 수 확인 (유통기한 빠른 것을 앞으로)','카운터 태블릿 홈 화면의 「발주」 즐겨찾기 → 「한빛유업 대리점」 선택','기본 수량 12팩 입력 (주말 전날은 16팩)','발주 완료 화면을 캡처해 이 카드에 첨부','카드를 「완료」로 변경'],
+    cautions:['14시 이후 발주는 다음다음 날 도착해요','두유·오트밀크는 다른 거래처예요 (창고 선반 B)'],
+    terms:[['대리점','우유를 매일 배송해 주는 거래처'],['선입선출','먼저 들어온 재고를 먼저 쓰는 것']],views:41}
 };
 const PLANS={fridge:'워크인 냉장고',storage:'창고',espresso:'에스프레소 머신',grinder:'그라인더',ice:'제빙기',counter:'카운터·포스',showcase:'쇼케이스'};
 
+let MID=100;
 function seed(){
   return {
-    view:'login', worker:null, nextWorker:'jy', shiftNo:0, filter:'all', sel:null, manual:null, mFrom:null,
-    phone:true, phoneTab:'noti', phoneThread:'notice', phonePush:null,
-    chatThread:'notice', bannerCarry:0, draft:null, rec:null,
+    view:'attend', worker:null, nextWorker:'jy', shiftNo:0, filter:'all', sel:null, manual:null, mFrom:null, mCat:'all', mq:'', rv:null,
+    phone:true, phoneTab:'noti', phonePush:null,
+    bannerCarry:0, draft:null, rec:null, recFrom:null,
     clock:new Date(2026,10,19,12,51,30).getTime(),
     manuals:JSON.parse(JSON.stringify(MANUALS0)),
+    att:{jy:{in:'06:56',out:null},hn:{in:'09:58',out:null}},
+    attLog:[{id:'jy',kind:'in',t:'06:56'},{id:'hn',kind:'in',t:'09:58'}],
     cards:[
       {id:'c1',type:'재고·발주',title:'우유 재고 부족 · 오늘 발주 필요',qty:'1L 2팩 남음 → 12팩 발주',loc:'워크인 냉장고 2번 칸',next:'발주 앱에서 12팩 주문',due:'오늘 14:00 전',urgent:true,status:0,from:'박서빈',at:'어제 22:41',
         src:{kind:'voice',text:'우유 두 팩밖에 안 남았어요. 내일 두 시 전에 발주 넣어야 토요일 단체 주문 맞출 수 있어요.',dur:'0:09'},manual:'m-milk',carry:0,assignee:null,shift:-1},
       {id:'c2',type:'장비 이상',title:'제빙기 필터 교체 경고등',qty:'필터 1개 (창고 C)',loc:'바 하부 제빙기',next:'필터 교체 후 RESET',due:'11/20(금)까지',urgent:false,status:2,from:'김지윤',at:'어제 12:58',
         src:{kind:'photo',photo:'ice',text:'필터 경고등 켜짐'},manual:'m-ice',carry:1,assignee:'박서빈',shift:-1},
       {id:'c3',type:'주문·예약',title:'토요일 14시 단체 주문 30잔',qty:'아이스 아메리카노 20 · 라떼 10',loc:'포스 「예약」 메모',next:'금요일 마감조가 컵·홀더 33세트 준비',due:'11/21(토) 14:00',urgent:false,status:1,from:'박서빈',at:'어제 21:15',
-        src:{kind:'text',text:'토욜 2시 단체 30잔 (아아20 라떼10) 컵 미리'},manual:'m-group',carry:0,assignee:null,shift:-1},
+        src:{kind:'text',text:'토욜 2시 단체 30잔 (아아20 라떼10) 컵 미리'},manual:'m-group',recipes:['r-americano','r-latte'],carry:0,assignee:null,shift:-1},
       {id:'c4',type:'청소·위생',title:'그라인더 호퍼 주간 청소',qty:'그라인더 2대',loc:'에스프레소 머신 오른쪽',next:'-',due:'완료됨',urgent:false,status:4,from:'박서빈',at:'어제 22:50',
         src:{kind:'text',text:'그라인더 청소 끝'},manual:'m-grinder',carry:0,assignee:'박서빈',shift:-1}
     ],
     notice:'토요일(11/21) 14시 단체 주문 30잔 있어요. 금요일 마감조는 컵·홀더 미리 준비 부탁해요 🙏',
-    chats:{
-      notice:[{from:'owner',text:'이번 주 토요일 단체 주문 있어요. 원두 여유분도 확인 부탁해요!',t:'어제 18:02'},{from:'w',who:'박서빈',text:'넵 원두 2kg 남아 있어요!',t:'어제 18:10'}],
-      c2:[{from:'w',who:'김지윤',text:'제빙기 필터 경고등 들어왔어요. 필터 재고 1개 남았습니다.',t:'어제 12:59'},{from:'owner',text:'고마워요. 필터 2개 더 주문해 둘게요.',t:'어제 13:20'}]
-    },
+    /* [테스트] 단체방 하나 */
+    room:[
+      {id:'m1',from:'w',who:'김지윤',text:'제빙기 필터 경고등 들어왔어요. 필터 재고 1개 남았습니다.',t:'어제 12:59',card:'c2'},
+      {id:'m2',from:'owner',text:'고마워요. 필터 2개 더 주문해 둘게요.',t:'어제 13:20',card:'c2'},
+      {id:'m3',from:'owner',text:'이번 주 토요일 단체 주문 있어요. 원두 여유분도 확인 부탁해요!',t:'어제 18:02'},
+      {id:'m4',from:'w',who:'박서빈',text:'넵 원두 2kg 남아 있어요!',t:'어제 18:10'},
+      {id:'m5',from:'card',who:'박서빈',card:'c3',t:'어제 21:15'},
+      {id:'m6',from:'card',who:'박서빈',card:'c1',t:'어제 22:41'},
+      {id:'m7',from:'sys',text:'박서빈님이 「그라인더 호퍼 주간 청소」를 완료했어요',t:'어제 22:50'},
+      {id:'m8',from:'w',who:'김지윤',text:'오픈 완료했습니다! 추출 테스트 27초 정상이에요 ☕',t:'오늘 07:52'},
+      {id:'m9',from:'w',who:'정하늘',text:'출근했어요~ 디저트 진열 제가 할게요',t:'오늘 10:01'}
+    ],
     notis:[
       {t:'어제 22:41',title:'📦 새 인수인계 카드',text:'우유 재고 부족 · 오늘 발주 필요 (박서빈)'},
-      {t:'어제 22:50',title:'✅ 완료',text:'그라인더 호퍼 주간 청소 (박서빈)'}
-    ],
+      {t:'어제 22:50',title:'✅ 완료',text:'그라인더 호퍼 주간 청소 (박서빈)'},
+      {t:'06:56',title:'🕘 출근',text:'김지윤 (오픈)'},
+      {t:'09:58',title:'🕘 출근',text:'정하늘 (파트)'}
+    ].reverse(),
     faqs:[
       {id:'f1',q:'영수증 용지 어디 있어요?',n:7,who:3,approved:false},
       {id:'f2',q:'오트밀크 재고는 어디서 확인해요?',n:4,who:2,approved:false},
@@ -390,15 +556,19 @@ let S=seed();
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const W=id=>WORKERS.find(w=>w.id===id);
+const WN=name=>WORKERS.find(w=>w.name===name);
 function hhmm(ts){const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
 function now(){return hhmm(S.clock)}
 function toast(t){const el=document.createElement('div');el.className='toast';el.textContent=t;$('#toasts').appendChild(el);setTimeout(()=>el.remove(),2800)}
 function card(id){return S.cards.find(c=>c.id===id)}
 function openCount(){return S.cards.filter(c=>c.status<4).length}
+function onDuty(){return WORKERS.filter(w=>S.att[w.id]&&!S.att[w.id].out)}
 function typeBadge(t){const T=TYPES[t]||TYPES['기타'];return `<span class="type" style="color:${T.c};background:${T.bg}">${T.ic} ${esc(t)}</span>`}
+function catBadge(k){const T=CATS[k]||CATS.etc;return `<span class="type" style="color:${T.c};background:${T.bg}">${T.ic} ${T.l}</span>`}
 function stBadge(s){return `<span class="st st-${s}"><i></i>${STATUS[s]}</span>`}
+function av(w,size){size=size||22;return `<span class="d" style="width:${size}px;height:${size}px;background:${w.color}">${w.name[0]}</span>`}
 function notify(title,text){S.notis.unshift({t:now(),title,text,fresh:true});S.phonePush={title,text};renderPhone();setTimeout(()=>{S.phonePush=null;renderPhone()},3200)}
-setInterval(()=>{S.clock+=1000;const c=$('#clk');if(c)c.textContent=now()},1000);
+setInterval(()=>{S.clock+=1000;document.querySelectorAll('.clock').forEach(c=>c.textContent=now())},1000);
 
 /* 매장 도면 (위치 안내) */
 function plan(hl){
@@ -407,6 +577,18 @@ function plan(hl){
   s+=`<rect x="122" y="150" width="268" height="80" rx="8" fill="none" stroke="var(--line)" stroke-dasharray="4 4"/><text x="256" y="196" text-anchor="middle">홀 (손님 좌석)</text>`;
   for(const [k,x,y,w,h,l] of Z){const on=k===hl;s+=`<rect class="z ${on?'hl':''}" x="${x}" y="${y}" width="${w}" height="${h}" rx="8"/><text class="${on?'hl':''}" x="${x+w/2}" y="${y+h/2+4}" text-anchor="middle">${l}</text>`;
     if(on){s+=`<circle class="pulse" cx="${x+w/2}" cy="${y+h/2-14}" r="8"/><circle cx="${x+w/2}" cy="${y+h/2-14}" r="6" fill="var(--brand)"/>`}}
+  return s+`</svg>`;
+}
+/* [테스트] 레시피 컵 구성 그림 */
+function cup(v){
+  const top=12,bot=132,H=bot-top;
+  let s=`<svg viewBox="0 0 100 140" role="img" aria-label="컵 구성"><defs><clipPath id="cupclip"><polygon points="12,${top} 88,${top} 78,${bot} 22,${bot}"/></clipPath></defs><g clip-path="url(#cupclip)"><rect x="0" y="0" width="100" height="140" fill="var(--surface2)"/>`;
+  let y=bot;
+  const L=[...v.layers].reverse();
+  for(const [l,p,c] of L){const h=p*H;y-=h;s+=`<rect x="0" y="${y}" width="100" height="${h}" fill="${c}"/>`}
+  if(v.ice){[[26,70],[50,60],[62,88],[34,98],[56,110],[30,120]].forEach(([x,yy])=>{if(yy>y+4)s+=`<rect x="${x}" y="${yy}" width="15" height="14" rx="3" fill="rgba(255,255,255,.45)" stroke="rgba(255,255,255,.8)"/>`})}
+  s+=`</g><polygon points="12,${top} 88,${top} 78,${bot} 22,${bot}" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linejoin="round"/>`;
+  if(v.ice)s+=`<rect x="58" y="0" width="5" height="70" rx="2" fill="var(--brand)" opacity=".75" transform="rotate(10 60 40)"/>`;
   return s+`</svg>`;
 }
 /* 데모용 사진 (일러스트) */
@@ -456,43 +638,65 @@ const PRESET_PHOTO={
 /* ===================== 렌더 ===================== */
 function render(){
   const r=$('#root');
-  if(S.view==='login'){r.innerHTML=viewLogin();return}
+  if(S.view==='attend'||!S.worker){S.view='attend';r.innerHTML=viewAttend()+(S.modal?S.modal():'');return}
   r.innerHTML=`<div class="app ${S.phone?'with-phone':''}">${side()}<main class="main">${topbar()}<div class="content" id="content">${body()}</div></main>${S.phone?'<aside class="phone-wrap" id="phone"></aside>':''}</div>${S.modal?S.modal():''}`;
   renderPhone();
   if(S.afterRender){const f=S.afterRender;S.afterRender=null;f()}
 }
 function side(){
   const unread=S.cards.filter(c=>c.status===0).length;
-  const n=(v,ic,l)=>`<button class="nav ${S.view===v||(v==='home'&&S.view==='card')||(v==='manuals'&&S.view==='manual')||(v==='record'&&S.view.startsWith('rec'))||(v==='record'&&S.view==='review')?'on':''}" onclick="go('${v}')"><span class="ic">${ic}</span><span class="lb">${l}</span><span class="lbm">${l.split(' ')[0]}</span>${v==='home'&&unread?`<span class="badge">${unread}</span>`:''}</button>`;
+  const isOn=v=>S.view===v||(v==='home'&&S.view==='card')||(v==='manuals'&&S.view==='manual')||(v==='chat'&&(S.view.startsWith('rec')||S.view==='review'));
+  const n=(v,ic,l)=>`<button class="nav ${isOn(v)?'on':''}" onclick="go('${v}')"><span class="ic">${ic}</span><span class="lb">${l}</span><span class="lbm">${l.split(' ')[0]}</span>${v==='home'&&unread?`<span class="badge">${unread}</span>`:''}</button>`;
   return `<nav class="side"><div class="logo"><div class="logo-mark">S</div><div><b>슬라이딩시프트</b><small>AI 인수인계 · 업무 매뉴얼</small></div></div>
-  ${n('home','🏠','오늘의 인수인계')}${n('record','🎙️','빠른 기록')}${n('manuals','📘','업무 매뉴얼')}${n('chat','💬','실시간 소통')}<div class="sep"></div>${n('admin','📊','점주 대시보드')}
+  ${n('home','🏠','오늘의 인수인계')}${n('chat','💬','소통 · 기록')}${n('manuals','📘','업무 매뉴얼')}${n('attend','🕘','출퇴근')}<div class="sep"></div>${n('admin','📊','점주 대시보드')}
   <div class="foot">MONEY팀 시연용 데모 · 데이터는 가상입니다<br><button onclick="resetDemo()">데모 처음부터</button> · <span class="kbd">?</span> 시연 순서</div></nav>`;
 }
 function topbar(){
-  const w=W(S.worker);
-  return `<header class="top"><div class="store">카페 온기 성수점<small>매장 공용 패드 · 교대 ${S.shiftNo+1}</small></div>
-  <span class="chip hide-m">🕐 <span class="clock" id="clk">${now()}</span></span>
-  <span class="chip"><span style="width:20px;height:20px;border-radius:50%;background:${w.color};color:#fff;display:inline-grid;place-items:center;font-size:11px;font-weight:800">${w.name[0]}</span>${w.name} · ${w.shift.split(' ')[0]}</span>
+  const duty=onDuty();
+  return `<header class="top"><div class="store">카페 온기 성수점<small>공용 패드 · 근무 ${duty.length}명</small></div>
+  <span class="chip hide-m" style="padding:6px 10px">🕐 <span class="clock">${now()}</span></span>
+  <div class="row" style="gap:6px;flex-wrap:nowrap" title="눌러서 사용하는 사람 바꾸기">${duty.map(w=>`<button class="duty ${w.id===S.worker?'on':''}" onclick="switchUser('${w.id}')">${av(w)}${w.name}</button>`).join('')}<button class="duty" style="padding:4px 10px" onclick="go('attend')" title="출퇴근 화면">＋</button></div>
   <span class="grow"></span>
-  <button class="btn ghost hide-m" onclick="togglePhone()">📱 점주 폰 ${S.phone?'숨기기':'보기'}</button>
-  <button class="btn dark" onclick="endShift()">교대 마감 ➜</button></header>`;
+  <button class="btn ghost hide-m" onclick="togglePhone()">📱 ${S.phone?'폰 숨기기':'점주 폰'}</button>
+  <button class="btn dark" onclick="endShift()">퇴근 · 교대 마감 ➜</button></header>`;
 }
 function body(){
-  return ({home:viewHome,card:viewCard,record:viewRecord,'rec-voice':viewVoice,'rec-photo':viewPhoto,'rec-text':viewText,'rec-ai':viewAI,review:viewReview,manuals:viewManuals,manual:viewManual,chat:viewChat,admin:viewAdmin}[S.view]||viewHome)();
+  return ({home:viewHome,card:viewCard,'rec-voice':viewVoice,'rec-photo':viewPhoto,'rec-text':viewText,'rec-ai':viewAI,review:viewReview,manuals:viewManuals,manual:viewManual,chat:viewChat,admin:viewAdmin}[S.view]||viewHome)();
 }
 
-/* ---- 로그인 ---- */
-function viewLogin(){
-  const carry=S.cards.filter(c=>c.status<4).length;
-  return `<div class="login"><div class="lbox panel">
-   <div class="row" style="gap:12px"><div class="logo-mark" style="width:48px;height:48px;font-size:20px;border-radius:14px">S</div><div><div class="h1" style="margin:0">카페 온기 성수점</div><div class="muted">슬라이딩시프트 · 매장 공용 패드</div></div><span class="grow" style="flex:1"></span><span class="chip">🕐 <span class="clock" id="clk">${now()}</span></span></div>
-   <p style="font-size:18px;font-weight:700;margin:26px 0 0">지금 근무하는 분을 눌러 시작하세요</p>
-   <p class="muted" style="margin:4px 0 0">앱 설치·비밀번호 없이, 이름만 누르면 오늘의 인수인계가 열려요.</p>
-   <div class="wk">${WORKERS.map(w=>`<button class="wbtn ${S.nextWorker===w.id?'next':''}" onclick="login('${w.id}')">${S.nextWorker===w.id?'<span class="tag brand nb">지금 교대</span>':''}<div class="av" style="background:${w.color}">${w.name[0]}</div><b>${w.name}</b><small>${w.shift}</small></button>`).join('')}</div>
-   <div class="banner info" style="margin:16px 0 0">📋 확인할 인수인계 카드 <b>${carry}개</b>가 기다리고 있어요.</div>
+/* ---- [테스트] 출퇴근 · 근무자 선택 ---- */
+function viewAttend(){
+  const carry=openCount(), duty=onDuty();
+  const cardOf=w=>{
+    const a=S.att[w.id], on=a&&!a.out, out=a&&a.out, nx=S.nextWorker===w.id&&!on;
+    const st=on?`<span class="st st-4"><i></i>근무 중 · ${a.in} 출근</span>`:out?`<span class="st st-0"><i></i>퇴근 ${a.out}</span>`:`<span class="st st-0"><i></i>출근 전</span>`;
+    const btns=on?`<button class="btn primary" onclick="useAs('${w.id}')">이 사람으로 사용</button><button class="btn" onclick="S.worker='${w.id}';endShift()">퇴근</button>`
+      :`<button class="btn ${nx?'primary':''}" onclick="clockIn('${w.id}')">🕘 출근하기</button>`;
+    return `<div class="atc ${on?'on':''} ${nx?'next':''}"><div class="who"><div class="av" style="background:${w.color}">${w.name[0]}</div><div><b>${w.name}</b><small>${w.shift}</small></div>${nx?'<span class="tag brand" style="margin-left:auto">지금 교대</span>':''}</div>${st}<div class="btns">${btns}</div></div>`;
+  };
+  return `<div class="login"><div class="lbox panel" style="width:min(1060px,100%)">
+   <div class="row" style="gap:12px"><div class="logo-mark" style="width:48px;height:48px;font-size:20px;border-radius:14px">S</div><div><div class="h1" style="margin:0">카페 온기 성수점</div><div class="muted">슬라이딩시프트 · 출퇴근 · 근무자 선택</div></div><span class="grow" style="flex:1"></span><span class="chip">🕐 <span class="clock">${now()}</span></span>${S.worker?`<button class="btn" onclick="go('home')">← 돌아가기</button>`:''}</div>
+   <p style="font-size:18px;font-weight:700;margin:26px 0 0">출근할 때 이름을 누르세요 · 지금 <span style="color:var(--green)">${duty.length}명</span> 근무 중</p>
+   <p class="muted" style="margin:4px 0 0">여러 명이 함께 근무해도 괜찮아요. 출근한 사람은 위쪽 이름표를 눌러 패드를 바꿔 쓰고, 퇴근할 때 남은 일이 다음 근무자에게 넘어가요.</p>
+   <div class="att">${WORKERS.map(cardOf).join('')}</div>
+   <div class="grid2" style="grid-template-columns:1fr 1fr;margin-top:14px">
+    <div class="banner info" style="margin:0;align-self:start">📋 확인할 인수인계 카드 <b>${carry}개</b>가 기다리고 있어요.</div>
+    <div class="panel" style="padding:12px 14px;box-shadow:none"><div class="sec-t" style="margin-bottom:4px">🕘 오늘 출퇴근 기록</div>${attTable(4)}</div>
+   </div>
   </div></div>`;
 }
-function login(id){S.worker=id;S.view='home';S.filter='all';render();toast(`${W(id).name}님, 출근 확인됐어요 👋`)}
+function attTable(limit){
+  const L=[...S.attLog].reverse().slice(0,limit||99);
+  return `<table class="alog"><tr><th>시간</th><th>근무자</th><th>구분</th></tr>${L.map(e=>`<tr><td>${e.t}</td><td>${W(e.id).name} <span class="muted" style="font-size:12px">${W(e.id).shift.split(' ')[0]}</span></td><td>${e.kind==='in'?'<span class="tag" style="background:var(--green-weak);color:var(--green)">출근</span>':'<span class="tag gray">퇴근</span>'}</td></tr>`).join('')}</table>`;
+}
+function clockIn(id){
+  S.att[id]={in:now(),out:null};S.attLog.push({id,kind:'in',t:now()});
+  notify('🕘 출근',`${W(id).name} (${W(id).shift.split(' ')[0]})`);
+  if(S.nextWorker===id)S.nextWorker=null;
+  S.worker=id;S.view='home';S.filter='all';render();toast(`${W(id).name}님, ${now()} 출근 기록됐어요 👋`);
+}
+function useAs(id){S.worker=id;S.view='home';S.filter='all';render();toast(`${W(id).name}님으로 패드를 사용해요`)}
+function switchUser(id){if(S.worker===id)return;S.worker=id;render();toast(`👤 ${W(id).name}님으로 바꿨어요`)}
 
 /* ---- 홈 ---- */
 function viewHome(){
@@ -508,24 +712,24 @@ function viewHome(){
   <div class="pin">📌 <div><b>공지</b> · ${esc(S.notice)}</div></div>
   <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:6px">
    <div><h1 class="h1">${w.name}님, 오늘의 인수인계</h1><p class="sub" style="margin:0">미해결 <b>${open}</b>건 · 긴급 <b style="color:var(--red)">${urg}</b>건 — 긴급하고 오래된 카드가 맨 위에 와요.</p></div>
-   <button class="btn primary lg" onclick="go('record')">🎙️ 빠른 기록</button></div>
+   <div class="row"><button class="btn lg" onclick="go('chat')">💬 단체방</button><button class="btn primary lg" onclick="S.recFrom='home';startVoice()">🎙️ 음성으로 기록</button></div></div>
   <div class="filters">${fb('all','전체')}${fb('open','미해결')}${fb('urgent','긴급')}${fb('mine','내 담당')}</div>
   <div class="cards">${list.map(hcard).join('')||'<p class="muted">해당하는 카드가 없어요.</p>'}</div>`;
 }
+function cardMsgs(id){return S.room.filter(m=>m.card===id&&m.from!=='card')}
 function hcard(c){
-  const msgs=(S.chats[c.id]||[]).length;
+  const msgs=cardMsgs(c.id).length;
   return `<button class="panel hcard ${c.urgent&&c.status<4?'urgent':''} ${c.status===4?'done':''} ${c.fresh?'newin':''}" onclick="openCard('${c.id}')">
    <div class="tline">${typeBadge(c.type)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}${c.carry?`<span class="tag orange">🔁 ${c.carry}회 이월</span>`:''}${c.shift===S.shiftNo-1&&c.shift>=0?'<span class="tag brand">방금 넘어옴</span>':''}<span style="margin-left:auto">${stBadge(c.status)}</span></div>
    <div class="title">${esc(c.title)}</div>
    <dl class="meta"><dt>수량</dt><dd>${esc(c.qty)}</dd><dt>위치</dt><dd>${esc(c.loc||'-')}</dd><dt>기한</dt><dd ${c.urgent&&c.status<4?'style="color:var(--red)"':''}>${esc(c.due||'-')}</dd><dt>다음 행동</dt><dd>${esc(c.next)}</dd></dl>
-   <div class="foot"><span>${c.src.kind==='voice'?'🎙️ 음성':c.src.kind==='photo'?'📷 사진':'⌨️ 메모'} · ${esc(c.from)} · ${esc(c.at)}</span><span>${c.assignee?'👤 '+esc(c.assignee):''} ${msgs?'💬 '+msgs:''} ${c.manual?'📘':''}</span></div></button>`;
+   <div class="foot"><span>${c.src.kind==='voice'?'🎙️ 음성':c.src.kind==='photo'?'📷 사진':'⌨️ 메모'} · ${esc(c.from)} · ${esc(c.at)}</span><span>${c.assignee?'👤 '+esc(c.assignee):''} ${msgs?'💬 '+msgs:''} ${c.manual?'📘':''}${c.recipes?' 🥤':''}</span></div></button>`;
 }
 
 /* ---- 카드 상세 ---- */
-function openCard(id){const c=card(id);c.fresh=false;if(c.status===0){c.status=1;c.seenBy=W(S.worker).name}S.sel=id;S.view='card';S.chatThread=id;render()}
+function openCard(id){const c=card(id);if(!c)return;c.fresh=false;if(c.status===0){c.status=1;c.seenBy=W(S.worker).name}S.sel=id;S.view='card';S.afterRender=scrollMsgs;render()}
 function viewCard(){
   const c=card(S.sel), m=c.manual&&S.manuals[c.manual];
-  const me=W(S.worker).name;
   const acts=[];
   if(c.status<2)acts.push(`<button class="btn primary lg" onclick="setSt(2)">🙋 내가 담당할게요</button>`);
   if(c.status===2)acts.push(`<button class="btn primary lg" onclick="setSt(3)">▶ 처리 시작</button>`);
@@ -543,7 +747,8 @@ function viewCard(){
   </section>
   <section style="display:flex;flex-direction:column;gap:14px">
    ${m?`<button class="mlink panel" onclick="openManual('${c.manual}','card')"><span class="ic">📘</span><span><span class="muted" style="font-size:12.5px">처음 하는 업무라면?</span><b>${esc(m.title)} 매뉴얼 열기</b><span class="muted" style="font-size:12.5px">위치 안내 · ${m.steps.length}단계 방법 · 주의사항</span></span><span style="margin-left:auto;font-size:20px">›</span></button>`:''}
-   <div class="panel" style="padding:16px"><div class="sec-t">💬 이 카드로 사장님과 대화 <span class="live" title="실시간"></span></div>${chatBox(c.id)}</div>
+   ${c.recipes?`<div class="panel" style="padding:14px 16px"><div class="sec-t">🥤 이 주문에 필요한 레시피</div><div class="rlinks">${c.recipes.map(r=>`<button onclick="openManual('${r}','card')">${S.manuals[r].em} ${esc(S.manuals[r].title)}</button>`).join('')}</div></div>`:''}
+   <div class="panel" style="padding:16px"><div class="sec-t">💬 이 카드 이야기 <span class="live" title="실시간"></span><span class="muted" style="font-weight:500;font-size:12.5px">단체방에 함께 올라가요</span></div>${chatBox(c.id)}</div>
   </section></div>`;
 }
 function origin(c){
@@ -559,73 +764,87 @@ function setSt(i){
   c.status=i;
   if(i===2){toast(`👤 ${me}님이 담당했어요`);}
   if(i===3){toast('⏳ 처리 중으로 바꿨어요');}
-  if(i===4){toast('✅ 완료! 사장님 폰에도 바로 반영돼요');notify('✅ 완료',`${c.title} (${me})`);sysMsg(c.id,`${me}님이 완료 처리했어요`)}
+  if(i===4){toast('✅ 완료! 사장님 폰에도 바로 반영돼요');notify('✅ 완료',`${c.title} (${me})`);sysMsg(`${me}님이 「${c.title}」를 완료했어요`,c.id)}
   render();
 }
 
-/* ---- 채팅 ---- */
-function chatBox(th,compact){
-  const L=S.chats[th]||[];
-  const me=!compact;
-  const q=th==='notice'?['확인했습니다!','원두 2kg 남았어요']:['사진 보내드릴게요','확인했어요','지금 처리 중이에요','도움이 필요해요'];
-  return `<div class="chat"><div class="msgs" id="msgs-${th}">${L.length?L.map(m=>bubble(m,false)).join(''):'<div class="msg sys"><div class="bub">아직 대화가 없어요. 급한 일은 여기서 바로 사장님께 보내세요.</div></div>'}${S.typing===th?'<div class="msg typing"><span class="who">'+OWNER+'</span><div class="bub"><i></i><i></i><i></i></div></div>':''}</div>
-  <div class="quick">${q.map(x=>`<button onclick="sendW('${th}','${x}')">${x}</button>`).join('')}</div>
-  <form class="send" onsubmit="event.preventDefault();sendW('${th}',this.m.value);"><input name="m" placeholder="사장님께 메시지 보내기…" autocomplete="off"><button class="btn primary">보내기</button></form></div>`;
+/* ---- [테스트] 단체방 (실시간 소통 + 빠른 기록) ---- */
+function clearFresh(){S.room.forEach(m=>m.fresh=false)}
+function push(m){clearFresh();m.id='m'+(++MID);m.t=m.t||now();m.fresh=true;S.room.push(m);return m}
+function chatBox(cid){
+  const L=cid?S.room.filter(m=>m.card===cid):S.room;
+  const typing=S.typing&&(cid?S.typing===cid:true);
+  const q=cid?['사진 보내드릴게요','확인했어요','지금 처리 중이에요','도움이 필요해요']:['확인했습니다!','오픈 완료했어요','잠깐 자리 비워요','도움이 필요해요'];
+  return `<div class="chat"><div class="msgs" id="msgs-${cid||'room'}">${L.length?L.map(m=>bubble(m,false,!!cid)).join(''):'<div class="msg sys"><div class="bub">아직 이 카드 이야기가 없어요. 급한 일은 여기서 바로 보내세요.</div></div>'}${typing?'<div class="msg typing"><span class="who">'+OWNER+'</span><div class="bub"><i></i><i></i><i></i></div></div>':''}</div>
+  <div class="quick">${q.map(x=>`<button onclick="sendW('${x}',${cid?`'${cid}'`:'null'})">${x}</button>`).join('')}</div>
+  <form class="send" onsubmit="event.preventDefault();sendW(this.m.value,${cid?`'${cid}'`:'null'});"><input name="m" id="msgin" placeholder="${cid?'이 카드에 대해 단체방에 보내기…':'단체방에 보내기… 예) 오트밀크 3팩 남음 내일까지 발주'}" autocomplete="off"><button class="btn primary">보내기</button></form>
+  ${cid?'':`<div class="tools"><button class="btn" onclick="S.recFrom='chat';startVoice()">🎙️ 음성으로 기록</button><button class="btn" onclick="S.recFrom='chat';go('rec-photo')">📷 사진으로 기록</button><button class="btn" onclick="inputToCard()">📋 입력한 글을 인수인계 카드로</button><span class="muted" style="font-size:12.5px;align-self:center">기록은 AI가 카드로 정리해 이 방에 올려요</span></div>`}</div>`;
 }
-function bubble(m,ownerView){
+function bubble(m,ownerView,inCard){
   if(m.from==='sys')return `<div class="msg sys ${m.fresh?'new':''}"><div class="bub">${esc(m.text)}</div></div>`;
+  if(m.from==='suggest'){if(ownerView)return '';
+    return m.done?`<div class="msg sys"><div class="bub">✓ 인수인계 카드로 만들었어요</div></div>`:`<div class="suggest ${m.fresh?'msg new':''}">🤖 인수인계로 남겨 둘 내용 같아요. 카드로 만들면 다음 근무자에게도 넘어가요. <button class="btn primary" onclick="msgToCard('${m.ref}')">📋 카드로 만들기</button></div>`}
   const mine=ownerView?m.from==='owner':m.from!=='owner';
-  return `<div class="msg ${mine?'me':''} ${m.fresh?'new':''}"><span class="who">${m.from==='owner'?'👑 '+OWNER:esc(m.who)} · ${esc(m.t)}</span><div class="bub">${esc(m.text)}</div></div>`;
+  const who=m.from==='owner'?'👑 '+OWNER:esc(m.who);
+  if(m.from==='card'){const c=card(m.card);if(!c)return '';
+    return `<div class="msg ${mine?'me':''} ${m.fresh?'new':''}"><span class="who">${who} · ${esc(m.t)} · 인수인계 카드를 남겼어요</span><button class="mcardmsg" ${ownerView?'':`onclick="openCard('${c.id}')"`}><span class="tline">${typeBadge(c.type)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}<span style="margin-left:auto">${stBadge(c.status)}</span></span><b>${esc(c.title)}</b><span class="muted">기한 ${esc(c.due||'-')} · ${esc(c.next)}</span>${ownerView?'':'<span style="color:var(--brand-ink);font-weight:700;font-size:12px">📋 눌러서 카드 보기 ›</span>'}</button></div>`}
+  const c=m.card&&card(m.card);
+  const tag=c&&!inCard?`<span class="ctag" ${ownerView?'':`onclick="openCard('${c.id}')"`}>📎 ${esc(c.title)}</span>`:'';
+  return `<div class="msg ${mine?'me':''} ${m.fresh?'new':''}"><span class="who">${who} · ${esc(m.t)}</span>${tag}<div class="bub">${esc(m.text)}</div></div>`;
 }
 function scrollMsgs(){document.querySelectorAll('.msgs').forEach(e=>e.scrollTop=e.scrollHeight)}
-function sysMsg(th,text){(S.chats[th]=S.chats[th]||[]).push({from:'sys',text,t:now()})}
-function sendW(th,text){
+function sysMsg(text,cid){push({from:'sys',text,card:cid||null})}
+function sendW(text,cid){
   text=(text||'').trim();if(!text)return;
   const me=W(S.worker).name;
-  (S.chats[th]=S.chats[th]||[]).forEach(m=>m.fresh=false);
-  S.chats[th].push({from:'w',who:me,text,t:now(),fresh:true});
-  const c=card(th);
-  notify(`💬 ${me}${c?' · '+c.title:' · 공지'}`,text);
-  S.phoneThread=th;
+  const m=push({from:'w',who:me,text,card:cid||null});
+  const c=cid&&card(cid);
+  notify(`💬 ${me}${c?' · '+c.title:' · 단체방'}`,text);
+  let sug=false;
+  if(!cid){const a=analyze(text);if(a.type!=='기타'){push({from:'suggest',ref:m.id});S.room[S.room.length-2].fresh=true;sug=true}}
   S.afterRender=scrollMsgs;render();
   // 점주 자동 응답 (데모 시나리오)
-  if(S.autoReplied&&S.autoReplied[th])return;
-  S.autoReplied=S.autoReplied||{};S.autoReplied[th]=true;
+  const key=cid||'room';
+  S.autoReplied=S.autoReplied||{};if(S.autoReplied[key])return;S.autoReplied[key]=true;
   let reply='확인했어요, 고마워요 👍';
   if(c&&c.manual==='m-espresso')reply='헉 고마워요! 수리 기사님 오늘 4시에 오시기로 했어요. 그때까지 2번 그룹은 쓰지 말아 주세요 🙏';
   else if(c&&c.type==='재고·발주')reply='고마워요! 주말 전이니까 16팩으로 넣어 주세요.';
-  else if(th==='notice')reply='좋아요 👍 다들 고마워요!';
-  setTimeout(()=>{S.typing=th;S.phoneTyping=true;S.afterRender=scrollMsgs;render()},1400);
-  setTimeout(()=>{S.typing=null;S.phoneTyping=false;ownerSend(th,reply)},3600);
+  else if(!cid&&sug)reply='고마워요! 카드로 남겨 주면 다음 조도 놓치지 않아요 👍';
+  else if(!cid)reply='좋아요 👍 다들 고마워요!';
+  setTimeout(()=>{S.typing=key;S.phoneTyping=true;S.afterRender=scrollMsgs;render()},1400);
+  setTimeout(()=>{S.typing=null;S.phoneTyping=false;ownerSend(reply,cid)},3600);
 }
-function ownerSend(th,text){
+function ownerSend(text,cid){
   text=(text||'').trim();if(!text)return;
-  (S.chats[th]=S.chats[th]||[]).forEach(m=>m.fresh=false);
-  S.chats[th].push({from:'owner',text,t:now(),fresh:true});
-  if(S.view!=='card'||S.sel!==th)toast(`👑 사장님: ${text.slice(0,30)}${text.length>30?'…':''}`);
+  push({from:'owner',text,card:cid||null});
+  if(!(S.view==='chat'||(S.view==='card'&&S.sel===cid)))toast(`👑 사장님: ${text.slice(0,30)}${text.length>30?'…':''}`);
   S.afterRender=scrollMsgs;render();
 }
+function inputToCard(){
+  const el=$('#msgin');const t=el&&el.value.trim();
+  if(!t){toast('먼저 남길 내용을 입력해 주세요');el&&el.focus();return}
+  S.recFrom='chat';runAI({kind:'text',text:t},analyze(t),['문장 이해','문제 유형 분류','수량 · 위치 · 기한 추출','빠진 정보 확인','관련 업무 매뉴얼 연결']);
+}
+function msgToCard(mid){
+  const m=S.room.find(x=>x.id===mid);if(!m)return;
+  S.recFrom='chat';S.fromMsg=mid;
+  runAI({kind:'text',text:m.text},analyze(m.text),['단체방 메시지 이해','문제 유형 분류','수량 · 위치 · 기한 추출','빠진 정보 확인','관련 업무 매뉴얼 연결']);
+}
 function viewChat(){
-  const ths=['notice',...S.cards.filter(c=>(S.chats[c.id]||[]).length||c.status<4).map(c=>c.id)];
-  const cur=S.chatThread||'notice';
-  const name=th=>th==='notice'?'📌 매장 공지':(TYPES[card(th).type].ic+' '+card(th).title);
-  const last=th=>{const L=S.chats[th]||[];return L.length?L[L.length-1].text:'대화 없음'};
-  return `<h1 class="h1">실시간 소통</h1><p class="sub">카드별로 사장님과 대화해요. 근무 중 개인 폰을 못 봐도 공용 패드에서 바로 확인할 수 있어요.</p>
-  <div class="grid2" style="grid-template-columns:320px 1fr"><div class="panel" style="padding:10px"><div class="threads">${ths.map(th=>`<button class="thr ${th===cur?'on':''}" onclick="S.chatThread='${th}';render();scrollMsgs()"><div style="min-width:0"><div class="t">${esc(name(th))}</div><div class="p">${esc(last(th))}</div></div></button>`).join('')}</div></div>
-  <div class="panel" style="padding:16px">${cur==='notice'?`<div class="pin">📌 <div><b>고정 공지</b> · ${esc(S.notice)}</div></div>`:`<div class="row" style="margin-bottom:10px">${typeBadge(card(cur).type)}<b>${esc(card(cur).title)}</b><span style="margin-left:auto">${stBadge(card(cur).status)}</span><button class="btn" onclick="openCard('${cur}')">카드 보기</button></div>`}${chatBox(cur)}</div></div>`;
+  const duty=onDuty().map(w=>w.id);
+  const mine=S.cards.filter(c=>c.shift===S.shiftNo);
+  return `<h1 class="h1">소통 · 기록</h1><p class="sub">사장님과 모든 근무자가 함께 있는 단체방 하나예요. 말하거나 사진을 올리면 AI가 인수인계 카드로 정리해 이 방에 올려요.</p>
+  <div class="room"><section class="panel" style="padding:16px"><div class="pin" style="margin-bottom:10px">📌 <div><b>고정 공지</b> · ${esc(S.notice)}</div></div>${chatBox(null)}</section>
+  <aside style="display:flex;flex-direction:column;gap:14px">
+   <div class="panel" style="padding:16px"><div class="sec-t">👥 단체방 참여자 <span class="muted" style="font-weight:500;font-size:13px">${WORKERS.length+1}명</span></div>
+    <div class="mem"><span class="d" style="background:var(--ink)">👑</span><b>${OWNER}</b></div>
+    ${WORKERS.map(w=>`<div class="mem">${av(w,28).replace('class="d"','class="d"')}<span>${w.name} <span class="muted" style="font-size:12px">${w.shift.split(' ')[0]}</span></span>${duty.includes(w.id)?'<span class="tag" style="margin-left:auto;background:var(--green-weak);color:var(--green)">근무 중</span>':''}</div>`).join('')}</div>
+   <div class="panel" style="padding:16px"><div class="sec-t">📋 이번 근무에 남긴 기록</div>${mine.length?mine.map(c=>`<button class="mini" style="width:100%;text-align:left" onclick="openCard('${c.id}')">${TYPES[c.type].ic} ${esc(c.title)}<div class="muted" style="font-size:11.5px">${esc(c.from)} · ${esc(c.at)}</div></button>`).join(''):'<p class="muted" style="margin:0;font-size:13.5px">아직 없어요. 특이사항이 생기면 음성·사진으로 바로 남겨 주세요.</p>'}</div>
+  </aside></div>`;
 }
 
-/* ---- 빠른 기록 ---- */
-function viewRecord(){
-  const mine=S.cards.filter(c=>c.shift===S.shiftNo);
-  return `<h1 class="h1">빠른 기록</h1><p class="sub">바쁜 근무 중엔 말하거나 사진 한 장만 남기세요. 정리는 AI가 해요.</p>
-  <div class="recbig">
-   <button class="panel rb" onclick="startVoice()"><span class="ic" style="background:var(--red-weak)">🎙️</span><b>음성으로 남기기</b><small>버튼 누르고 말하기 · 10초면 충분</small></button>
-   <button class="panel rb" onclick="go('rec-photo')"><span class="ic" style="background:var(--blue-weak)">📷</span><b>사진 찍기</b><small>재고·고장 상황을 한 장으로</small></button>
-   <button class="panel rb" onclick="go('rec-text')"><span class="ic" style="background:var(--green-weak)">⌨️</span><b>짧은 문장</b><small>“우유 2팩 발주” 정도면 OK</small></button>
-  </div>
-  <div class="panel" style="padding:18px"><div class="sec-t">이번 근무에 남긴 기록</div>${mine.length?`<div class="cards">${mine.map(hcard).join('')}</div>`:'<p class="muted" style="margin:0">아직 없어요. 특이사항이 생기면 바로 남겨 주세요.</p>'}</div>`;
-}
+/* ---- 기록 (음성 · 사진 · 글) ---- */
+function backRec(){return S.recFrom||'chat'}
 function startVoice(){S.rec={text:'',done:false,live:false};S.view='rec-voice';render();
   let i=0;clearInterval(S.recTimer);
   S.recTimer=setInterval(()=>{ if(S.view!=='rec-voice'){clearInterval(S.recTimer);return}
@@ -646,11 +865,11 @@ function startLiveVoice(){
 }
 function viewVoice(){
   const live=S.rec&&S.rec.live;
-  return `<div class="recwrap"><h1 class="h1">듣고 있어요…</h1><p class="sub">편하게 말하세요. 수량·위치·기한은 AI가 찾아내요.</p>
+  return `<div class="recwrap"><h1 class="h1">듣고 있어요…</h1><p class="sub">편하게 말하세요. 수량·위치·기한은 AI가 찾아내고, 정리된 카드는 단체방에 올라가요.</p>
   <div class="mic">🎙️</div><div class="wave">${Array.from({length:22},(_,i)=>`<i style="animation-delay:${(i%7)*.11}s"></i>`).join('')}</div>
   <div class="muted" style="margin-bottom:8px">● 녹음 중 <b id="rsec">0:00</b> ${live?'· 실제 마이크':''}</div>
   <div class="transcript" id="tr">${esc(S.rec.text)}<span class="cur"></span></div>
-  <div class="row" style="justify-content:center;margin-top:18px"><button class="btn" onclick="go('record')">취소</button><button id="stopb" class="btn lg ${S.rec.done||live?'primary':''}" onclick="stopVoice()">${S.rec.done||live?'■ 녹음 끝내고 AI로 정리하기':'■ 녹음 끝내기'}</button></div>
+  <div class="row" style="justify-content:center;margin-top:18px"><button class="btn" onclick="go(backRec())">취소</button><button id="stopb" class="btn lg ${S.rec.done||live?'primary':''}" onclick="stopVoice()">${S.rec.done||live?'■ 녹음 끝내고 AI로 정리하기':'■ 녹음 끝내기'}</button></div>
   ${live?'':`<p style="margin-top:18px"><button class="muted" style="text-decoration:underline;font-size:13px" onclick="startLiveVoice()">실제 마이크로 말해 보기 (Chrome)</button></p>`}</div>`;
 }
 function stopVoice(){
@@ -660,14 +879,14 @@ function stopVoice(){
   runAI({kind:'voice',text,dur:'0:12'},analyze(text,live?null:PRESET_VOICE),['음성 → 텍스트 변환 (STT)','문제 유형 분류','수량 · 위치 · 기한 추출','빠진 정보 확인','관련 업무 매뉴얼 연결']);
 }
 function viewPhoto(){
-  return `<button class="btn ghost" onclick="go('record')" style="margin:-6px 0 12px -10px">← 빠른 기록</button><h1 class="h1">사진 찍기</h1><p class="sub">카메라로 찍거나, 시연용 샘플 사진을 골라 보세요.</p>
+  return `<button class="btn ghost" onclick="go(backRec())" style="margin:-6px 0 12px -10px">← 돌아가기</button><h1 class="h1">사진으로 기록</h1><p class="sub">카메라로 찍거나, 시연용 샘플 사진을 골라 보세요.</p>
   <div class="photos">${['milk','receipt','ice'].map(k=>`<button class="ph" onclick="pickPhoto('${k}')">${photo(k)}<div>${{milk:'냉장고 선반 (우유)',receipt:'포스 영수증 프린터',ice:'제빙기 패널'}[k]}</div></button>`).join('')}</div>
   <label class="btn lg" style="margin-top:16px">📷 카메라 / 앨범에서 선택<input type="file" accept="image/*" capture="environment" hidden onchange="realPhoto(this)"></label>`;
 }
 function pickPhoto(k){const p=PRESET_PHOTO[k];runAI({kind:'photo',photo:k,text:p.title,vision:p.vision},analyze('',p),['사진 업로드','이미지 속 물품·장비 인식','문제 유형 분류','빠진 정보 확인','관련 업무 매뉴얼 연결'])}
 function realPhoto(inp){const f=inp.files&&inp.files[0];if(!f)return;toast('사진을 받았어요. 한 줄 설명을 덧붙이면 더 정확해요.');S.view='rec-text';S.photoHint=true;render()}
 function viewText(){
-  return `<button class="btn ghost" onclick="go('record')" style="margin:-6px 0 12px -10px">← 빠른 기록</button><h1 class="h1">짧은 문장으로 남기기</h1><p class="sub">대충 써도 괜찮아요. 아래 예시를 눌러 봐도 돼요.</p>
+  return `<button class="btn ghost" onclick="go(backRec())" style="margin:-6px 0 12px -10px">← 돌아가기</button><h1 class="h1">짧은 문장으로 남기기</h1><p class="sub">대충 써도 괜찮아요. 아래 예시를 눌러 봐도 돼요.</p>
   <textarea class="big" id="tx" placeholder="예) 오트밀크 3팩 남음 내일 오전까지 발주"></textarea>
   <div class="quick" style="margin-top:10px">${['오트밀크 3팩 남음 내일 오전까지 발주','화장실 휴지 다 떨어짐 창고에 없음','포스 카드 단말기 에러 계속 남 지금','일요일 오후 3시 케이크 2개 픽업 예약'].map(x=>`<button onclick="$('#tx').value='${x}'">${x}</button>`).join('')}</div>
   <div class="row" style="margin-top:16px"><button class="btn primary lg" onclick="submitText()">✨ AI로 카드 만들기</button></div>`;
@@ -687,14 +906,14 @@ function viewReview(){
   const d=S.draft;const m=d.manual&&S.manuals[d.manual];
   const askField=d.ask&&(d.ask.field||'due');
   const fld=(k,l)=>`<div class="field ${(!d[k]&&d.ask&&askField===k)?'miss':''}"><label>${l}${(!d[k]&&d.ask&&askField===k)?' · 비어 있음':''}</label><input value="${esc(d[k])}" oninput="S.draft['${k}']=this.value" placeholder="—"></div>`;
-  return `<h1 class="h1">퇴근 전, AI 카드를 확인해 주세요</h1><p class="sub">틀린 부분은 눌러서 바로 고칠 수 있어요. 확인하면 다음 근무자에게 넘어가요.</p>
+  return `<h1 class="h1">AI 카드를 확인해 주세요</h1><p class="sub">틀린 부분은 눌러서 바로 고칠 수 있어요. 확인하면 단체방에 올라가고, 끝날 때까지 다음 근무자에게 넘어가요.</p>
   <div class="grid2"><section class="panel" style="padding:20px;display:flex;flex-direction:column;gap:14px">
    <div class="tline"><select onchange="S.draft.type=this.value;render()" style="border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--surface);font-weight:700">${Object.keys(TYPES).map(t=>`<option ${t===d.type?'selected':''}>${t}</option>`).join('')}</select><span class="ai-tag">AI 자동 분류</span>
     <label style="margin-left:auto;display:flex;gap:6px;align-items:center;font-weight:700;font-size:14px"><input type="checkbox" ${d.urgent?'checked':''} onchange="S.draft.urgent=this.checked"> 🚨 긴급</label></div>
    <div class="field wide"><label>제목</label><input value="${esc(d.title)}" oninput="S.draft.title=this.value" style="font-size:18px"></div>
    <div class="fields">${fld('qty','수량')}${fld('due','기한')}${fld('loc','위치')}${fld('next','다음 행동')}</div>
    ${d.ask?`<div class="ask"><b>🤖 하나만 더 알려 주세요 — ${esc(d.ask.q)}</b><div class="opts">${d.ask.opts.map(o=>`<button class="${d.answer===o?'on':''}" onclick="answer('${o}')">${o}</button>`).join('')}</div></div>`:''}
-   <div class="row"><button class="btn primary lg" ${d.ask&&!d.answer?'disabled':''} onclick="commitDraft()">✔ 확인 · 다음 교대로 넘기기</button><button class="btn" onclick="go('record')">다시 기록</button></div>
+   <div class="row"><button class="btn primary lg" ${d.ask&&!d.answer?'disabled':''} onclick="commitDraft()">✔ 확인 · 단체방에 올리고 넘기기</button><button class="btn" onclick="go(backRec())">취소</button></div>
   </section>
   <section style="display:flex;flex-direction:column;gap:14px"><div class="panel" style="padding:16px"><div class="sec-t">원본 기록 <span class="muted" style="font-weight:500;font-size:13px">AI가 틀려도 원본이 함께 전달돼요</span></div>${origin({src:d.src})}</div>
    ${m?`<div class="mlink panel"><span class="ic">📘</span><span><span class="muted" style="font-size:12.5px">자동 연결된 매뉴얼</span><b>${esc(m.title)}</b><span class="muted" style="font-size:12.5px">다음 근무자가 카드에서 바로 열 수 있어요</span></span></div>`:`<div class="panel" style="padding:16px"><span class="muted">연결할 매뉴얼이 아직 없어요. 반복되면 점주가 매뉴얼로 승인할 수 있어요.</span></div>`}
@@ -705,95 +924,138 @@ function commitDraft(){
   const d=S.draft,me=W(S.worker).name;
   const id='n'+Date.now();
   S.cards.unshift({id,type:d.type,title:d.title,qty:d.qty||'-',loc:d.loc,next:d.next,due:d.due,urgent:d.urgent,status:0,from:me,at:'오늘 '+now(),src:d.src,manual:d.manual,carry:0,assignee:null,shift:S.shiftNo,fresh:true});
+  if(S.fromMsg){const s=S.room.find(x=>x.from==='suggest'&&x.ref===S.fromMsg);if(s)s.done=true;S.fromMsg=null}
+  push({from:'card',who:me,card:id});
   notify(d.urgent?'🚨 긴급 인수인계 카드':'📦 새 인수인계 카드',`${d.title} (${me})`);
-  S.draft=null;S.view='home';S.filter='all';render();toast('🗂️ 카드가 등록됐어요 · 사장님 폰에도 알림이 갔어요');
+  S.draft=null;S.view=backRec();S.recFrom=null;S.filter='all';S.afterRender=scrollMsgs;render();toast('🗂️ 카드가 단체방에 올라갔어요 · 사장님 폰에도 알림이 갔어요');
 }
 
-/* ---- 매뉴얼 ---- */
-function viewManuals(){
-  const L=Object.entries(S.manuals);
-  return `<h1 class="h1">업무 매뉴얼</h1><p class="sub">우리 매장만의 노하우가 쌓여요. 카드에서 바로 열리고, 반복 질문은 점주 승인 후 매뉴얼이 돼요.</p>
-  <div class="mgrid">${L.map(([k,m])=>`<button class="panel mcard" onclick="openManual('${k}','list')"><div class="tline">${typeBadge(m.type)}${m.isNew?'<span class="tag brand">NEW · 질문에서 생성</span>':''}</div><b style="font-size:16px">${esc(m.title)}</b><span class="muted" style="font-size:13px">📍 ${esc(m.locText)}</span><span class="muted" style="font-size:12.5px">${m.steps.length}단계 · 조회 ${m.views}회</span></button>`).join('')}</div>`;
+/* ---- [테스트] 업무 매뉴얼 (카테고리 + 레시피) ---- */
+function mMatch(m,q){if(!q)return true;q=q.trim();const hay=[m.title,m.sub||'',m.locText,...(m.steps||[]),...(m.vars?Object.values(m.vars).flatMap(v=>v.ings.map(x=>x[0])):[])].join(' ');return hay.includes(q)}
+function mcardHTML(k,m){
+  if(m.cat==='recipe')return `<button class="panel mcard rcard" onclick="openManual('${k}','list')"><div class="tline"><span class="em">${m.em}</span>${Object.keys(m.vars).map(v=>`<span class="tag" style="background:${v==='HOT'?'var(--red-weak)':'var(--blue-weak)'};color:${v==='HOT'?'var(--red)':'var(--blue)'}">${v}</span>`).join('')}${m.isSeason?'<span class="tag orange">시즌</span>':''}</div><b style="font-size:16px">${esc(m.title)}</b><span class="muted" style="font-size:13px">${esc(m.sub)}</span><span class="muted" style="font-size:12.5px">재료 ${Object.values(m.vars)[0].ings.length}가지 · 조회 ${m.views}회</span></button>`;
+  return `<button class="panel mcard" onclick="openManual('${k}','list')"><div class="tline">${catBadge(m.cat)}${m.isNew?'<span class="tag brand">NEW · 질문에서 생성</span>':''}</div><b style="font-size:16px">${esc(m.title)}</b><span class="muted" style="font-size:13px">📍 ${esc(m.locText)}</span><span class="muted" style="font-size:12.5px">${m.steps.length}단계 · 조회 ${m.views}회</span></button>`;
 }
-function openManual(k,from){S.manual=k;S.mFrom=from;S.mDone={};S.manuals[k].views++;S.view='manual';render()}
+function mlistHTML(){
+  const all=Object.entries(S.manuals).filter(([k,m])=>(S.mCat==='all'||m.cat===S.mCat)&&mMatch(m,S.mq));
+  if(!all.length)return `<p class="muted">「${esc(S.mq)}」에 맞는 매뉴얼이 없어요. 단체방에 물어보면 반복 질문은 매뉴얼 초안이 돼요.</p>`;
+  if(S.mCat==='all'&&!S.mq)return Object.keys(CATS).map(c=>{const L=all.filter(([k,m])=>m.cat===c);if(!L.length)return '';
+    return `<div class="mgroup"><div class="sec-t">${CATS[c].ic} ${CATS[c].l} <span class="muted" style="font-weight:500;font-size:13px">${L.length}</span><button class="muted" style="margin-left:auto;font-size:13px;font-weight:500" onclick="S.mCat='${c}';render()">전체 보기 ›</button></div><div class="mgrid">${L.map(([k,m])=>mcardHTML(k,m)).join('')}</div></div>`}).join('');
+  return `<div class="mgrid">${all.map(([k,m])=>mcardHTML(k,m)).join('')}</div>`;
+}
+function drawM(){const el=$('#mlist');if(el)el.innerHTML=mlistHTML()}
+function viewManuals(){
+  const cnt=c=>Object.values(S.manuals).filter(m=>c==='all'||m.cat===c).length;
+  const tab=(c,l)=>`<button class="ctab ${S.mCat===c?'on':''}" onclick="S.mCat='${c}';render()">${l} <em>${cnt(c)}</em></button>`;
+  return `<h1 class="h1">업무 매뉴얼</h1><p class="sub">우리 매장만의 노하우가 쌓여요. 카드에서 바로 열리고, 반복 질문은 점주 승인 후 매뉴얼이 돼요.</p>
+  <div class="ctabs">${tab('all','전체')}${Object.entries(CATS).map(([c,T])=>tab(c,T.ic+' '+T.l)).join('')}</div>
+  <input class="msearch" placeholder="🔍 메뉴·재료·업무 검색 (예: 바닐라, 환불, 우유)" value="${esc(S.mq)}" oninput="S.mq=this.value;drawM()">
+  <div id="mlist">${mlistHTML()}</div>`;
+}
+function openManual(k,from){S.manual=k;S.mFrom=from;S.mDone={};S.manuals[k].views++;const m=S.manuals[k];S.rv=m.vars?Object.keys(m.vars)[m.vars.ICE?Object.keys(m.vars).indexOf('ICE'):0]:null;S.view='manual';render();const c=$('#content');if(c)c.scrollTop=0}
 function viewManual(){
   const m=S.manuals[S.manual];
   const back=S.mFrom==='card'?`<button class="btn ghost" onclick="S.view='card';render()" style="margin:-6px 0 12px -10px">← 카드로 돌아가기</button>`:`<button class="btn ghost" onclick="go('manuals')" style="margin:-6px 0 12px -10px">← 업무 매뉴얼</button>`;
+  if(m.cat==='recipe')return back+viewRecipe(m);
   const done=Object.values(S.mDone||{}).filter(Boolean).length;
-  return `${back}<div class="tline" style="margin-bottom:6px">${typeBadge(m.type)}<span class="muted" style="font-size:13px">조회 ${m.views}회 · 점주 승인됨 ✓</span></div><h1 class="h1">${esc(m.title)}</h1><p class="sub">${esc(m.purpose)}</p>
+  return `${back}<div class="tline" style="margin-bottom:6px">${catBadge(m.cat)}<span class="muted" style="font-size:13px">조회 ${m.views}회 · 점주 승인됨 ✓</span></div><h1 class="h1">${esc(m.title)}</h1><p class="sub">${esc(m.purpose)}</p>
   <div class="grid2"><section class="panel" style="padding:18px"><div class="sec-t">단계별 방법 <span class="muted" style="font-weight:500;font-size:13px">${done}/${m.steps.length} 완료 · 눌러서 체크</span></div>
    <ol class="steps">${m.steps.map((s,i)=>`<li class="${S.mDone[i]?'ok':''}" onclick="S.mDone[${i}]=!S.mDone[${i}];render()"><span class="n">${S.mDone[i]?'✓':i+1}</span><span>${esc(s)}</span></li>`).join('')}</ol>
    ${done===m.steps.length&&S.mFrom==='card'?`<div class="banner info" style="margin:14px 0 0">🎉 모든 단계를 마쳤어요! <button class="btn primary" style="margin-left:auto" onclick="S.view='card';render()">카드로 돌아가 완료하기</button></div>`:''}
    <div class="sec-t" style="margin-top:18px">⚠️ 주의사항</div><ul class="warn" style="margin:0;padding-left:30px">${m.cautions.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>
-   <div class="sec-t" style="margin-top:18px">📖 매장 용어</div><dl class="terms">${m.terms.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></section>
+   ${m.terms&&m.terms.length?`<div class="sec-t" style="margin-top:18px">📖 매장 용어</div><dl class="terms">${m.terms.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl>`:''}</section>
   <section class="panel" style="padding:18px;display:flex;flex-direction:column;gap:12px"><div class="sec-t" style="margin:0">📍 위치 안내</div><div style="font-weight:700">${esc(m.locText)}</div>${plan(m.loc)}
    <div class="video"><div class="play">▶</div><small>🎬 점주가 찍은 30초 시연 영상</small></div></section></div>`;
+}
+function viewRecipe(m){
+  const keys=Object.keys(m.vars), v=m.vars[S.rv]||m.vars[keys[0]];
+  const done=Object.values(S.mDone||{}).filter(Boolean).length;
+  return `<div class="tline" style="margin-bottom:6px">${catBadge('recipe')}${m.isSeason?'<span class="tag orange">시즌 메뉴</span>':''}<span class="muted" style="font-size:13px">조회 ${m.views}회 · 점주 승인됨 ✓</span></div>
+  <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:14px"><div><h1 class="h1">${m.em} ${esc(m.title)}</h1><p class="sub" style="margin:0">${esc(m.sub)}</p></div>
+   ${keys.length>1?`<div class="vtabs">${keys.map(k=>`<button class="${k.toLowerCase()} ${k===S.rv?'on':''}" onclick="S.rv='${k}';S.mDone={};render()">${k==='HOT'?'🔥 HOT':'🧊 ICE'}</button>`).join('')}</div>`:`<span class="tag" style="background:var(--blue-weak);color:var(--blue);font-size:13px;padding:5px 12px">🧊 ICE 전용</span>`}</div>
+  <div class="grid2"><section class="panel" style="padding:18px">
+   <div class="sec-t">🧪 재료 · 분량 <span class="muted" style="font-weight:500;font-size:13px">${esc(v.cup)}</span></div>
+   <table class="ings">${v.ings.map(([a,b])=>`<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join('')}</table>
+   <div class="sec-t" style="margin-top:18px">만드는 순서 <span class="muted" style="font-weight:500;font-size:13px">${done}/${v.steps.length} · 눌러서 체크</span></div>
+   <ol class="steps">${v.steps.map((s,i)=>`<li class="${S.mDone[i]?'ok':''}" onclick="S.mDone[${i}]=!S.mDone[${i}];render()"><span class="n">${S.mDone[i]?'✓':i+1}</span><span>${esc(s)}</span></li>`).join('')}</ol>
+   ${done===v.steps.length&&S.mFrom==='card'?`<div class="banner info" style="margin:14px 0 0">🎉 다 만들었어요! <button class="btn primary" style="margin-left:auto" onclick="S.view='card';render()">카드로 돌아가기</button></div>`:''}
+   <div class="sec-t" style="margin-top:18px">💡 포인트</div><ul class="warn" style="margin:0;padding-left:30px;background:var(--amber-weak)">${m.tips.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></section>
+  <section class="panel" style="padding:18px;display:flex;flex-direction:column;gap:12px">
+   <div class="sec-t" style="margin:0">🥤 완성 모습 (${S.rv||keys[0]})</div>
+   <div class="cupwrap">${cup(v)}<div class="legend">${v.layers.map(([l,p,c])=>`<span><i style="background:${c}"></i>${esc(l)}</span>`).join('')}${v.ice?'<span><i style="background:rgba(200,225,255,.8)"></i>얼음</span>':''}<span class="muted" style="font-size:12px;margin-top:4px">${esc(v.cup)}</span></div></div>
+   <div class="sec-t" style="margin:6px 0 0">📍 재료 위치</div><div style="font-weight:700">${esc(m.locText)}</div>${plan(m.loc)}</section></div>`;
 }
 
 /* ---- 점주 대시보드 ---- */
 function viewAdmin(){
   const C=S.cards, open=C.filter(c=>c.status<4).length, done=C.filter(c=>c.status===4).length, carry=C.filter(c=>c.carry&&c.status<4).length;
+  const duty=onDuty();
   return `<div class="row" style="justify-content:space-between;align-items:flex-end"><div><h1 class="h1">점주 대시보드</h1><p class="sub" style="margin:0">매장에 없어도 지금 상황을 한눈에. ${OWNER} 계정으로 보는 화면이에요.</p></div><span class="chip">👑 점주 모드</span></div>
   <div class="kpis" style="margin-top:16px">
-   <div class="panel kpi"><small>오늘 인수인계 카드</small><div class="v">${C.length}</div><div class="d muted">완료 ${done} · 진행 ${open}</div></div>
-   <div class="panel kpi"><small>미해결 · 이월 중</small><div class="v">${open}<span style="font-size:16px;color:var(--orange)"> / ${carry}</span></div><div class="d muted">완료 전까지 자동 승계</div></div>
+   <div class="panel kpi"><small>지금 근무 중</small><div class="v">${duty.length}명</div><div class="d muted">${duty.map(w=>w.name).join(' · ')||'-'}</div></div>
+   <div class="panel kpi"><small>미해결 · 이월 중</small><div class="v">${open}<span style="font-size:16px;color:var(--orange)"> / ${carry}</span></div><div class="d muted">완료 ${done} · 완료 전까지 자동 승계</div></div>
    <div class="panel kpi"><small>카드 확인까지 평균</small><div class="v">4분</div><div class="d up">▼ 단톡방 대비 -78%</div></div>
    <div class="panel kpi"><small>반복 질문 (이번 달)</small><div class="v">${14-S.faqs.filter(f=>f.approved).reduce((a,f)=>a+f.n,0)}건</div><div class="d up">▼ 지난달 대비 -42%</div></div></div>
   <div class="grid2"><section class="panel" style="padding:18px"><div class="sec-t">🙋 자주 나오는 질문 → 매뉴얼로 승인</div><p class="muted" style="margin:-4px 0 12px;font-size:13px">근무자들이 반복해서 물어본 질문을 AI가 모았어요. 승인하면 AI가 쓴 초안이 매장 매뉴얼이 돼요.</p>
    ${S.faqs.map(f=>`<div class="faq"><div><div class="q">“${esc(f.q)}”</div><div class="c">${f.n}회 질문 · 근무자 ${f.who}명</div></div>${f.approved?'<span class="st st-4" style="margin-left:auto"><i></i>매뉴얼 등록됨</span>':`<button class="btn primary" onclick="draftManual('${f.id}')">✨ 매뉴얼 초안 보기</button>`}</div>`).join('')}
-   <div class="sec-t" style="margin-top:18px">📌 공지 고정</div><form class="send" style="margin:0" onsubmit="event.preventDefault();S.notice=this.n.value;notify('📌 공지 변경',S.notice);toast('공용 패드 맨 위에 고정됐어요');render()"><input name="n" value="${esc(S.notice)}"><button class="btn">고정</button></form></section><section class="panel" style="padding:18px"><div class="sec-t">📉 인수인계 누락 건수 (파일럿 가정치)</div>
-   <div class="bars">${[['도입 전 1주',9,1],['도입 전 2주',11,1],['도입 1주',5,0],['도입 2주',3,0],['도입 3주',2,0],['도입 4주',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*8}px"></i>${l}</div>`).join('')}</div></section></div><div style="margin-top:18px"><section class="panel" style="padding:18px"><div class="sec-t">카드 상태 보드</div><div class="board">${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="col"><h4>${stBadge(i)}<span class="muted">${L.length}</span></h4>${L.map(c=>`<div class="mini" ${c.urgent&&c.status<4?'style="border-color:var(--red)"':''}>${TYPES[c.type].ic} ${esc(c.title)}${c.assignee?`<div class="muted" style="font-size:11.5px">👤 ${esc(c.assignee)}</div>`:''}</div>`).join('')}</div>`}).join('')}</div>
+   <div class="sec-t" style="margin-top:18px">📌 공지 고정</div><form class="send" style="margin:0" onsubmit="event.preventDefault();S.notice=this.n.value;notify('📌 공지 변경',S.notice);toast('공용 패드 맨 위에 고정됐어요');render()"><input name="n" value="${esc(S.notice)}"><button class="btn">고정</button></form></section>
+   <section style="display:flex;flex-direction:column;gap:18px"><div class="panel" style="padding:18px"><div class="sec-t">🕘 오늘 출퇴근 기록</div>${attTable()}</div>
+   <div class="panel" style="padding:18px"><div class="sec-t">📉 인수인계 누락 건수 (파일럿 가정치)</div>
+   <div class="bars">${[['도입 전 1주',9,1],['도입 전 2주',11,1],['도입 1주',5,0],['도입 2주',3,0],['도입 3주',2,0],['도입 4주',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*8}px"></i>${l}</div>`).join('')}</div></div></section></div><div style="margin-top:18px"><section class="panel" style="padding:18px"><div class="sec-t">카드 상태 보드</div><div class="board">${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="col"><h4>${stBadge(i)}<span class="muted">${L.length}</span></h4>${L.map(c=>`<div class="mini" ${c.urgent&&c.status<4?'style="border-color:var(--red)"':''}>${TYPES[c.type].ic} ${esc(c.title)}${c.assignee?`<div class="muted" style="font-size:11.5px">👤 ${esc(c.assignee)}</div>`:''}</div>`).join('')}</div>`}).join('')}</div>
    </section></div>`;
 }
 const FAQ_DRAFT={
-  f1:{key:'m-receipt',title:'영수증 용지 교체',type:'재고·발주',loc:'storage',locText:'창고 선반 A 맨 위 (흰 상자) · 프린터는 포스 오른쪽',purpose:'영수증 용지가 떨어지면 카드 결제 영수증을 못 뽑아요. 프린터 빨간불이 깜빡이면 바로 교체해요.',steps:['포스 오른쪽 프린터 덮개 버튼 누르기','다 쓴 심 빼고 새 롤을 종이 끝이 위로 오게 넣기','종이를 2cm 빼고 덮개 닫기','「FEED」 버튼으로 시험 출력','창고 재고가 3롤 이하면 사장님께 알리기'],cautions:['감열지라 거꾸로 넣으면 글자가 안 나와요'],terms:[['감열지','열로 글자가 찍히는 영수증 용지']]},
-  f2:{key:'m-oat',title:'오트밀크 재고 확인',type:'재고·발주',loc:'storage',locText:'창고 선반 B (두유 옆)',purpose:'오트밀크는 우유와 다른 거래처라 별도로 확인해요.',steps:['창고 선반 B에서 남은 팩 수 확인','4팩 이하면 발주 앱 「오트」 거래처 선택','6팩 단위로 발주'],cautions:['개봉 후 냉장 5일 이내 사용'],terms:[['거래처','물건을 납품하는 업체']]},
-  f3:{key:'m-showcase',title:'마감 시 쇼케이스 온도 설정',type:'청소·위생',loc:'showcase',locText:'카운터 앞 쇼케이스 하단 패널',purpose:'마감 후 케이크 보관 온도를 지켜야 다음 날 판매할 수 있어요.',steps:['하단 패널 「SET」 3초','온도를 3℃로 맞추기','조명 OFF, 커튼 내리기'],cautions:['5℃ 이상이면 사장님께 알리기'],terms:[['SET','설정 모드 버튼']]}
+  f1:{key:'m-receipt',cat:'order',title:'영수증 용지 교체',type:'재고·발주',loc:'storage',locText:'창고 선반 A 맨 위 (흰 상자) · 프린터는 포스 오른쪽',purpose:'영수증 용지가 떨어지면 카드 결제 영수증을 못 뽑아요. 프린터 빨간불이 깜빡이면 바로 교체해요.',steps:['포스 오른쪽 프린터 덮개 버튼 누르기','다 쓴 심 빼고 새 롤을 종이 끝이 위로 오게 넣기','종이를 2cm 빼고 덮개 닫기','「FEED」 버튼으로 시험 출력','창고 재고가 3롤 이하면 사장님께 알리기'],cautions:['감열지라 거꾸로 넣으면 글자가 안 나와요'],terms:[['감열지','열로 글자가 찍히는 영수증 용지']]},
+  f2:{key:'m-oat',cat:'etc',title:'오트밀크 재고 확인',type:'재고·발주',loc:'storage',locText:'창고 선반 B (두유 옆)',purpose:'오트밀크는 우유와 다른 거래처라 별도로 확인해요.',steps:['창고 선반 B에서 남은 팩 수 확인','4팩 이하면 발주 앱 「오트」 거래처 선택','6팩 단위로 발주'],cautions:['개봉 후 냉장 5일 이내 사용'],terms:[['거래처','물건을 납품하는 업체']]},
+  f3:{key:'m-showcase',cat:'equip',title:'마감 시 쇼케이스 온도 설정',type:'청소·위생',loc:'showcase',locText:'카운터 앞 쇼케이스 하단 패널',purpose:'마감 후 케이크 보관 온도를 지켜야 다음 날 판매할 수 있어요.',steps:['하단 패널 「SET」 3초','온도를 3℃로 맞추기','조명 OFF, 커튼 내리기'],cautions:['5℃ 이상이면 사장님께 알리기'],terms:[['SET','설정 모드 버튼']]}
 };
 function draftManual(fid){
   const f=S.faqs.find(x=>x.id===fid), d=FAQ_DRAFT[fid];
-  S.modal=()=>`<div class="scrim" onclick="if(event.target===this){S.modal=null;render()}"><div class="modal"><span class="ai-tag">AI가 쓴 매뉴얼 초안</span><h2 class="h1" style="margin:10px 0 2px">${esc(d.title)}</h2><p class="muted" style="margin:0 0 12px">근무자 질문 “${esc(f.q)}” ${f.n}회에서 생성</p>
+  S.modal=()=>`<div class="scrim" onclick="if(event.target===this){S.modal=null;render()}"><div class="modal"><span class="ai-tag">AI가 쓴 매뉴얼 초안</span> ${catBadge(d.cat)}<h2 class="h1" style="margin:10px 0 2px">${esc(d.title)}</h2><p class="muted" style="margin:0 0 12px">근무자 질문 “${esc(f.q)}” ${f.n}회에서 생성 · 「${CATS[d.cat].l}」 분류로 들어가요</p>
    <p style="margin:0 0 10px">${esc(d.purpose)}</p><div style="font-weight:700;margin-bottom:6px">📍 ${esc(d.locText)}</div>
    <ol class="steps">${d.steps.map((s,i)=>`<li><span class="n">${i+1}</span><span>${esc(s)}</span></li>`).join('')}</ol>
    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" onclick="S.modal=null;render()">나중에</button><button class="btn primary lg" onclick="approve('${fid}')">✔ 승인하고 매뉴얼에 추가</button></div></div></div>`;
   render();
 }
-function approve(fid){const f=S.faqs.find(x=>x.id===fid),d=FAQ_DRAFT[fid];f.approved=true;S.manuals[d.key]={...d,views:0,isNew:true};S.modal=null;render();toast(`📘 「${d.title}」 매뉴얼이 등록됐어요. 이제 모든 근무자가 볼 수 있어요`)}
+function approve(fid){const f=S.faqs.find(x=>x.id===fid),d=FAQ_DRAFT[fid];f.approved=true;S.manuals[d.key]={...d,views:0,isNew:true};S.modal=null;render();toast(`📘 「${d.title}」 매뉴얼이 ${CATS[d.cat].l}에 등록됐어요`)}
 
-/* ---- 교대 마감 / 자동 승계 ---- */
+/* ---- [테스트] 퇴근 = 교대 마감 / 자동 승계 ---- */
 function endShift(){
-  const me=W(S.worker), idx=WORKERS.indexOf(me), nxt=WORKERS[(idx+1)%3];
-  const open=S.cards.filter(c=>c.status<4), mine=S.cards.filter(c=>c.shift===S.shiftNo), done=S.cards.filter(c=>c.status===4);
-  S.modal=()=>`<div class="scrim"><div class="modal"><h2 class="h1" style="margin:0">${me.name}님, 수고하셨어요 👋</h2><p class="muted" style="margin:4px 0 0">${me.shift} 근무를 마감할게요.</p>
+  const me=W(S.worker), nxt=W(me.next);
+  const others=onDuty().filter(w=>w.id!==me.id);
+  const open=S.cards.filter(c=>c.status<4), mine=S.cards.filter(c=>c.shift===S.shiftNo&&c.from===me.name), done=S.cards.filter(c=>c.status===4);
+  S.modal=()=>`<div class="scrim"><div class="modal"><h2 class="h1" style="margin:0">${me.name}님, 수고하셨어요 👋</h2><p class="muted" style="margin:4px 0 0">${me.shift} · ${S.att[me.id]?S.att[me.id].in+' 출근 → ':''}${now()} 퇴근으로 기록할게요.</p>
    <div class="kpis" style="grid-template-columns:repeat(3,1fr);margin:16px 0 4px"><div class="panel kpi"><small>내가 남긴 카드</small><div class="v">${mine.length}</div></div><div class="panel kpi"><small>완료</small><div class="v" style="color:var(--green)">${done.length}</div></div><div class="panel kpi"><small>다음 교대로 승계</small><div class="v" style="color:var(--orange)">${open.length}</div></div></div>
    <div class="sec-t" style="margin-top:14px">🔁 ${nxt.name}님(${nxt.shift.split(' ')[0]})에게 넘어가는 카드</div>
+   ${others.length?`<p class="muted" style="margin:-4px 0 6px;font-size:13px">함께 근무 중인 ${others.map(w=>w.name).join(', ')}님도 계속 볼 수 있어요.</p>`:''}
    <div class="hand" id="hand">${open.map(c=>`<div class="it">${TYPES[c.type].ic} <b style="flex:1">${esc(c.title)}</b>${stBadge(c.status)}${c.shift===S.shiftNo?'<span class="tag brand">새 카드</span>':`<span class="tag orange">이월 ${c.carry+1}회차</span>`}</div>`).join('')}</div>
-   <div class="row" style="justify-content:flex-end"><button class="btn" onclick="S.modal=null;render()">계속 근무</button><button class="btn primary lg" onclick="doHandover('${nxt.id}')">교대 마감하고 넘기기 ➜</button></div></div></div>`;
+   <div class="row" style="justify-content:flex-end"><button class="btn" onclick="S.modal=null;render()">계속 근무</button><button class="btn primary lg" onclick="doHandover('${nxt.id}')">퇴근하고 넘기기 ➜</button></div></div></div>`;
   render();
 }
 function doHandover(nid){
   document.querySelectorAll('#hand .it').forEach((e,i)=>{e.style.animationDelay=(i*.12)+'s';e.classList.add('go')});
   setTimeout(()=>{
-    const me=W(S.worker).name;let n=0;
+    const meW=W(S.worker), me=meW.name;let n=0;
+    if(S.clock<new Date(2026,10,19,13,0,0).getTime())S.clock=new Date(2026,10,19,13,1,10).getTime();
     S.cards.forEach(c=>{c.fresh=false;if(c.status<4){if(c.shift!==S.shiftNo)c.carry++;n++;if(c.status===1)c.status=0}});
-    notify('🔁 교대 완료',`${me} → ${W(nid).name} · 미해결 ${n}건 자동 승계`);
-    S.shiftNo++;S.bannerCarry=n;S.modal=null;S.worker=null;S.nextWorker=nid;S.view='login';
-    S.clock=new Date(2026,10,19,13,1,10).getTime();render();
+    if(S.att[meW.id])S.att[meW.id].out=now();S.attLog.push({id:meW.id,kind:'out',t:now()});
+    sysMsg(`${me}님이 퇴근했어요 · 미해결 ${n}건이 ${W(nid).name}님에게 넘어가요`);
+    notify('🔁 퇴근 · 교대',`${me} → ${W(nid).name} · 미해결 ${n}건 자동 승계`);
+    S.shiftNo++;S.bannerCarry=n;S.modal=null;S.worker=null;S.nextWorker=(S.att[nid]&&!S.att[nid].out)?null:nid;S.view='attend';
+    render();
   },900);
 }
 
 /* ---- 점주 폰 (실시간 동기화 미리보기) ---- */
 function renderPhone(){
   const el=$('#phone');if(!el)return;
-  const th=S.phoneThread;const c=card(th);
-  const L=S.chats[th]||[];
   el.innerHTML=`<div class="lbl"><span class="live"></span> 점주 휴대폰 · 실시간 동기화</div><div class="phone"><div class="notch"></div>
   ${S.phonePush?`<div class="banner-push"><b>슬라이딩시프트 · 지금</b>${esc(S.phonePush.title)}<br>${esc(S.phonePush.text)}</div>`:''}
-  <div class="ph-top"><b>👑 ${OWNER}</b><div class="muted" style="font-size:11.5px">카페 온기 성수점 · 미해결 ${openCount()}건</div>
-  <div class="tabs"><button class="${S.phoneTab==='noti'?'on':''}" onclick="S.phoneTab='noti';renderPhone()">알림 ${S.notis.filter(n=>n.fresh).length?'•':''}</button><button class="${S.phoneTab==='chat'?'on':''}" onclick="S.phoneTab='chat';renderPhone()">대화</button></div></div>
+  <div class="ph-top"><b>👑 ${OWNER}</b><div class="muted" style="font-size:11.5px">카페 온기 성수점 · 근무 중 ${onDuty().length}명 · 미해결 ${openCount()}건</div>
+  <div class="tabs"><button class="${S.phoneTab==='noti'?'on':''}" onclick="S.phoneTab='noti';renderPhone()">알림 ${S.notis.filter(n=>n.fresh).length?'•':''}</button><button class="${S.phoneTab==='chat'?'on':''}" onclick="S.phoneTab='chat';renderPhone()">단체방</button></div></div>
   ${S.phoneTab==='noti'?`<div class="body">${S.notis.map(n=>`<div class="noti ${n.fresh?'new':''}"><b>${esc(n.title)}</b>${esc(n.text)}<br><small>${esc(n.t)}</small></div>`).join('')}</div>`:
-   `<div class="body" style="padding:0"><div style="padding:8px 12px;font-size:12px;font-weight:700;border-bottom:1px solid var(--line)">${c?TYPES[c.type].ic+' '+esc(c.title):'📌 매장 공지'}</div><div class="msgs" id="pmsgs">${L.map(m=>bubble(m,true)).join('')}${S.phoneTyping?'<div class="msg me typing"><div class="bub" style="background:var(--brand)"><i style="background:#fff"></i><i style="background:#fff"></i><i style="background:#fff"></i></div></div>':''}</div></div>
-   <form class="send" onsubmit="event.preventDefault();ownerSend('${th}',this.m.value)"><input name="m" placeholder="답장 보내기…" autocomplete="off"><button class="btn primary" style="padding:8px 12px">↑</button></form>`}
+   `<div class="body" style="padding:0"><div style="padding:8px 12px;font-size:12px;font-weight:700;border-bottom:1px solid var(--line)">💬 카페 온기 성수점 단체방 · ${WORKERS.length+1}명</div><div class="msgs" id="pmsgs">${S.room.map(m=>bubble(m,true)).join('')}${S.phoneTyping?'<div class="msg me typing"><div class="bub" style="background:var(--brand)"><i style="background:#fff"></i><i style="background:#fff"></i><i style="background:#fff"></i></div></div>':''}</div></div>
+   <form class="send" onsubmit="event.preventDefault();ownerSend(this.m.value,null)"><input name="m" placeholder="단체방에 답장…" autocomplete="off"><button class="btn primary" style="padding:8px 12px">↑</button></form>`}
   </div>`;
   S.notis.forEach(n=>{if(n.fresh)setTimeout(()=>{n.fresh=false},1500)});
   const pm=$('#pmsgs');if(pm)pm.scrollTop=pm.scrollHeight;
@@ -801,19 +1063,20 @@ function renderPhone(){
 function togglePhone(){S.phone=!S.phone;render()}
 
 /* ---- 네비게이션 ---- */
-function go(v){if(v!=='rec-voice'){clearInterval(S.recTimer);if(S.sr){try{S.sr.stop()}catch(e){}S.sr=null}}S.view=v;if(v==='chat')S.afterRender=scrollMsgs;render();const c=$('#content');if(c)c.scrollTop=0}
+function go(v){if(v!=='rec-voice'){clearInterval(S.recTimer);if(S.sr){try{S.sr.stop()}catch(e){}S.sr=null}}S.view=v;if(v==='chat')S.afterRender=scrollMsgs;render();const c=$('#content');if(c&&v!=='chat')c.scrollTop=0}
 function resetDemo(){clearInterval(S.recTimer);S=seed();render();toast('데모를 처음 상태로 되돌렸어요')}
-// 메시지 보내면 폰은 자동으로 대화 탭으로
+// 메시지 보내면 폰은 자동으로 단체방 탭으로
 const _notify=notify;notify=function(t,x){_notify(t,x);if(/💬/.test(t)){S.phoneTab='chat';renderPhone()}};
 
 /* 시연 순서 도우미 (? 키) */
 document.addEventListener('keydown',e=>{
   if(e.target.matches('input,textarea'))return;
-  if(e.key==='?'){S.modal=S.modal?null:()=>`<div class="scrim" onclick="S.modal=null;render()"><div class="modal"><h2 class="h1">3분 시연 순서</h2><ol style="line-height:2;padding-left:20px;margin:10px 0 0">
-   <li><b>김지윤(오픈조)</b> 선택 → 오늘의 인수인계 둘러보기</li><li><b>빠른 기록 → 음성</b> → 녹음 끝내기 → AI 정리 과정</li><li>카드 검토 → AI 추가 질문 「오늘 중」 → 넘기기 (점주 폰 알림 확인)</li>
-   <li><b>교대 마감</b> → 미해결 카드 자동 승계 → <b>이민호</b> 선택</li><li>우유 카드 → 매뉴얼 열기 (위치 도면·단계) → 담당 → 처리 중 → 완료</li><li>누수 카드 → 사장님께 메시지 → 폰에서 실시간 답장</li><li><b>점주 대시보드</b> → 반복 질문 → 매뉴얼 승인</li></ol>
+  if(e.key==='?'){S.modal=S.modal?null:()=>`<div class="scrim" onclick="S.modal=null;render()"><div class="modal"><h2 class="h1">시연 순서</h2><ol style="line-height:2;padding-left:20px;margin:10px 0 0">
+   <li><b>출퇴근 화면</b>: 김지윤·정하늘 2명 근무 중 → <b>김지윤 「이 사람으로 사용」</b></li><li>홈 → <b>🎙️ 음성으로 기록</b> → AI 정리 → 추가 질문 「오늘 중」 → 단체방에 카드 올라감</li>
+   <li>단체방에 「오트밀크 3팩 남음 내일까지 발주」 입력 → AI 제안 → 카드로 만들기</li>
+   <li><b>퇴근 · 교대 마감</b> → 미해결 카드 승계 → 출퇴근 화면에서 <b>이민호 출근</b></li><li>단체 주문 카드 → <b>관련 레시피</b> (아메리카노·라떼) / 우유 카드 → 매뉴얼 → 완료</li><li>누수 카드 → 메시지 → 단체방·점주 폰에서 답장</li><li><b>업무 매뉴얼</b> 카테고리 탭 · 레시피 HOT/ICE · <b>점주 대시보드</b> 승인</li></ol>
    <p class="muted" style="font-size:13px;margin-top:14px">단축키: <span class="kbd">?</span> 이 창 · 왼쪽 아래 「데모 처음부터」로 초기화</p></div></div>`;
-   if(S.view==='login'){S.view_='login'}render()}
+   render()}
 });
 render();
 </script>
