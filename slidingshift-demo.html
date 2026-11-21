@@ -753,7 +753,7 @@ function viewCard(){
 }
 function origin(c){
   const s=c.src;
-  if(s.kind==='voice')return `<div class="origin"><div class="ic">🎙️</div><div><div class="quote">“${esc(s.text)}”</div><div class="audio">▶ <span class="bars">${Array.from({length:28},(_,i)=>`<i style="height:${4+Math.abs(Math.sin(i*1.7))*12}px"></i>`).join('')}</span> ${s.dur||'0:12'} · 음성 원본</div></div></div>`;
+  if(s.kind==='voice')return `<div class="origin"><div class="ic">🎙️</div><div><div class="quote">“${esc(s.text)}”</div><div class="audio">▶ <span class="bars">${Array.from({length:28},(_,i)=>`<i style="height:${4+Math.abs(Math.sin(i*1.7))*12}px"></i>`).join('')}</span> ${s.dur||'0:12'} · 음성 원본${s.api?' · '+esc(s.api)+' 변환':''}</div></div></div>`;
   if(s.kind==='photo')return `<div class="origin"><div style="width:150px;flex:none;border-radius:10px;overflow:hidden">${photo(s.photo)}</div><div class="quote">${esc(s.text)}${s.vision?`<div class="audio">🔎 ${esc(s.vision)}</div>`:''}</div></div>`;
   return `<div class="origin"><div class="ic">⌨️</div><div class="quote">“${esc(s.text)}”</div></div>`;
 }
@@ -863,17 +863,95 @@ function startLiveVoice(){
   r.onerror=()=>toast('마이크 권한을 확인해 주세요');
   r.start();
 }
+/* ---- 외부 STT API (중간 서버 경유 · API 키는 서버에만 있음) ---- */
+/* 서버 주소를 여기에 넣으면 모든 사람에게 기본값이 돼요. 비워 두면 화면의 「STT 서버 설정」에서 각자 넣을 수 있어요. */
+const STT_DEFAULT_URL='';
+function sttUrl(){
+  try{const q=new URLSearchParams(location.search).get('stt');if(q){localStorage.setItem('ss-stt-url',q);return q}}catch(e){}
+  try{const v=localStorage.getItem('ss-stt-url');if(v)return v}catch(e){}
+  return STT_DEFAULT_URL;
+}
+function sttSettings(){
+  S.modal=()=>`<div class="scrim" onclick="if(event.target===this){S.modal=null;render()}"><div class="modal"><h2 class="h1" style="margin:0 0 4px">STT 서버 설정</h2>
+   <p class="muted" style="margin:0 0 14px">Cloudflare Worker로 만든 중간 서버(리턴제로 연결) 주소를 넣어 주세요. API 키는 서버에만 있고, 여기엔 주소만 저장돼요 (이 브라우저에만).</p>
+   <form class="send" style="margin:0" onsubmit="event.preventDefault();saveStt(this.u.value)"><input name="u" value="${esc(sttUrl())}" placeholder="https://slidingshift-stt.이름.workers.dev"><button class="btn primary">저장</button></form>
+   <div class="row" style="margin-top:12px;justify-content:space-between"><button class="btn ghost" onclick="testStt()">🔌 연결 확인</button><button class="btn" onclick="S.modal=null;render()">닫기</button></div></div></div>`;
+  render();
+}
+function saveStt(u){u=(u||'').trim();try{u?localStorage.setItem('ss-stt-url',u):localStorage.removeItem('ss-stt-url')}catch(e){}S.modal=null;render();toast(u?'STT 서버 주소를 저장했어요':'STT 서버 주소를 지웠어요')}
+async function testStt(){const u=sttUrl();if(!u){toast('먼저 주소를 저장해 주세요');return}
+  try{const r=await fetch(u);const j=await r.json();toast(j.ok?`✅ 연결됨 · ${j.provider||'STT'} ${j.model||''}`:'서버는 응답했지만 설정이 덜 됐어요: '+(j.error||''))}catch(e){toast('❌ 서버에 연결할 수 없어요. 주소를 확인해 주세요')}}
+function stopMic(){if(S.mr){try{if(S.mr.state!=='inactive'){S.mr.onstop=null;S.mr.stop()}}catch(e){}try{S.mr.stream.getTracks().forEach(t=>t.stop())}catch(e){}S.mr=null}}
+async function startApiVoice(){
+  if(!sttUrl()){sttSettings();return}
+  if(!navigator.mediaDevices||!window.MediaRecorder){toast('이 브라우저는 녹음을 지원하지 않아요');return}
+  let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast('마이크 권한을 허용해 주세요');return}
+  clearInterval(S.recTimer);stopMic();
+  const mime=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+  const mr=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);S.mr=mr;S.chunks=[];
+  mr.ondataavailable=e=>{if(e.data&&e.data.size)S.chunks.push(e.data)};
+  mr.start(250);
+  S.rec={text:'',done:false,live:true,api:true,t0:Date.now()};render();
+  const el=$('#tr');if(el)el.innerHTML='<span class="muted">녹음 중이에요. 다 말하고 아래 버튼을 누르면 STT 서버로 보내 글자로 바꿔요.</span>';
+  S.recTimer=setInterval(()=>{if(S.view!=='rec-voice'){clearInterval(S.recTimer);stopMic();return}
+    const sec=Math.floor((Date.now()-S.rec.t0)/1000);const e2=$('#rsec');if(e2)e2.textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
+    if(sec>=60)stopVoice();},250);
+}
+/* 녹음(webm 등)을 16kHz 모노 WAV로 변환 — 리턴제로가 확실히 받는 형식 */
+async function toWav16k(blob){
+  const AC=window.AudioContext||window.webkitAudioContext;const ac=new AC();
+  const src=await ac.decodeAudioData(await blob.arrayBuffer());ac.close&&ac.close();
+  const rate=16000,len=Math.ceil(src.duration*rate);
+  const off=new OfflineAudioContext(1,len,rate);const n=off.createBufferSource();n.buffer=src;n.connect(off.destination);n.start();
+  const pcm=(await off.startRendering()).getChannelData(0);
+  const buf=new ArrayBuffer(44+pcm.length*2),v=new DataView(buf);
+  const w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+pcm.length*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,pcm.length*2,true);
+  for(let i=0;i<pcm.length;i++){const x=Math.max(-1,Math.min(1,pcm[i]));v.setInt16(44+i*2,x<0?x*0x8000:x*0x7FFF,true)}
+  return new Blob([buf],{type:'audio/wav'});
+}
+function finishApiVoice(){
+  const mr=S.mr;if(!mr)return;
+  const sec=Math.max(1,Math.round((Date.now()-S.rec.t0)/1000)), dur=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
+  mr.onstop=async()=>{
+    try{mr.stream.getTracks().forEach(t=>t.stop())}catch(e){}
+    S.mr=null;
+    const type=(mr.mimeType||'audio/webm').split(';')[0], ext=type.includes('mp4')?'m4a':type.includes('ogg')?'ogg':'webm';
+    let blob=new Blob(S.chunks,{type});S.chunks=[];
+    let fname='record.'+ext;
+    try{blob=await toWav16k(blob);fname='record.wav'}catch(e){/* 변환 실패 시 원본 그대로 전송 */}
+    const el=$('#tr'), b=$('#stopb');
+    if(b){b.disabled=true;b.textContent='⏳ STT 서버에서 변환 중…'}
+    if(el)el.innerHTML='<span class="muted">음성을 STT API로 보내는 중…</span>';
+    try{
+      const fd=new FormData();fd.append('file',blob,fname);
+      const r=await fetch(sttUrl(),{method:'POST',body:fd});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.text)throw new Error(j.error||('HTTP '+r.status));
+      S.rec.text=j.text;if(el)el.innerHTML=esc(j.text);
+      runAI({kind:'voice',text:j.text,dur,api:j.provider||'STT API'},analyze(j.text),[`음성 → 텍스트 변환 (${j.provider||'STT API'} 완료)`,'문제 유형 분류','수량 · 위치 · 기한 추출','빠진 정보 확인','관련 업무 매뉴얼 연결']);
+    }catch(e){
+      toast('STT 변환에 실패했어요: '+e.message);
+      if(el)el.innerHTML='<span style="color:var(--red)">변환 실패: '+esc(e.message)+'</span><br><span class="muted" style="font-size:14px">서버 주소·API 키를 확인하거나, 기본 시나리오로 시연해 주세요.</span>';
+      if(b){b.disabled=false;b.textContent='↺ 다시 녹음하기';b.onclick=()=>startApiVoice()}
+    }
+  };
+  mr.stop();
+}
 function viewVoice(){
-  const live=S.rec&&S.rec.live;
+  const live=S.rec&&S.rec.live, api=S.rec&&S.rec.api;
   return `<div class="recwrap"><h1 class="h1">듣고 있어요…</h1><p class="sub">편하게 말하세요. 수량·위치·기한은 AI가 찾아내고, 정리된 카드는 단체방에 올라가요.</p>
   <div class="mic">🎙️</div><div class="wave">${Array.from({length:22},(_,i)=>`<i style="animation-delay:${(i%7)*.11}s"></i>`).join('')}</div>
-  <div class="muted" style="margin-bottom:8px">● 녹음 중 <b id="rsec">0:00</b> ${live?'· 실제 마이크':''}</div>
+  <div class="muted" style="margin-bottom:8px">● 녹음 중 <b id="rsec">0:00</b> ${api?'· 외부 STT API':live?'· 실제 마이크 (브라우저)':''}</div>
   <div class="transcript" id="tr">${esc(S.rec.text)}<span class="cur"></span></div>
   <div class="row" style="justify-content:center;margin-top:18px"><button class="btn" onclick="go(backRec())">취소</button><button id="stopb" class="btn lg ${S.rec.done||live?'primary':''}" onclick="stopVoice()">${S.rec.done||live?'■ 녹음 끝내고 AI로 정리하기':'■ 녹음 끝내기'}</button></div>
-  ${live?'':`<p style="margin-top:18px"><button class="muted" style="text-decoration:underline;font-size:13px" onclick="startLiveVoice()">실제 마이크로 말해 보기 (Chrome)</button></p>`}</div>`;
+  ${live?'':`<p style="margin-top:18px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap"><button class="muted" style="text-decoration:underline;font-size:13px" onclick="startApiVoice()">🎧 외부 STT API로 실제 녹음${sttUrl()?'':' (서버 설정 필요)'}</button><button class="muted" style="text-decoration:underline;font-size:13px" onclick="startLiveVoice()">브라우저 음성 인식 (Chrome)</button><button class="muted" style="text-decoration:underline;font-size:13px" onclick="sttSettings()">⚙️ STT 서버 설정</button></p>`}</div>`;
 }
 function stopVoice(){
-  clearInterval(S.recTimer);if(S.sr){try{S.sr.stop()}catch(e){}S.sr=null}
+  clearInterval(S.recTimer);
+  if(S.rec&&S.rec.api){finishApiVoice();return}
+  if(S.sr){try{S.sr.stop()}catch(e){}S.sr=null}
   const live=S.rec.live, text=live?S.rec.text:SCRIPT_VOICE;
   if(!text.trim()){toast('녹음된 내용이 없어요');return}
   runAI({kind:'voice',text,dur:'0:12'},analyze(text,live?null:PRESET_VOICE),['음성 → 텍스트 변환 (STT)','문제 유형 분류','수량 · 위치 · 기한 추출','빠진 정보 확인','관련 업무 매뉴얼 연결']);
@@ -1063,7 +1141,7 @@ function renderPhone(){
 function togglePhone(){S.phone=!S.phone;render()}
 
 /* ---- 네비게이션 ---- */
-function go(v){if(v!=='rec-voice'){clearInterval(S.recTimer);if(S.sr){try{S.sr.stop()}catch(e){}S.sr=null}}S.view=v;if(v==='chat')S.afterRender=scrollMsgs;render();const c=$('#content');if(c&&v!=='chat')c.scrollTop=0}
+function go(v){if(v!=='rec-voice'){clearInterval(S.recTimer);stopMic();if(S.sr){try{S.sr.stop()}catch(e){}S.sr=null}}S.view=v;if(v==='chat')S.afterRender=scrollMsgs;render();const c=$('#content');if(c&&v!=='chat')c.scrollTop=0}
 function resetDemo(){clearInterval(S.recTimer);S=seed();render();toast('데모를 처음 상태로 되돌렸어요')}
 // 메시지 보내면 폰은 자동으로 단체방 탭으로
 const _notify=notify;notify=function(t,x){_notify(t,x);if(/💬/.test(t)){S.phoneTab='chat';renderPhone()}};
