@@ -410,6 +410,46 @@ const CATS={
   clean:{l:'청소',ic:'🧽',c:'var(--green)',bg:'var(--green-weak)'},
   etc:{l:'기타',ic:'📌',c:'var(--muted)',bg:'var(--gray-weak)'}
 };
+/* 재고 위치: 창고·냉장고 선반 칸 단위 */
+const STORE_MAP=[
+  {name:'원두 (하우스 블렌드 1kg)',place:'창고',shelf:'왼쪽',lv:2,note:'유통기한 빠른 봉투를 앞으로'},
+  {name:'종이컵 12oz / 16oz',place:'창고',shelf:'왼쪽',lv:4,note:'카운터 하부 수납장이 비면 여기서 보충'},
+  {name:'뚜껑 · 빨대 · 홀더',place:'창고',shelf:'왼쪽',lv:3},
+  {name:'바닐라 · 카라멜 시럽 여분 (1L)',place:'창고',shelf:'오른쪽',lv:1,note:'흰 라벨 = 바닐라, 갈색 = 카라멜'},
+  {name:'초코 소스 여분',place:'창고',shelf:'오른쪽',lv:2},
+  {name:'오트밀크 · 두유',place:'창고',shelf:'오른쪽',lv:3,note:'우유와 다른 거래처 (6팩 단위 발주)'},
+  {name:'녹차 · 아이스티 파우더',place:'창고',shelf:'가운데',lv:2,note:'녹색 라벨 박스'},
+  {name:'영수증 용지',place:'창고',shelf:'가운데',lv:1,note:'흰 상자 · 3롤 이하면 알리기'},
+  {name:'제빙기 정수 필터',place:'창고',shelf:'가운데',lv:4},
+  {name:'탄산수 (24캔 박스)',place:'창고',shelf:'바닥',lv:0,note:'문 옆 바닥'},
+  {name:'우유 (1L)',place:'워크인 냉장고',shelf:'왼쪽',lv:2,note:'선입선출 · 3팩 이하면 발주'},
+  {name:'자몽청 · 딸기청 · 유자청',place:'워크인 냉장고',shelf:'오른쪽',lv:1,note:'뚜껑 색: 주황 자몽 · 빨강 딸기 · 노랑 유자'},
+  {name:'콜드브루 원액',place:'워크인 냉장고',shelf:'왼쪽',lv:1,note:'날짜 라벨 확인 (5일)'},
+  {name:'케이크 · 샌드위치 여분',place:'워크인 냉장고',shelf:'오른쪽',lv:3}
+];
+const ORD=['','맨 위 칸','위에서 두 번째 칸','위에서 세 번째 칸','맨 아래 칸'];
+function storeText(x){return x.lv===0?`${x.place} ${x.shelf}`:`${x.place} ${x.shelf} 선반 ${ORD[x.lv]}`}
+function shelfSVG(place,hl){
+  const cols=place==='창고'?['왼쪽','가운데','오른쪽']:['왼쪽','오른쪽'];
+  const W_=place==='창고'?300:210, colW=(W_-20)/cols.length;
+  let s=`<svg viewBox="0 0 ${W_} 200" class="plan" role="img" aria-label="${place} 선반">`;
+  cols.forEach((c,i)=>{const x=10+i*colW;
+    s+=`<text x="${x+colW/2}" y="14" text-anchor="middle">${c} 선반</text>`;
+    for(let lv=1;lv<=4;lv++){const y=20+(lv-1)*40, on=hl&&hl.place===place&&hl.shelf===c&&hl.lv===lv;
+      s+=`<rect class="z ${on?'hl':''}" x="${x+4}" y="${y}" width="${colW-8}" height="34" rx="5"/>`;
+      if(on)s+=`<circle class="pulse" cx="${x+colW/2}" cy="${y+17}" r="7"/><circle cx="${x+colW/2}" cy="${y+17}" r="5" fill="var(--brand)"/>`;
+      else s+=`<text x="${x+colW/2}" y="${y+21}" text-anchor="middle" style="font-size:9px">${lv}칸</text>`}});
+  if(place==='창고'){const on=hl&&hl.shelf==='바닥';s+=`<rect class="z ${on?'hl':''}" x="10" y="182" width="${W_-20}" height="14" rx="4"/><text x="${W_/2}" y="193" text-anchor="middle" style="font-size:9px" class="${on?'hl':''}">바닥 (문 옆)</text>`}
+  return s+`</svg>`;
+}
+function stockView(){
+  const q=(S.mq||'').trim(), L=STORE_MAP.map((x,i)=>({...x,i})).filter(x=>!q||x.name.includes(q)||x.place.includes(q));
+  const sel=STORE_MAP[S.stockSel??0];
+  return `<div class="grid2" style="grid-template-columns:1.2fr 1fr"><section class="panel" style="padding:18px"><div class="sec-t">📦 재료별 보관 위치 <span class="muted" style="font-weight:500;font-size:13px">누르면 오른쪽 그림에 표시돼요</span></div>
+   ${L.map(x=>`<button class="calit ${x.i===(S.stockSel??0)?'on':''}" style="width:100%;text-align:left;${x.i===(S.stockSel??0)?'border-color:var(--brand);background:var(--brand-weak)':''}" onclick="S.stockSel=${x.i};render()"><b style="flex:1">${esc(x.name)}</b><span style="font-weight:700;color:var(--brand-ink);font-size:13.5px">${esc(storeText(x))}</span></button>`).join('')||'<p class="muted">검색 결과가 없어요.</p>'}</section>
+   <section class="panel" style="padding:18px;display:flex;flex-direction:column;gap:10px"><div class="sec-t" style="margin:0">📍 ${esc(sel.name)}</div><div style="font-weight:800;font-size:17px">${esc(storeText(sel))}</div>${sel.note?`<div class="muted" style="font-size:13.5px">💡 ${esc(sel.note)}</div>`:''}
+    ${shelfSVG(sel.place,sel)}<div class="muted" style="font-size:12px">${sel.place} 문을 열고 정면에서 본 모습이에요.</div></section></div>`;
+}
 /* [테스트] 여러 명이 함께 근무 */
 const WORKERS=[
   {id:'jy',name:'김지윤',shift:'오픈 07:00–13:00',color:'#F2711C',next:'mh'},
@@ -481,7 +521,7 @@ const MANUALS0={
       steps:['컵 바닥에 딸기청 90g','얼음 1/2 담기 (딸기 층이 보이게)','우유를 천천히 부어 층 만들기','빨대 꽂고 「저어서 드세요」 안내'],
       layers:[['우유 + 얼음',.62,'#FBF3EE'],['딸기청',.24,'#E5484D']]}},
     tips:['딸기청은 제조일 7일 이내만 사용','우유 대신 오트밀크 변경 가능 (+500원)']},
-  'r-peach':{cat:'recipe',em:'🍑',title:'복숭아 아이스티',sub:'샷 추가 시 「아샷추」',loc:'storage',locText:'창고 선반 B · 아이스티 파우더 박스',views:20,
+  'r-peach':{cat:'recipe',em:'🍑',title:'복숭아 아이스티',sub:'샷 추가 시 「아샷추」',loc:'storage',locText:'창고 가운데 선반 위에서 두 번째 칸 · 아이스티 파우더 박스',views:20,
     vars:{ICE:{cup:'16oz 아이스컵',ice:true,ings:[['아이스티 파우더','35g (스쿱 1)'],['뜨거운 물','50ml'],['정수','200ml'],['얼음','컵 가득']],
       steps:['컵에 파우더 + 뜨거운 물 50ml로 완전히 녹이기','정수 200ml 붓고 섞기','얼음 가득 채우기','(아샷추) 에스프레소 1샷을 마지막에 올리기'],
       layers:[['아이스티',.84,'#F2A65A']]}},
@@ -533,7 +573,7 @@ const MANUALS0={
     steps:['스팀 밸브를 끝까지 잠그고 젖은 행주로 노즐을 감싸기','서랍 1번 칸의 「사용 중지」 표시를 2번 그룹에 걸기','1번 그룹만으로 운영 (스팀도 1번 노즐 사용)','단체방에 상황 남기기','수리 기사 방문 시간을 카드에 기록'],
     cautions:['노즐을 맨손으로 만지지 마세요 (화상 위험)','머신 전원은 끄지 마세요 (다시 데우는 데 30분)'],
     terms:[['그룹(그룹헤드)','포터필터를 끼워 커피를 추출하는 부분'],['스팀 노즐','우유 거품을 내는 금속 관']],views:3},
-  'm-ice':{cat:'equip',title:'제빙기 필터 교체',type:'장비 이상',loc:'ice',locText:'바 하부 오른쪽 제빙기, 필터는 창고 선반 C',
+  'm-ice':{cat:'equip',title:'제빙기 필터 교체',type:'장비 이상',loc:'ice',locText:'바 하부 오른쪽 제빙기, 필터는 창고 가운데 선반 맨 아래 칸',
     purpose:'필터 경고등이 켜지면 얼음 생성이 느려지고 얼음이 탁해져요. 경고등이 켜진 뒤 1주일 안에 교체해요.',
     steps:['제빙기 전원 스위치 OFF','하부 커버를 앞으로 당겨 분리','기존 필터를 왼쪽으로 90° 돌려 빼기','새 필터를 끼우고 오른쪽으로 90° 돌려 고정','전원 ON 후 「RESET」 버튼 3초 누르기','첫 얼음 한 판은 버리기'],
     cautions:['교체 중 바닥에 물이 샐 수 있어 행주를 깔아 주세요','필터 재고가 1개 이하면 사장님께 알려 주세요'],
@@ -563,37 +603,37 @@ const MANUALS0={
   'm-milk':{cat:'etc',title:'우유 발주하기',type:'재고·발주',loc:'fridge',locText:'워크인 냉장고 2번 칸 (문 열고 왼쪽 두 번째)',
     purpose:'우유는 하루 평균 10팩을 사용해요. 발주하면 다음 날 오전 9시에 도착하므로, 재고가 3팩 이하면 당일 14시 전에 발주해야 해요.',
     steps:['워크인 냉장고 2번 칸에서 남은 팩 수 확인 (유통기한 빠른 것을 앞으로)','카운터 태블릿 홈 화면의 「발주」 즐겨찾기 → 「한빛유업 대리점」 선택','기본 수량 12팩 입력 (주말 전날은 16팩)','발주 완료 화면을 캡처해 이 카드에 첨부','카드를 「완료」로 변경'],
-    cautions:['14시 이후 발주는 다음다음 날 도착해요','두유·오트밀크는 다른 거래처예요 (창고 선반 B)'],
+    cautions:['14시 이후 발주는 다음다음 날 도착해요','두유·오트밀크는 다른 거래처예요 (창고 오른쪽 선반 세 번째 칸)'],
     terms:[['대리점','우유를 매일 배송해 주는 거래처'],['선입선출','먼저 들어온 재고를 먼저 쓰는 것']],views:41}
 };
 /* [5단계] 재고 위치 */
 const STOCK={
-  'r-americano':[['원두 (하우스 블렌드)','창고 선반 A 2칸 · 1kg 봉투'],['종이컵 12oz / 16oz','카운터 하부 수납장 1칸'],['뚜껑 · 슬리브','카운터 하부 수납장 2칸']],
-  'r-latte':[['우유','워크인 냉장고 2번 칸 (선입선출)'],['오트밀크','창고 선반 B (두유 옆)'],['원두','창고 선반 A 2칸']],
-  'r-vanilla':[['바닐라 시럽 여분','창고 선반 B 맨 위 (1L 병)'],['우유','워크인 냉장고 2번 칸']],
-  'r-mocha':[['초코 소스 여분','창고 선반 B 맨 위'],['휘핑크림 · 가스','바 냉장고 1칸 · 가스는 창고 선반 C']],
-  'r-coldbrew':[['콜드브루 원액','워크인 냉장고 1번 칸'],['추출용 원두 (굵게 분쇄)','창고 선반 A 3칸']],
-  'r-grapefruit':[['자몽청','워크인 냉장고 3번 칸'],['탄산수','창고 바닥 박스 (24캔)'],['로즈마리','워크인 냉장고 문쪽 칸']],
-  'r-greentea':[['녹차 파우더 여분','창고 선반 B 2칸 (녹색 라벨)']],
+  'r-americano':[['원두 (하우스 블렌드)','창고 왼쪽 선반 위에서 두 번째 칸'],['종이컵 12oz / 16oz','카운터 하부 수납장 1칸'],['뚜껑 · 슬리브','카운터 하부 수납장 2칸']],
+  'r-latte':[['우유','워크인 냉장고 왼쪽 선반 위에서 두 번째 칸 (선입선출)'],['오트밀크','창고 오른쪽 선반 위에서 세 번째 칸'],['원두','창고 왼쪽 선반 위에서 두 번째 칸']],
+  'r-vanilla':[['바닐라 시럽 여분','창고 오른쪽 선반 맨 위 칸 (1L 병)'],['우유','워크인 냉장고 왼쪽 선반 위에서 두 번째 칸']],
+  'r-mocha':[['초코 소스 여분','창고 오른쪽 선반 위에서 두 번째 칸'],['휘핑크림 · 가스','바 냉장고 1칸 · 가스는 창고 선반 C']],
+  'r-coldbrew':[['콜드브루 원액','워크인 냉장고 왼쪽 선반 맨 위 칸'],['추출용 원두 (굵게 분쇄)','창고 왼쪽 선반 위에서 세 번째 칸']],
+  'r-grapefruit':[['자몽청','워크인 냉장고 3번 칸'],['탄산수','창고 바닥 · 문 옆 (24캔 박스)'],['로즈마리','워크인 냉장고 문쪽 칸']],
+  'r-greentea':[['녹차 파우더 여분','창고 가운데 선반 위에서 두 번째 칸 (녹색 라벨)']],
   'r-strawberry':[['딸기청','워크인 냉장고 3번 칸 (빨간 뚜껑)'],['생딸기 (제조용)','워크인 냉장고 4번 칸']],
-  'r-peach':[['아이스티 파우더','창고 선반 B 박스']],
-  'r-einspanner':[['생크림','워크인 냉장고 2번 칸 오른쪽'],['연유','창고 선반 B'],['코코아 파우더','바 상부 선반']],
+  'r-peach':[['아이스티 파우더','창고 가운데 선반 위에서 두 번째 칸']],
+  'r-einspanner':[['생크림','워크인 냉장고 왼쪽 선반 위에서 두 번째 칸 오른쪽'],['연유','창고 오른쪽 선반 위에서 세 번째 칸'],['코코아 파우더','바 상부 선반']],
   'r-yuja':[['유자청','워크인 냉장고 3번 칸 (노란 뚜껑)']],
   'f-strawcake':[['홀 케이크 여분','워크인 냉장고 4번 칸'],['조각 박스 · 보냉팩','카운터 하부 수납장 3칸 · 냉동고']],
   'f-basque':[['홀 케이크 여분','워크인 냉장고 4번 칸'],['꿀 · 종지','바 상부 선반']],
   'f-hamcheese':[['파니니 완제품','워크인 냉장고 5번 칸 (입고 박스)'],['피클','워크인 냉장고 문쪽 칸'],['종이 봉투 · 유산지','카운터 하부 수납장 3칸']],
   'f-eggmayo':[['샌드위치 완제품','워크인 냉장고 5번 칸']],
   'm-group':[['캐리어 4구','창고 선반 C 아래 박스'],['컵 · 홀더','카운터 하부 수납장 1·2칸']],
-  'm-refund':[['영수증 용지','창고 선반 A 맨 위 (흰 상자)']],
+  'm-refund':[['영수증 용지','창고 가운데 선반 맨 위 칸 (흰 상자)']],
   'm-delivery':[['봉인 스티커','카운터 서랍 2칸'],['배달 봉투','카운터 하부 수납장 3칸']],
   'm-espresso':[['「사용 중지」 표시','카운터 서랍 1칸'],['여분 행주','창고 선반 C']],
-  'm-ice':[['정수 필터','창고 선반 C (2개 남음)']],
-  'm-machine':[['원두','창고 선반 A 2칸'],['계량 저울','바 상부 선반']],
+  'm-ice':[['정수 필터','창고 가운데 선반 맨 아래 칸 (2개 남음)']],
+  'm-machine':[['원두','창고 왼쪽 선반 위에서 두 번째 칸'],['계량 저울','바 상부 선반']],
   'm-grinder':[['밀폐 용기','창고 선반 C']],
   'm-backflush':[['머신 세정제','머신 아래 서랍'],['블라인드 바스켓','머신 아래 서랍']],
   'm-trash':[['쓰레기봉투 (일반 · 음식물)','창고 안쪽 분리수거함 옆 박스']],
   'm-open':[['시재 (10만 원)','카운터 금고'],['냉장고 온도 기록지','워크인 냉장고 문 옆 클립보드']],
-  'm-milk':[['우유','워크인 냉장고 2번 칸'],['두유 · 오트밀크','창고 선반 B']]
+  'm-milk':[['우유','워크인 냉장고 왼쪽 선반 위에서 두 번째 칸'],['두유 · 오트밀크','창고 오른쪽 선반 위에서 세 번째 칸']]
 };
 Object.keys(STOCK).forEach(k=>{if(MANUALS0[k])MANUALS0[k].stock=STOCK[k]});
 /* [4단계] 시연 영상은 주문·결제 / 장비만 */
@@ -758,7 +798,6 @@ function topbar(){
   const duty=onDuty();
   return `<header class="top"><div class="store">카페 온기 성수점<small>공용 패드 · 근무 ${duty.length}명</small></div>
   <span class="chip hide-m" style="padding:6px 10px">🕐 <span class="clock">${now()}</span></span>
-  <div class="row" style="gap:6px;flex-wrap:nowrap" title="눌러서 사용하는 사람 바꾸기">${duty.map(w=>`<button class="duty ${w.id===S.worker?'on':''}" onclick="switchUser('${w.id}')">${av(w)}${w.name}</button>`).join('')}<button class="duty" style="padding:4px 10px" onclick="go('attend')" title="출퇴근 화면">＋</button></div>
   <span class="grow"></span>${backupChip()}
   <button class="btn ghost hide-m" onclick="togglePhone()" title="점주 폰 ${S.phone?'숨기기':'보기'}" style="padding:10px 12px">📱</button>
   <button class="btn dark" onclick="endShift()">퇴근 · 교대 마감 ➜</button></header>`;
@@ -799,7 +838,7 @@ function clockIn(id){
   S.worker=id;S.view='home';S.filter='all';render();toast(`${W(id).name}님, ${now()} 출근 기록됐어요 👋`);
 }
 function useAs(id){S.worker=id;S.view='home';S.filter='all';render();toast(`${W(id).name}님으로 패드를 사용해요`)}
-function switchUser(id){if(S.worker===id)return;S.worker=id;render();toast(`👤 ${W(id).name}님으로 바꿨어요`)}
+function switchUser(id){if(S.worker===id)return;S.worker=id;render();scrollMsgs();toast(`👤 ${W(id).name}님 이름으로 보내요`)}
 
 /* ---- 홈 ---- */
 function viewHome(){
@@ -908,13 +947,15 @@ function setSt(i){
 /* ---- [테스트] 단체방 (실시간 소통 + 빠른 기록) ---- */
 function clearFresh(){S.room.forEach(m=>m.fresh=false)}
 function push(m){clearFresh();m.id='m'+(++MID);m.t=m.t||now();m.fresh=true;S.room.push(m);return m}
+function senderPick(){const d=onDuty();
+  return `<div class="row" style="gap:6px;margin-top:10px"><span class="muted" style="font-size:12.5px;font-weight:700">보내는 사람</span>${d.map(w=>`<button class="duty ${w.id===S.worker?'on':''}" onclick="switchUser('${w.id}')">${av(w)}${w.name}</button>`).join('')}<button class="duty" style="padding:4px 10px" onclick="go('attend')" title="출근한 사람 추가">＋ 출근</button></div>`}
 function chatBox(cid){
   const L=cid?S.room.filter(m=>m.card===cid):S.room;
   const typing=S.typing&&(cid?S.typing===cid:true);
   const q=cid?['확인했어요','지금 처리 중이에요','도움이 필요해요']:['확인했습니다!','오픈 완료했어요','잠깐 자리 비워요','도움이 필요해요'];
   return `<div class="chat"><div class="msgs" id="msgs-${cid||'room'}">${L.length?L.map(m=>bubble(m,false,!!cid)).join(''):'<div class="msg sys"><div class="bub">아직 이 카드 이야기가 없어요. 급한 일은 여기서 바로 보내세요.</div></div>'}${typing?'<div class="msg typing"><span class="who">'+OWNER+'</span><div class="bub"><i></i><i></i><i></i></div></div>':''}</div>
   <div class="quick">${q.map(x=>`<button onclick="sendW('${x}',${cid?`'${cid}'`:'null'})">${x}</button>`).join('')}</div>
-  <form class="send" onsubmit="event.preventDefault();sendW(this.m.value,${cid?`'${cid}'`:'null'});"><input name="m" id="msgin" placeholder="${cid?'이 카드에 대해 단체방에 보내기…':'단체방에 보내기… 예) 오트밀크 3팩 남음 내일까지 발주'}" autocomplete="off"><button class="btn primary">보내기</button></form>
+  ${senderPick()}<form class="send" onsubmit="event.preventDefault();sendW(this.m.value,${cid?`'${cid}'`:'null'});"><input name="m" id="msgin" placeholder="${cid?'이 카드에 대해 단체방에 보내기…':'단체방에 보내기… 예) 오트밀크 3팩 남음 내일까지 발주'}" autocomplete="off"><button class="btn primary">보내기</button></form>
   ${cid?'':`<div class="tools"><button class="btn" onclick="S.recFrom='chat';startVoice()">🎙️ 음성으로 기록</button><button class="btn" onclick="inputToCard()">📋 입력한 글을 인수인계 카드로</button><span class="muted" style="font-size:12.5px;align-self:center">기록은 AI가 카드로 정리해 이 방에 올려요</span></div>`}</div>`;
 }
 function bubble(m,ownerView,inCard){
@@ -1103,14 +1144,14 @@ function mlistHTML(){
     return `<div class="mgroup"><div class="sec-t">${CATS[c].ic} ${CATS[c].l} <span class="muted" style="font-weight:500;font-size:13px">${L.length}</span><button class="muted" style="margin-left:auto;font-size:13px;font-weight:500" onclick="S.mCat='${c}';render()">전체 보기 ›</button></div><div class="mgrid">${L.map(([k,m])=>mcardHTML(k,m)).join('')}</div></div>`}).join('');
   return `<div class="mgrid">${all.map(([k,m])=>mcardHTML(k,m)).join('')}</div>`;
 }
-function drawM(){const el=$('#mlist');if(el)el.innerHTML=mlistHTML()}
+function drawM(){const el=$('#mlist');if(el)el.innerHTML=S.mCat==='stock'?stockView():mlistHTML()}
 function viewManuals(){
-  const cnt=c=>Object.values(S.manuals).filter(m=>c==='all'||m.cat===c).length;
+  const cnt=c=>c==='stock'?STORE_MAP.length:Object.values(S.manuals).filter(m=>c==='all'||m.cat===c).length;
   const tab=(c,l)=>`<button class="ctab ${S.mCat===c?'on':''}" onclick="S.mCat='${c}';render()">${l} <em>${cnt(c)}</em></button>`;
   return `<h1 class="h1">업무 매뉴얼</h1><p class="sub">우리 매장만의 노하우가 쌓여요. 카드에서 바로 열리고, 반복 질문은 점주 승인 후 매뉴얼이 돼요.</p>
-  <div class="ctabs">${tab('all','전체')}${Object.entries(CATS).map(([c,T])=>tab(c,T.ic+' '+T.l)).join('')}</div>
-  <input class="msearch" placeholder="🔍 메뉴·재료·업무 검색 (예: 바닐라, 환불, 우유)" value="${esc(S.mq)}" oninput="S.mq=this.value;drawM()">
-  <div id="mlist">${mlistHTML()}</div>`;
+  <div class="ctabs">${tab('all','전체')}${Object.entries(CATS).map(([c,T])=>tab(c,T.ic+' '+T.l)).join('')}${tab('stock','📦 재고 위치')}</div>
+  <input class="msearch" placeholder="${S.mCat==='stock'?'🔍 재료 검색 (예: 시럽, 우유)':'🔍 메뉴·재료·업무 검색 (예: 바닐라, 환불, 우유)'}" value="${esc(S.mq)}" oninput="S.mq=this.value;drawM()">
+  <div id="mlist">${S.mCat==='stock'?stockView():mlistHTML()}</div>`;
 }
 function openManual(k,from){S.manual=k;S.mFrom=from;S.mDone={};S.manuals[k].views++;const m=S.manuals[k];S.rv=m.vars?(m.vars.ICE?'ICE':Object.keys(m.vars)[0]):null;S.view='manual';render();const c=$('#content');if(c)c.scrollTop=0}
 function viewManual(){
@@ -1172,8 +1213,8 @@ function viewAdmin(){
    </section></div>`;
 }
 const FAQ_DRAFT={
-  f1:{key:'m-receipt',cat:'order',stock:[['영수증 용지 (감열지)','창고 선반 A 맨 위 (흰 상자)']],title:'영수증 용지 교체',type:'재고·발주',loc:'storage',locText:'창고 선반 A 맨 위 (흰 상자) · 프린터는 포스 오른쪽',purpose:'영수증 용지가 떨어지면 카드 결제 영수증을 못 뽑아요. 프린터 빨간불이 깜빡이면 바로 교체해요.',steps:['포스 오른쪽 프린터 덮개 버튼 누르기','다 쓴 심 빼고 새 롤을 종이 끝이 위로 오게 넣기','종이를 2cm 빼고 덮개 닫기','「FEED」 버튼으로 시험 출력','창고 재고가 3롤 이하면 사장님께 알리기'],cautions:['감열지라 거꾸로 넣으면 글자가 안 나와요'],terms:[['감열지','열로 글자가 찍히는 영수증 용지']]},
-  f2:{key:'m-oat',cat:'etc',stock:[['오트밀크','창고 선반 B (두유 옆)']],title:'오트밀크 재고 확인',type:'재고·발주',loc:'storage',locText:'창고 선반 B (두유 옆)',purpose:'오트밀크는 우유와 다른 거래처라 별도로 확인해요.',steps:['창고 선반 B에서 남은 팩 수 확인','4팩 이하면 발주 앱 「오트」 거래처 선택','6팩 단위로 발주'],cautions:['개봉 후 냉장 5일 이내 사용'],terms:[['거래처','물건을 납품하는 업체']]},
+  f1:{key:'m-receipt',cat:'order',stock:[['영수증 용지 (감열지)','창고 가운데 선반 맨 위 칸 (흰 상자)']],title:'영수증 용지 교체',type:'재고·발주',loc:'storage',locText:'창고 가운데 선반 맨 위 칸 (흰 상자) · 프린터는 포스 오른쪽',purpose:'영수증 용지가 떨어지면 카드 결제 영수증을 못 뽑아요. 프린터 빨간불이 깜빡이면 바로 교체해요.',steps:['포스 오른쪽 프린터 덮개 버튼 누르기','다 쓴 심 빼고 새 롤을 종이 끝이 위로 오게 넣기','종이를 2cm 빼고 덮개 닫기','「FEED」 버튼으로 시험 출력','창고 재고가 3롤 이하면 사장님께 알리기'],cautions:['감열지라 거꾸로 넣으면 글자가 안 나와요'],terms:[['감열지','열로 글자가 찍히는 영수증 용지']]},
+  f2:{key:'m-oat',cat:'etc',stock:[['오트밀크','창고 오른쪽 선반 위에서 세 번째 칸']],title:'오트밀크 재고 확인',type:'재고·발주',loc:'storage',locText:'창고 오른쪽 선반 위에서 세 번째 칸',purpose:'오트밀크는 우유와 다른 거래처라 별도로 확인해요.',steps:['창고 오른쪽 선반 세 번째 칸에서 남은 팩 수 확인','4팩 이하면 발주 앱 「오트」 거래처 선택','6팩 단위로 발주'],cautions:['개봉 후 냉장 5일 이내 사용'],terms:[['거래처','물건을 납품하는 업체']]},
   f3:{key:'m-showcase',cat:'equip',title:'마감 시 쇼케이스 온도 설정',type:'청소·위생',loc:'showcase',locText:'카운터 앞 쇼케이스 하단 패널',purpose:'마감 후 케이크 보관 온도를 지켜야 다음 날 판매할 수 있어요.',steps:['하단 패널 「SET」 3초','온도를 3℃로 맞추기','조명 OFF, 커튼 내리기'],cautions:['5℃ 이상이면 사장님께 알리기'],terms:[['SET','설정 모드 버튼']]}
 };
 function savePromo(f){S.promo={title:f.t.value.trim(),until:f.u.value.trim(),items:f.i.value.split('\n').map(x=>x.trim()).filter(Boolean)};
@@ -1186,28 +1227,31 @@ function breakMin(w){return w>=480?60:w>=240?30:0} // 근로기준법: 4시간 3
 function monthRecords(){
   // 11/1~11/18 근무표(가상) + 오늘 실제 출퇴근 기록
   const now_=new Date(S.clock), Y=now_.getFullYear(), M=now_.getMonth(), today=now_.getDate();
-  const R=[];
+  const R=[], ds=d=>`${Y}-${String(M+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   const plan={jy:['07:00','13:00'],hn:['10:00','15:00'],mh:['13:00','19:00'],sj:['17:00','22:00'],sb:['19:00','23:00']};
   const off={jy:[0,6],hn:[0,3,6],mh:[1,2],sj:[2,4],sb:[3,5]};
+  const LATE={jy:{4:8,12:12},hn:{13:4},mh:{7:6},sj:{6:5,13:15,18:9},sb:{}}; // 지각한 날: 늦은 분
   for(let d=1;d<today;d++){const dow=new Date(Y,M,d).getDay();
     for(const w of WORKERS){if(off[w.id].includes(dow))continue;
-      const j=(d*7+w.id.charCodeAt(0))%9-4; // -4~+4분 흔들림
-      const [a,b]=plan[w.id];R.push({date:`${Y}-${String(M+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,id:w.id,in:hhmm(new Date(Y,M,d,0,toMin(a)-3+j%3).getTime()),out:hhmm(new Date(Y,M,d,0,toMin(b)+Math.abs(j)).getTime())})}}
-  for(const w of WORKERS){const a=S.att[w.id];if(a&&a.in)R.push({date:`${Y}-${String(M+1).padStart(2,'0')}-${String(today).padStart(2,'0')}`,id:w.id,in:a.in,out:a.out||null})}
-  return R.map(r=>{const gross=r.out?toMin(r.out)-toMin(r.in):null;const br=gross==null?0:breakMin(gross);return {...r,gross,br,net:gross==null?null:gross-br}});
+      const j=(d*7+w.id.charCodeAt(0))%9-4;
+      const [a,b]=plan[w.id], late=LATE[w.id][d];
+      const inM=late?toMin(a)+late:toMin(a)-3+j%3;
+      R.push({date:ds(d),id:w.id,plan:a,in:hhmm(new Date(Y,M,d,0,inM).getTime()),out:hhmm(new Date(Y,M,d,0,toMin(b)+Math.abs(j)).getTime())})}}
+  for(const w of WORKERS){const a=S.att[w.id];if(a&&a.in)R.push({date:ds(today),id:w.id,plan:plan[w.id][0],in:a.in,out:a.out||null})}
+  return R.map(r=>{const gross=r.out?toMin(r.out)-toMin(r.in):null;const br=gross==null?0:breakMin(gross);const lateMin=Math.max(0,toMin(r.in)-toMin(r.plan));return {...r,gross,br,net:gross==null?null:gross-br,late:lateMin>0,lateMin}});
 }
 function payroll(){
   const R=monthRecords();
-  return WORKERS.map(w=>{const L=R.filter(r=>r.id===w.id&&r.net!=null), net=L.reduce((a,r)=>a+r.net,0), wage=S.wage[w.id]||MIN_WAGE;
-    return {w,days:L.length,net,wage,pay:Math.round(net/60*wage/10)*10,working:R.some(r=>r.id===w.id&&r.net==null)}});
+  return WORKERS.map(w=>{const all=R.filter(r=>r.id===w.id), L=all.filter(r=>r.net!=null), net=L.reduce((a,r)=>a+r.net,0), hours=Math.floor(net/60), wage=S.wage[w.id]||MIN_WAGE;
+    return {w,days:L.length,hours,wage,pay:hours*wage,late:all.filter(r=>r.late).length,lateDays:all.filter(r=>r.late).map(r=>+r.date.slice(8)),working:all.some(r=>r.net==null)}});
 }
 function payPanel(){
   const P=payroll(), tot=P.reduce((a,x)=>a+x.pay,0), mo=new Date(S.clock).getMonth()+1;
   return `<div class="panel" style="padding:18px"><div class="sec-t">💰 ${mo}월 실근무시간 · 급여 메모 <span class="muted" style="font-weight:500;font-size:12.5px">출퇴근 기록 자동 집계</span></div>
-   <table class="alog pay"><tr><th>근무자</th><th>일수</th><th>실근무</th><th>시급</th><th style="text-align:right">예상 급여</th></tr>
-   ${P.map(x=>`<tr><td>${x.w.name}${x.working?' <span class="tag" style="background:var(--green-weak);color:var(--green)">근무 중</span>':''}</td><td>${x.days}일</td><td>${fmtH(x.net)}</td><td><input class="wage" type="number" step="10" value="${x.wage}" onchange="S.wage['${x.w.id}']=+this.value;markDirty();render()"></td><td style="text-align:right;font-weight:800">${x.pay.toLocaleString()}원</td></tr>`).join('')}
-   <tr><td colspan="4" style="font-weight:800">합계</td><td style="text-align:right;font-weight:800;color:var(--brand-ink)">${tot.toLocaleString()}원</td></tr></table>
-   <p class="muted" style="font-size:12px;margin:6px 0 10px">실근무 = 퇴근 − 출근 − 휴게(4시간 이상 30분, 8시간 이상 1시간). 주휴수당·세금·4대보험은 빠진 단순 계산이에요. 오늘 근무 중인 사람은 퇴근하면 반영돼요.</p>
+   <table class="alog pay"><tr><th>근무자</th><th>일수</th><th>실근무</th><th>지각</th><th>시급</th><th style="text-align:right">예상 급여</th></tr>
+   ${P.map(x=>`<tr><td>${x.w.name}${x.working?' <span class="tag" style="background:var(--green-weak);color:var(--green)">근무 중</span>':''}</td><td>${x.days}일</td><td><b>${x.hours}시간</b></td><td>${x.late?`<span class="tag ${x.late>=2?'red':'orange'}" title="${mo}/${x.lateDays.join(', '+mo+'/')}">${x.late}회</span>`:'<span class="muted">-</span>'}</td><td><input class="wage" type="number" step="10" value="${x.wage}" onchange="S.wage['${x.w.id}']=+this.value;markDirty();render()"></td><td style="text-align:right;font-weight:800">${x.pay.toLocaleString()}원</td></tr>`).join('')}
+   <tr><td colspan="5" style="font-weight:800">합계</td><td style="text-align:right;font-weight:800;color:var(--brand-ink)">${tot.toLocaleString()}원</td></tr></table>
+   <p class="muted" style="font-size:12px;margin:6px 0 10px">실근무 = 퇴근 − 출근 − 휴게(4시간 이상 30분, 8시간 이상 1시간), 한 달 합계를 시간 단위로 계산해요(분 단위 버림). 지각은 예정 출근 시간보다 늦게 찍힌 날이고, 2회 이상이면 빨간색이에요. 주휴수당·세금·4대보험은 빠진 단순 계산이에요. 오늘 근무 중인 사람은 퇴근하면 반영돼요.</p>
    <div class="sec-t" style="margin-bottom:6px">📝 급여 메모</div>
    <textarea rows="2" style="width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface);resize:vertical" oninput="S.payMemo=this.value;markDirty(true)">${esc(S.payMemo)}</textarea>
    <div class="row" style="margin-top:10px"><button class="btn primary" onclick="downloadPayCSV()">⬇️ 급여 CSV 내려받기</button><span class="muted" style="font-size:12px">엑셀에서 바로 열려요 (일별 기록 + 합계 + 메모)</span></div></div>`;
@@ -1215,12 +1259,12 @@ function payPanel(){
 function downloadPayCSV(){
   const R=monthRecords(), P=payroll(), mo=new Date(S.clock).getMonth()+1;
   const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
-  const rows=[['[일별 출퇴근 기록]'],['날짜','근무자','파트','출근','퇴근','총 체류(분)','휴게(분)','실근무(분)','실근무(시간)']];
-  R.sort((a,b)=>a.date.localeCompare(b.date)||a.in.localeCompare(b.in)).forEach(r=>rows.push([r.date,W(r.id).name,W(r.id).shift.split(' ')[0],r.in,r.out||'근무 중',r.gross??'',r.br,r.net??'',r.net==null?'':(r.net/60).toFixed(2)]));
-  rows.push([]);rows.push(['[근무자별 합계]']);rows.push(['근무자','근무일수','실근무(시간)','시급(원)','예상 급여(원)']);
-  P.forEach(x=>rows.push([x.w.name,x.days,(x.net/60).toFixed(2),x.wage,x.pay]));
-  rows.push(['합계','','','',P.reduce((a,x)=>a+x.pay,0)]);
-  rows.push([]);rows.push(['[메모]',S.payMemo]);rows.push(['※ 휴게: 4시간 이상 30분, 8시간 이상 1시간 차감 · 주휴수당/세금/4대보험 미포함']);
+  const rows=[['[일별 출퇴근 기록]'],['날짜','근무자','파트','예정 출근','출근','퇴근','지각','실근무(시간)']];
+  R.sort((a,b)=>a.date.localeCompare(b.date)||a.in.localeCompare(b.in)).forEach(r=>rows.push([r.date,W(r.id).name,W(r.id).shift.split(' ')[0],r.plan,r.in,r.out||'근무 중',r.late?'지각':'',r.net==null?'':+(r.net/60).toFixed(1)]));
+  rows.push([]);rows.push(['[근무자별 합계]']);rows.push(['근무자','근무일수','실근무(시간)','지각(회)','시급(원)','예상 급여(원)']);
+  P.forEach(x=>rows.push([x.w.name,x.days,x.hours,x.late,x.wage,x.pay]));
+  rows.push(['합계','','','','',P.reduce((a,x)=>a+x.pay,0)]);
+  rows.push([]);rows.push(['[메모]',S.payMemo]);rows.push(['※ 휴게: 4시간 이상 30분, 8시간 이상 1시간 차감 · 월 합계 시간 단위(분 버림) · 주휴수당/세금/4대보험 미포함']);
   const csv='\ufeff'+rows.map(r=>r.map(q).join(',')).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`cafe-ongi_payroll_${new Date(S.clock).getFullYear()}-${String(mo).padStart(2,'0')}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
   toast(`⬇️ ${mo}월 급여 CSV를 내려받았어요`);
@@ -1254,7 +1298,8 @@ function endShift(){
   const me=W(S.worker), nxt=W(me.next);
   const others=onDuty().filter(w=>w.id!==me.id);
   const open=S.cards.filter(c=>c.status<4), mine=S.cards.filter(c=>c.shift===S.shiftNo&&c.from===me.name), done=S.cards.filter(c=>c.status===4);
-  S.modal=()=>`<div class="scrim"><div class="modal"><h2 class="h1" style="margin:0">${me.name}님, 수고하셨어요 👋</h2><p class="muted" style="margin:4px 0 0">${me.shift} · ${S.att[me.id]?S.att[me.id].in+' 출근 → ':''}${now()} 퇴근으로 기록할게요.</p>
+  const pick=onDuty().length>1?`<div class="row" style="gap:6px;margin:0 0 12px"><span class="muted" style="font-size:12.5px;font-weight:700">누가 퇴근하나요?</span>${onDuty().map(w=>`<button class="duty ${w.id===me.id?'on':''}" onclick="S.worker='${w.id}';endShift()">${av(w)}${w.name}</button>`).join('')}</div>`:'';
+  S.modal=()=>`<div class="scrim"><div class="modal">${pick}<h2 class="h1" style="margin:0">${me.name}님, 수고하셨어요 👋</h2><p class="muted" style="margin:4px 0 0">${me.shift} · ${S.att[me.id]?S.att[me.id].in+' 출근 → ':''}${now()} 퇴근으로 기록할게요.</p>
    <div class="kpis" style="grid-template-columns:repeat(3,1fr);margin:16px 0 4px"><div class="panel kpi"><small>내가 남긴 카드</small><div class="v">${mine.length}</div></div><div class="panel kpi"><small>완료</small><div class="v" style="color:var(--green)">${done.length}</div></div><div class="panel kpi"><small>다음 교대로 승계</small><div class="v" style="color:var(--orange)">${open.length}</div></div></div>
    <div class="sec-t" style="margin-top:14px">🔁 ${nxt.name}님(${nxt.shift.split(' ')[0]})에게 넘어가는 카드</div>
    ${others.length?`<p class="muted" style="margin:-4px 0 6px;font-size:13px">함께 근무 중인 ${others.map(w=>w.name).join(', ')}님도 계속 볼 수 있어요.</p>`:''}
