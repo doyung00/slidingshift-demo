@@ -193,6 +193,18 @@ input,textarea,select{font:inherit;color:var(--ink)}
 .alog.pay td{padding:7px 8px;white-space:nowrap}
 .alog.pay td:first-child{white-space:normal}
 .tag{white-space:nowrap}
+.modal.pinbox{width:min(360px,100%);text-align:center}
+#staff .d{border-radius:50%;display:inline-grid;place-items:center;color:#fff;font-size:11.5px;font-weight:800;flex:none}
+.pinbox.err{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pdots{display:flex;gap:14px;justify-content:center;margin:20px 0 6px}
+.pdots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:transparent}
+.pdots i.on{background:var(--ink);border-color:var(--ink)}
+.pinbox.err .pdots i{border-color:var(--red)}
+.perr{color:var(--red);font-size:12.5px;font-weight:700;margin:0 0 8px;min-height:18px}
+.pkeys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pkeys button{height:54px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-size:20px;font-weight:700;cursor:pointer}
+.pkeys button:active{background:var(--line)}
 .wage{width:84px;border:1px solid var(--line);border-radius:8px;padding:4px 6px;background:var(--surface);text-align:right}
 .bk{gap:7px;font-size:12.5px}
 .bk i.ok{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-weak)}
@@ -456,13 +468,15 @@ function stockView(){
     ${shelfSVG(sel.place,sel)}<div class="muted" style="font-size:12px">${sel.place} 문을 열고 정면에서 본 모습이에요.</div></section></div>`;
 }
 /* [테스트] 여러 명이 함께 근무 */
-const WORKERS=[
+const WORKERS0=[
   {id:'jy',name:'김지윤',shift:'오픈 07:00–13:00',color:'#F2711C',next:'mh'},
   {id:'hn',name:'정하늘',shift:'파트 10:00–15:00',color:'#0EA5E9',next:'mh'},
   {id:'mh',name:'이민호',shift:'미들 13:00–19:00',color:'#5146E5',next:'sb'},
   {id:'sj',name:'오세진',shift:'파트 17:00–22:00',color:'#D946EF',next:'sb'},
   {id:'sb',name:'박서빈',shift:'마감 19:00–23:00',color:'#12A150',next:'jy'}
 ];
+let WORKERS=JSON.parse(JSON.stringify(WORKERS0));
+const active=()=>WORKERS.filter(w=>!w.removed);
 const OWNER='최은영 사장님';
 /* [3단계] 공용 버튼: 근무자 대신 파트로 */
 const PARTS={am:{l:'오전',ic:'☀️',t:'07:00–13:00',c:'#F2711C'},mid:{l:'미들',ic:'🌤️',t:'13:00–19:00',c:'#5146E5'},pm:{l:'저녁',ic:'🌙',t:'19:00–23:00',c:'#12A150'}};
@@ -659,7 +673,7 @@ const PLANS={fridge:'워크인 냉장고',storage:'창고',espresso:'에스프�
 let MID=100;
 function seed(){
   return {
-    view:'home', worker:'jy', nextWorker:null, shiftNo:0, filter:'all', part:'all', sel:null, manual:null, mFrom:null, mCat:'all', mq:'', rv:null,
+    view:'home', worker:'jy', ownerAuth:false, pin:'1234', pinBuf:'', pinErr:false, delAsk:null, nextWorker:null, shiftNo:0, filter:'all', part:'all', sel:null, manual:null, mFrom:null, mCat:'all', mq:'', rv:null,
     phone:true, phoneTab:'noti', phonePush:null,
     bannerCarry:0, draft:null, rec:null, recFrom:null,
     clock:new Date(2026,10,19,12,51,30).getTime(),
@@ -796,7 +810,7 @@ function side(){
   const isOn=v=>S.view===v||(v==='home'&&S.view==='card')||(v==='manuals'&&S.view==='manual')||(v==='chat'&&(S.view.startsWith('rec')||S.view==='review'));
   const n=(v,ic,l)=>`<button class="nav ${isOn(v)?'on':''}" onclick="go('${v}')"><span class="ic">${ic}</span><span class="lb">${l}</span><span class="lbm">${l.split(' ')[0]}</span>${v==='home'&&unread?`<span class="badge">${unread}</span>`:''}</button>`;
   return `<nav class="side"><div class="logo"><div class="logo-mark">S</div><div><b>슬라이딩시프트</b><small>AI 인수인계 · 업무 매뉴얼</small></div></div>
-  ${n('home','🏠','오늘의 인수인계')}${n('chat','💬','소통 · 기록')}${n('manuals','📘','업무 매뉴얼')}${n('attend','🕘','출퇴근')}<div class="sep"></div>${n('admin','📊','점주 대시보드')}
+  ${n('home','🏠','오늘의 인수인계')}${n('chat','💬','소통 · 기록')}${n('manuals','📘','업무 매뉴얼')}${n('attend','🕘','출퇴근')}<div class="sep"></div>${n('admin',S.ownerAuth?'📊':'🔒','점주 대시보드')}
   <div class="foot">MONEY팀 시연용 데모 · 데이터는 가상입니다<br><button onclick="resetDemo()">데모 처음부터</button> · <span class="kbd">?</span> 시연 순서</div></nav>`;
 }
 function topbar(){
@@ -825,7 +839,7 @@ function viewAttend(){
    <div class="row" style="gap:12px"><div class="logo-mark" style="width:48px;height:48px;font-size:20px;border-radius:14px">S</div><div><div class="h1" style="margin:0">카페 온기 성수점</div><div class="muted">슬라이딩시프트 · 출퇴근 · 근무자 선택</div></div><span class="grow" style="flex:1"></span><span class="chip">🕐 <span class="clock">${now()}</span></span>${S.worker?`<button class="btn" onclick="go('home')">← 돌아가기</button>`:''}</div>
    <p style="font-size:18px;font-weight:700;margin:26px 0 0">출근할 때 이름을 누르세요 · 지금 <span style="color:var(--green)">${duty.length}명</span> 근무 중</p>
    <p class="muted" style="margin:4px 0 0">여러 명이 함께 근무해도 괜찮아요. 출근한 사람은 위쪽 이름표를 눌러 패드를 바꿔 쓰고, 퇴근할 때 남은 일이 다음 근무자에게 넘어가요.</p>
-   <div class="att">${WORKERS.map(cardOf).join('')}</div>
+   <div class="att">${active().map(cardOf).join('')}</div>
    <div class="grid2" style="grid-template-columns:1fr 1fr;margin-top:14px">
     <div class="banner info" style="margin:0;align-self:start">📋 확인할 인수인계 카드 <b>${carry}개</b>가 기다리고 있어요.</div>
     <div class="panel" style="padding:12px 14px;box-shadow:none"><div class="sec-t" style="margin-bottom:4px">🕘 오늘 출퇴근 기록</div>${attTable(4)}</div>
@@ -1019,9 +1033,9 @@ function viewChat(){
   return `<h1 class="h1">소통 · 기록</h1><p class="sub">사장님과 모든 근무자가 함께 있는 단체방 하나예요. 말이나 글로 남기면 AI가 인수인계 카드로 정리해 이 방에 올려요.</p>
   <div class="room"><section class="panel" style="padding:16px">${promoBar()}<div class="pin" style="margin-bottom:10px">📌 <div><b>고정 공지</b> · ${esc(S.notice)}</div></div>${chatBox(null)}</section>
   <aside style="display:flex;flex-direction:column;gap:14px">
-   <div class="panel" style="padding:16px"><div class="sec-t">👥 단체방 참여자 <span class="muted" style="font-weight:500;font-size:13px">${WORKERS.length+1}명</span></div>
+   <div class="panel" style="padding:16px"><div class="sec-t">👥 단체방 참여자 <span class="muted" style="font-weight:500;font-size:13px">${active().length+1}명</span></div>
     <div class="mem"><span class="d" style="background:var(--ink)">👑</span><b>${OWNER}</b></div>
-    ${WORKERS.map(w=>`<div class="mem">${av(w,28).replace('class="d"','class="d"')}<span>${w.name} <span class="muted" style="font-size:12px">${w.shift.split(' ')[0]}</span></span>${duty.includes(w.id)?'<span class="tag" style="margin-left:auto;background:var(--green-weak);color:var(--green)">근무 중</span>':''}</div>`).join('')}</div>
+    ${active().map(w=>`<div class="mem">${av(w,28).replace('class="d"','class="d"')}<span>${w.name} <span class="muted" style="font-size:12px">${w.shift.split(' ')[0]}</span></span>${duty.includes(w.id)?'<span class="tag" style="margin-left:auto;background:var(--green-weak);color:var(--green)">근무 중</span>':''}</div>`).join('')}</div>
    <div class="panel" style="padding:16px"><div class="sec-t">📋 이번 근무에 남긴 기록</div>${mine.length?mine.map(c=>`<button class="mini" style="width:100%;text-align:left" onclick="openCard('${c.id}')">${TYPES[c.type].ic} ${esc(c.title)}<div class="muted" style="font-size:11.5px">${esc(c.from)} · ${esc(c.at)}</div></button>`).join(''):'<p class="muted" style="margin:0;font-size:13.5px">아직 없어요. 특이사항이 생기면 음성이나 글로 바로 남겨 주세요.</p>'}</div>
   </aside></div>`;
 }
@@ -1197,7 +1211,7 @@ function viewRecipe(m){
 function viewAdmin(){
   const C=S.cards, open=C.filter(c=>c.status<4).length, done=C.filter(c=>c.status===4).length, carry=C.filter(c=>c.carry&&c.status<4).length;
   const duty=onDuty();
-  return `<div class="row" style="justify-content:space-between;align-items:flex-end"><div><h1 class="h1">점주 대시보드</h1><p class="sub" style="margin:0">매장에 없어도 지금 상황을 한눈에. ${OWNER} 계정으로 보는 화면이에요.</p></div><span class="chip">👑 점주 모드</span></div>
+  return `<div class="row" style="justify-content:space-between;align-items:flex-end"><div><h1 class="h1">점주 대시보드</h1><p class="sub" style="margin:0">매장에 없어도 지금 상황을 한눈에. ${OWNER} 계정으로 보는 화면이에요.</p></div><div class="row" style="gap:8px"><span class="chip">👑 점주 모드</span><button class="btn" onclick="lockOwner()">🔒 잠그기</button></div></div>
   <div class="kpis" style="margin-top:16px">
    <div class="panel kpi"><small>지금 근무 중</small><div class="v">${duty.length}명</div><div class="d muted">${duty.map(w=>w.name).join(' · ')||'-'}</div></div>
    <div class="panel kpi"><small>미해결 · 이월 중</small><div class="v">${open}<span style="font-size:16px;color:var(--orange)"> / ${carry}</span></div><div class="d muted">완료 ${done} · 완료 전까지 자동 승계</div></div>
@@ -1214,7 +1228,7 @@ function viewAdmin(){
    <section style="display:flex;flex-direction:column;gap:18px"><div class="panel" style="padding:18px"><div class="sec-t">🕘 오늘 출퇴근 기록</div>${attTable()}</div>
 
    <div class="panel" style="padding:18px"><div class="sec-t">📉 인수인계 누락 건수 (파일럿 가정치)</div>
-   <div class="bars">${[['도입 전 1주',9,1],['도입 전 2주',11,1],['도입 1주',5,0],['도입 2주',3,0],['도입 3주',2,0],['도입 4주',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*8}px"></i>${l}</div>`).join('')}</div></div></section></div><div class="grid2" style="margin-top:18px;grid-template-columns:1.4fr 1fr">${payPanel()}${backupPanel()}</div><div style="margin-top:18px"><section class="panel" style="padding:18px"><div class="sec-t">카드 상태 보드</div><div class="board">${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="col"><h4>${stBadge(i)}<span class="muted">${L.length}</span></h4>${L.map(c=>`<div class="mini" ${c.urgent&&c.status<4?'style="border-color:var(--red)"':''}>${TYPES[c.type].ic} ${esc(c.title)}${c.assignee?`<div class="muted" style="font-size:11.5px">👤 ${esc(c.assignee)}</div>`:''}</div>`).join('')}</div>`}).join('')}</div>
+   <div class="bars">${[['도입 전 1주',9,1],['도입 전 2주',11,1],['도입 1주',5,0],['도입 2주',3,0],['도입 3주',2,0],['도입 4주',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*8}px"></i>${l}</div>`).join('')}</div></div></section></div><div class="grid2" style="margin-top:18px;grid-template-columns:1.4fr 1fr">${payPanel()}${backupPanel()}</div><div style="margin-top:18px">${staffPanel()}</div><div style="margin-top:18px"><section class="panel" style="padding:18px"><div class="sec-t">카드 상태 보드</div><div class="board">${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="col"><h4>${stBadge(i)}<span class="muted">${L.length}</span></h4>${L.map(c=>`<div class="mini" ${c.urgent&&c.status<4?'style="border-color:var(--red)"':''}>${TYPES[c.type].ic} ${esc(c.title)}${c.assignee?`<div class="muted" style="font-size:11.5px">👤 ${esc(c.assignee)}</div>`:''}</div>`).join('')}</div>`}).join('')}</div>
    </section></div>`;
 }
 const FAQ_DRAFT={
@@ -1229,6 +1243,70 @@ const MIN_WAGE=10320; // 2026년 최저시급
 const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
 const fmtH=m=>`${Math.floor(m/60)}시간${m%60?` ${m%60}분`:''}`;
 function breakMin(w){return w>=480?60:w>=240?30:0} // 근로기준법: 4시간 30분, 8시간 1시간 휴게
+/* [11] 알바생 추가·삭제 */
+const COLORS=['#F2711C','#0EA5E9','#5146E5','#D946EF','#12A150','#E11D48','#CA8A04','#0891B2','#7C3AED','#65A30D','#DB2777','#475569'];
+const SHIFT_PRESET={'오픈':['07:00','13:00'],'미들':['13:00','19:00'],'마감':['19:00','23:00'],'파트':['10:00','15:00']};
+function planOf(w){const m=(w.shift||'').match(/(\d\d:\d\d)\s*[–-]\s*(\d\d:\d\d)/);return m?[m[1],m[2]]:['09:00','18:00']}
+function nextOf(me){const n=W(me.next);if(n&&!n.removed)return n;
+  const L=active().filter(w=>w.id!==me.id);if(!L.length)return me;const end=toMin(planOf(me)[1]);
+  const after=L.filter(w=>toMin(planOf(w)[0])>=end-60).sort((a,b)=>toMin(planOf(a)[0])-toMin(planOf(b)[0]));
+  return after[0]||L.sort((a,b)=>toMin(planOf(a)[0])-toMin(planOf(b)[0]))[0]}
+function staffPanel(){
+  const duty=onDuty().map(w=>w.id), L=active();
+  return `<section class="panel" style="padding:18px" id="staff"><div class="sec-t">👥 알바생 관리 <span class="muted" style="font-weight:500;font-size:12.5px">${L.length}명 · 추가하면 출퇴근·단체방·급여에 바로 나와요</span></div>
+   <div class="grid2" style="grid-template-columns:1.3fr 1fr;gap:18px;align-items:start">
+   <table class="alog pay"><tr><th>이름</th><th>근무 시간</th><th>시급</th><th></th></tr>
+   ${L.map(w=>`<tr><td><span class="row" style="gap:8px">${av(w,24)}<b>${esc(w.name)}</b>${duty.includes(w.id)?'<span class="tag" style="background:var(--green-weak);color:var(--green)">근무 중</span>':''}</span></td><td>${esc(w.shift)}</td><td>${(S.wage[w.id]||MIN_WAGE).toLocaleString()}원</td>
+    <td style="text-align:right">${S.delAsk===w.id?`<span class="row" style="gap:6px;justify-content:flex-end"><span style="font-size:12.5px;color:var(--red);font-weight:700">정말 삭제할까요?</span><button class="btn" style="padding:6px 10px;color:#fff;background:var(--red);border-color:var(--red)" onclick="delWorker('${w.id}')">삭제</button><button class="btn" style="padding:6px 10px" onclick="S.delAsk=null;render()">취소</button></span>`:`<button class="btn" style="padding:6px 10px" onclick="askDel('${w.id}')">🗑️ 삭제</button>`}</td></tr>`).join('')}</table>
+   <form onsubmit="event.preventDefault();addWorker(this)" style="display:flex;flex-direction:column;gap:8px;border:1px dashed var(--line);border-radius:14px;padding:14px">
+    <b style="font-size:14px">➕ 새 알바생 추가</b>
+    <input name="nm" placeholder="이름 (예: 한도윤)" maxlength="10" required style="border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--surface)">
+    <div class="row" style="gap:6px;flex-wrap:wrap">${Object.keys(SHIFT_PRESET).map((k,i)=>`<label class="chip" style="cursor:pointer"><input type="radio" name="pt" value="${k}" ${i?'':'checked'} onchange="const f=this.form;f.st.value=SHIFT_PRESET['${k}'][0];f.en.value=SHIFT_PRESET['${k}'][1]"> ${k}</label>`).join('')}</div>
+    <div class="row" style="gap:6px"><input name="st" type="time" value="07:00" required style="border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--surface)"> ~ <input name="en" type="time" value="13:00" required style="border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--surface)"></div>
+    <label class="row" style="gap:6px;font-size:13px">시급 <input name="wg" type="number" step="10" min="0" value="${MIN_WAGE}" class="wage"> 원</label>
+    <button class="btn primary">추가하기</button></form></div>
+   <p class="muted" style="font-size:12px;margin:10px 0 0">근무 중인 사람은 퇴근한 뒤에 삭제할 수 있어요. 삭제해도 이번 달 출퇴근 기록과 급여는 남아요.</p>
+   <form class="row" style="gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)" onsubmit="event.preventDefault();changePin(this)"><b style="font-size:13.5px">🔑 대시보드 비밀번호 변경</b><input name="p1" inputmode="numeric" maxlength="4" placeholder="새 비밀번호 4자리" style="width:150px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface)"><button class="btn">변경</button></form></section>`;
+}
+function addWorker(f){
+  const name=f.nm.value.trim(), st=f.st.value, en=f.en.value, pt=(f.querySelector('input[name=pt]:checked')||{}).value||'파트';
+  if(!name)return toast('이름을 입력해 주세요');
+  if(active().some(w=>w.name===name))return toast('같은 이름의 알바생이 이미 있어요');
+  if(!st||!en||toMin(en)<=toMin(st))return toast('근무 시간을 확인해 주세요');
+  const used=active().map(w=>w.color), color=COLORS.find(c=>!used.includes(c))||COLORS[WORKERS.length%COLORS.length];
+  const id='w'+Date.now().toString(36);
+  WORKERS.push({id,name,shift:`${pt} ${st}–${en}`,color,added:true});
+  if(+f.wg.value&&+f.wg.value!==MIN_WAGE)S.wage[id]=+f.wg.value;
+  sysMsg(`${name}님이 단체방에 들어왔어요`);notify('👥 알바생 추가',`${name} · ${pt} ${st}–${en}`);toast(`${name}님을 추가했어요`);render();
+}
+function askDel(id){if(onDuty().some(w=>w.id===id))return toast(`${W(id).name}님은 근무 중이에요. 퇴근한 뒤에 삭제할 수 있어요`);
+  if(active().length<=1)return toast('알바생이 최소 1명은 있어야 해요');S.delAsk=id;render()}
+function delWorker(id){const w=W(id);if(!w||onDuty().some(x=>x.id===id))return;
+  w.removed=true;S.delAsk=null;if(S.nextWorker===id)S.nextWorker=null;
+  sysMsg(`${w.name}님이 단체방에서 나갔어요`);notify('👥 알바생 삭제',w.name);toast(`${w.name}님을 삭제했어요`);render()}
+/* [11] 점주 대시보드 비밀번호 */
+function askPin(){S.pinBuf='';S.pinErr=false;S.pinOpen=true;S.modal=pinModal;render()}
+function closePin(){S.pinOpen=false;S.modal=null;render()}
+function pinModal(){
+  const dots=[0,1,2,3].map(i=>`<i class="${i<S.pinBuf.length?'on':''}"></i>`).join('');
+  const keys=['1','2','3','4','5','6','7','8','9','','0','del'];
+  return `<div class="scrim" onclick="if(event.target===this)closePin()"><div class="modal pinbox ${S.pinErr?'err':''}">
+   <div style="font-size:34px">🔒</div><h2 class="h1" style="margin:6px 0 2px">점주 대시보드</h2><p class="muted" style="margin:0">사장님 비밀번호 4자리를 입력하세요</p>
+   <div class="pdots">${dots}</div><p class="perr">${S.pinErr?'비밀번호가 달라요. 다시 입력해 주세요':'&nbsp;'}</p>
+   <div class="pkeys">${keys.map(k=>k?`<button onclick="pinKey('${k}')">${k==='del'?'⌫':k}</button>`:'<span></span>').join('')}</div>
+   <p class="muted" style="font-size:12px;margin:12px 0 0">시연용 비밀번호: <b>${S.pin==='1234'?'1234':'변경됨'}</b> · <a href="#" onclick="event.preventDefault();closePin()">취소</a></p></div></div>`}
+function pinKey(k){
+  if(k==='del'){S.pinBuf=S.pinBuf.slice(0,-1);S.pinErr=false;pinPaint();return}
+  if(S.pinBuf.length>=4)return;S.pinBuf+=k;S.pinErr=false;pinPaint();
+  if(S.pinBuf.length===4)setTimeout(()=>{
+    if(S.pinBuf===S.pin){S.ownerAuth=true;S.pinOpen=false;S.modal=null;S.pinBuf='';go('admin');toast('👑 점주 모드로 들어왔어요')}
+    else{S.pinErr=true;S.pinBuf='';pinPaint()}},180)}
+function pinPaint(){const bx=$('.pinbox');if(!bx)return render();
+  bx.querySelectorAll('.pdots i').forEach((d,i)=>d.classList.toggle('on',i<S.pinBuf.length));
+  bx.querySelector('.perr').innerHTML=S.pinErr?'비밀번호가 달라요. 다시 입력해 주세요':'&nbsp;';
+  bx.classList.remove('err');if(S.pinErr){void bx.offsetWidth;bx.classList.add('err')}}
+function lockOwner(){S.ownerAuth=false;S.view='home';render();toast('🔒 점주 대시보드를 잠갔어요')}
+function changePin(f){const a=f.p1.value.trim();if(!/^\d{4}$/.test(a))return toast('숫자 4자리로 입력해 주세요');S.pin=a;f.reset();markDirty();toast('🔑 비밀번호를 바꿨어요')}
 function monthRecords(){
   // 11/1~11/18 근무표(가상) + 오늘 실제 출퇴근 기록
   const now_=new Date(S.clock), Y=now_.getFullYear(), M=now_.getMonth(), today=now_.getDate();
@@ -1237,24 +1315,24 @@ function monthRecords(){
   const off={jy:[0,6],hn:[0,3,6],mh:[1,2],sj:[2,4],sb:[3,5]};
   const LATE={jy:{4:8,12:12},hn:{13:4},mh:{7:6},sj:{6:5,13:15,18:9},sb:{}}; // 지각한 날: 늦은 분
   for(let d=1;d<today;d++){const dow=new Date(Y,M,d).getDay();
-    for(const w of WORKERS){if(off[w.id].includes(dow))continue;
+    for(const w of WORKERS){if(!plan[w.id]||off[w.id].includes(dow))continue;
       const j=(d*7+w.id.charCodeAt(0))%9-4;
       const [a,b]=plan[w.id], late=LATE[w.id][d];
       const inM=late?toMin(a)+late:toMin(a)-3+j%3;
       R.push({date:ds(d),id:w.id,plan:a,in:hhmm(new Date(Y,M,d,0,inM).getTime()),out:hhmm(new Date(Y,M,d,0,toMin(b)+Math.abs(j)).getTime())})}}
-  for(const w of WORKERS){const a=S.att[w.id];if(a&&a.in)R.push({date:ds(today),id:w.id,plan:plan[w.id][0],in:a.in,out:a.out||null})}
+  for(const w of WORKERS){const a=S.att[w.id];if(a&&a.in)R.push({date:ds(today),id:w.id,plan:(plan[w.id]||planOf(w))[0],in:a.in,out:a.out||null})}
   return R.map(r=>{const gross=r.out?toMin(r.out)-toMin(r.in):null;const br=gross==null?0:breakMin(gross);const lateMin=Math.max(0,toMin(r.in)-toMin(r.plan));return {...r,gross,br,net:gross==null?null:gross-br,late:lateMin>0,lateMin}});
 }
 function payroll(){
   const R=monthRecords();
-  return WORKERS.map(w=>{const all=R.filter(r=>r.id===w.id), L=all.filter(r=>r.net!=null), net=L.reduce((a,r)=>a+r.net,0), hours=Math.floor(net/60), wage=S.wage[w.id]||MIN_WAGE;
+  return WORKERS.filter(w=>!w.removed||R.some(r=>r.id===w.id)).map(w=>{const all=R.filter(r=>r.id===w.id), L=all.filter(r=>r.net!=null), net=L.reduce((a,r)=>a+r.net,0), hours=Math.floor(net/60), wage=S.wage[w.id]||MIN_WAGE;
     return {w,days:L.length,hours,wage,pay:hours*wage,late:all.filter(r=>r.late).length,lateDays:all.filter(r=>r.late).map(r=>+r.date.slice(8)),working:all.some(r=>r.net==null)}});
 }
 function payPanel(){
   const P=payroll(), tot=P.reduce((a,x)=>a+x.pay,0), mo=new Date(S.clock).getMonth()+1;
   return `<div class="panel" style="padding:18px"><div class="sec-t">💰 ${mo}월 실근무시간 · 급여 메모 <span class="muted" style="font-weight:500;font-size:12.5px">출퇴근 기록 자동 집계</span></div>
    <table class="alog pay"><tr><th>근무자</th><th>일수</th><th>실근무</th><th>지각</th><th>시급</th><th style="text-align:right">예상 급여</th></tr>
-   ${P.map(x=>`<tr><td>${x.w.name}${x.working?' <span class="tag" style="background:var(--green-weak);color:var(--green)">근무 중</span>':''}</td><td>${x.days}일</td><td><b>${x.hours}시간</b></td><td>${x.late?`<span class="tag ${x.late>=2?'red':'orange'}" title="${mo}/${x.lateDays.join(', '+mo+'/')}">${x.late}회</span>`:'<span class="muted">-</span>'}</td><td><input class="wage" type="number" step="10" value="${x.wage}" onchange="S.wage['${x.w.id}']=+this.value;markDirty();render()"></td><td style="text-align:right;font-weight:800">${x.pay.toLocaleString()}원</td></tr>`).join('')}
+   ${P.map(x=>`<tr><td>${x.w.name}${x.w.removed?' <span class="tag gray">삭제됨</span>':''}${x.working?' <span class="tag" style="background:var(--green-weak);color:var(--green)">근무 중</span>':''}</td><td>${x.days}일</td><td><b>${x.hours}시간</b></td><td>${x.late?`<span class="tag ${x.late>=2?'red':'orange'}" title="${mo}/${x.lateDays.join(', '+mo+'/')}">${x.late}회</span>`:'<span class="muted">-</span>'}</td><td><input class="wage" type="number" step="10" value="${x.wage}" onchange="S.wage['${x.w.id}']=+this.value;markDirty();render()"></td><td style="text-align:right;font-weight:800">${x.pay.toLocaleString()}원</td></tr>`).join('')}
    <tr><td colspan="5" style="font-weight:800">합계</td><td style="text-align:right;font-weight:800;color:var(--brand-ink)">${tot.toLocaleString()}원</td></tr></table>
    <p class="muted" style="font-size:12px;margin:6px 0 10px">실근무 = 퇴근 − 출근 − 휴게(4시간 이상 30분, 8시간 이상 1시간), 한 달 합계를 시간 단위로 계산해요(분 단위 버림). 지각은 예정 출근 시간보다 늦게 찍힌 날이고, 2회 이상이면 빨간색이에요. 주휴수당·세금·4대보험은 빠진 단순 계산이에요. 오늘 근무 중인 사람은 퇴근하면 반영돼요.</p>
    <div class="sec-t" style="margin-bottom:6px">📝 급여 메모</div>
@@ -1300,7 +1378,7 @@ function approve(fid){const f=S.faqs.find(x=>x.id===fid),d=FAQ_DRAFT[fid];f.appr
 
 /* ---- [테스트] 퇴근 = 교대 마감 / 자동 승계 ---- */
 function endShift(){
-  const me=W(S.worker), nxt=W(me.next);
+  const me=W(S.worker), nxt=nextOf(me);
   const others=onDuty().filter(w=>w.id!==me.id);
   const open=S.cards.filter(c=>c.status<4), mine=S.cards.filter(c=>c.shift===S.shiftNo&&c.from===me.name), done=S.cards.filter(c=>c.status===4);
   const pick=onDuty().length>1?`<div class="row" style="gap:6px;margin:0 0 12px"><span class="muted" style="font-size:12.5px;font-weight:700">누가 퇴근하나요?</span>${onDuty().map(w=>`<button class="duty ${w.id===me.id?'on':''}" onclick="S.worker='${w.id}';endShift()">${av(w)}${w.name}</button>`).join('')}</div>`:'';
@@ -1334,7 +1412,7 @@ function renderPhone(){
   <div class="ph-top"><b>👑 ${OWNER}</b><div class="muted" style="font-size:11.5px">카페 온기 성수점 · 근무 중 ${onDuty().length}명 · 미해결 ${openCount()}건</div>
   <div class="tabs"><button class="${S.phoneTab==='noti'?'on':''}" onclick="S.phoneTab='noti';renderPhone()">알림 ${S.notis.filter(n=>n.fresh).length?'•':''}</button><button class="${S.phoneTab==='chat'?'on':''}" onclick="S.phoneTab='chat';renderPhone()">단체방</button></div></div>
   ${S.phoneTab==='noti'?`<div class="body">${S.notis.map(n=>`<div class="noti ${n.fresh?'new':''}"><b>${esc(n.title)}</b>${esc(n.text)}<br><small>${esc(n.t)}</small></div>`).join('')}</div>`:
-   `<div class="body" style="padding:0"><div style="padding:8px 12px;font-size:12px;font-weight:700;border-bottom:1px solid var(--line)">💬 카페 온기 성수점 단체방 · ${WORKERS.length+1}명</div><div class="msgs" id="pmsgs">${S.room.map(m=>bubble(m,true)).join('')}${S.phoneTyping?'<div class="msg me typing"><div class="bub" style="background:var(--brand)"><i style="background:#fff"></i><i style="background:#fff"></i><i style="background:#fff"></i></div></div>':''}</div></div>
+   `<div class="body" style="padding:0"><div style="padding:8px 12px;font-size:12px;font-weight:700;border-bottom:1px solid var(--line)">💬 카페 온기 성수점 단체방 · ${active().length+1}명</div><div class="msgs" id="pmsgs">${S.room.map(m=>bubble(m,true)).join('')}${S.phoneTyping?'<div class="msg me typing"><div class="bub" style="background:var(--brand)"><i style="background:#fff"></i><i style="background:#fff"></i><i style="background:#fff"></i></div></div>':''}</div></div>
    <form class="send" onsubmit="event.preventDefault();ownerSend(this.m.value,null)"><input name="m" placeholder="단체방에 답장…" autocomplete="off"><button class="btn primary" style="padding:8px 12px">↑</button></form>`}
   </div>`;
   S.notis.forEach(n=>{if(n.fresh)setTimeout(()=>{n.fresh=false},1500)});
@@ -1343,14 +1421,15 @@ function renderPhone(){
 function togglePhone(){S.phone=!S.phone;render()}
 
 /* ---- 네비게이션 ---- */
-function go(v){if(v!=='rec-voice'){clearInterval(S.recTimer);stopSR()}S.view=v;if(v==='chat')S.afterRender=scrollMsgs;render();const c=$('#content');if(c&&v!=='chat')c.scrollTop=0}
-function resetDemo(){clearInterval(S.recTimer);S=seed();render();toast('데모를 처음 상태로 되돌렸어요')}
+function go(v){if(v==='admin'&&!S.ownerAuth){askPin();return}if(v!=='admin')S.ownerAuth=false;if(v!=='rec-voice'){clearInterval(S.recTimer);stopSR()}S.view=v;if(v==='chat')S.afterRender=scrollMsgs;render();const c=$('#content');if(c&&v!=='chat')c.scrollTop=0}
+function resetDemo(){clearInterval(S.recTimer);WORKERS=JSON.parse(JSON.stringify(WORKERS0));S=seed();render();toast('데모를 처음 상태로 되돌렸어요')}
 // 메시지 보내면 폰은 자동으로 단체방 탭으로
 const _notify=notify;notify=function(t,x){_notify(t,x);if(/💬/.test(t)){S.phoneTab='chat';renderPhone()}};
 
 /* 시연 순서 도우미 (? 키) */
 document.addEventListener('keydown',e=>{
   if(e.target.matches('input,textarea'))return;
+  if(S.pinOpen){if(/^[0-9]$/.test(e.key)){pinKey(e.key);return}if(e.key==='Backspace'){pinKey('del');return}if(e.key==='Escape'){closePin();return}}
   if(e.key==='?'){S.modal=S.modal?null:()=>`<div class="scrim" onclick="S.modal=null;render()"><div class="modal"><h2 class="h1">시연 순서</h2><ol style="line-height:2;padding-left:20px;margin:10px 0 0">
    <li><b>출퇴근 화면</b>: 김지윤·정하늘 2명 근무 중 → <b>김지윤 「이 사람으로 사용」</b></li><li>홈 → <b>🎙️ 음성으로 기록</b> (바로 실시간 음성 인식, 안 되면 기본 시나리오) → AI 정리 → 추가 질문 「오늘 중」 → 단체방에 카드 올라감</li>
    <li>단체방에 「오트밀크 3팩 남음 내일까지 발주」 입력 → AI 제안 → 카드로 만들기</li>
