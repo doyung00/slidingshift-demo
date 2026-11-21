@@ -166,6 +166,37 @@ input,textarea,select{font:inherit;color:var(--ink)}
 .send input:focus{border-color:var(--brand)}
 .quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .quick button{font-size:12.5px;padding:5px 11px;border-radius:99px;background:var(--surface);border:1px solid var(--line)}
+.parts{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px;align-items:center}
+.pbtn{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:9px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);font-weight:800;font-size:14.5px;min-width:112px;position:relative}
+.pbtn small{font-weight:500;font-size:11.5px;color:var(--muted)}
+.pbtn.on{border-color:var(--brand);background:var(--brand-weak);color:var(--brand-ink)}
+.pbtn .now{position:absolute;top:-8px;right:8px;font-size:10.5px;font-weight:800;background:var(--brand);color:#fff;border-radius:99px;padding:1px 7px}
+.pbtn .n{position:absolute;top:8px;right:10px;font-size:11.5px;color:var(--muted);font-weight:700}
+.cal .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .wd{text-align:center;font-size:12px;font-weight:700;color:var(--muted);padding:2px 0}
+.cal .cd{min-height:68px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:5px;display:flex;flex-direction:column;gap:2px;text-align:left;overflow:hidden}
+.cal .cd.empty{border:0;background:transparent}
+.cal .cd.past{background:var(--surface2)}
+.cal .cd.today{border-color:var(--brand);border-width:2px}
+.cal .cd.sel{box-shadow:0 0 0 3px var(--brand-weak);border-color:var(--brand)}
+.cal .dn{font-size:12.5px;font-weight:800;color:var(--ink)}
+.cal .ev{font-size:10.5px;font-weight:700;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);border-radius:5px;padding:1px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal .more{font-size:10.5px;color:var(--muted)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;flex:none}
+.calit{display:flex;align-items:center;gap:6px;padding:9px 10px;border-radius:10px;border:1px solid var(--line);margin-bottom:6px;font-size:14px;background:var(--surface)}
+.ings.stock td{font-size:14px;padding:8px 4px} .ings.stock td:last-child{font-weight:700;color:var(--ink2)}
+.alog.pay td{padding:7px 8px;white-space:nowrap}
+.alog.pay td:first-child{white-space:normal}
+.tag{white-space:nowrap}
+.wage{width:84px;border:1px solid var(--line);border-radius:8px;padding:4px 6px;background:var(--surface);text-align:right}
+.bk{gap:7px;font-size:12.5px}
+.bk i.ok{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-weak)}
+.bk i.spin{width:12px;height:12px;border-radius:50%;border:2px solid var(--brand);border-top-color:transparent;animation:spin .7s linear infinite}
+.bk.saving{color:var(--brand-ink);border-color:var(--brand)}
+.bkrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+@media (max-width:1400px){.with-phone .top .chip.hide-m{display:none}}
+.top{flex-wrap:wrap;row-gap:8px}
+@media (max-width:760px){.cal .cd{min-height:44px}.cal .ev{display:none}.cal .grid2{grid-template-columns:1fr!important}.bk{display:none}}
 .promo{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:14px;background:linear-gradient(110deg,#FF6B6B,#F2711C);color:#fff;margin-bottom:10px;font-size:14px;box-shadow:var(--shadow)}
 .promo .em{font-size:24px}
 .promo b{font-size:15px}
@@ -373,6 +404,7 @@ const TYPES={
 /* [테스트] 매뉴얼 카테고리 */
 const CATS={
   recipe:{l:'음료 레시피',ic:'🥤',c:'var(--orange)',bg:'var(--orange-weak)'},
+  food:{l:'케이크·샌드위치',ic:'🍰',c:'#D6336C',bg:'color-mix(in srgb,#D6336C 12%,transparent)'},
   order:{l:'주문·결제',ic:'🧾',c:'var(--violet)',bg:'var(--violet-weak)'},
   equip:{l:'장비',ic:'🛠️',c:'var(--red)',bg:'var(--red-weak)'},
   clean:{l:'청소',ic:'🧽',c:'var(--green)',bg:'var(--green-weak)'},
@@ -387,6 +419,10 @@ const WORKERS=[
   {id:'sb',name:'박서빈',shift:'마감 19:00–23:00',color:'#12A150',next:'jy'}
 ];
 const OWNER='최은영 사장님';
+/* [3단계] 공용 버튼: 근무자 대신 파트로 */
+const PARTS={am:{l:'오전',ic:'☀️',t:'07:00–13:00',c:'#F2711C'},mid:{l:'미들',ic:'🌤️',t:'13:00–19:00',c:'#5146E5'},pm:{l:'저녁',ic:'🌙',t:'19:00–23:00',c:'#12A150'}};
+function curPart(){const h=new Date(S.clock).getHours();return h<13?'am':h<19?'mid':'pm'}
+function partTag(k){const P=PARTS[k];return P?`<span class="tag" style="background:color-mix(in srgb,${P.c} 14%,transparent);color:${P.c}">${P.ic} ${P.l}</span>`:''}
 
 const MANUALS0={
   /* ---------- 음료 레시피 ---------- */
@@ -450,6 +486,34 @@ const MANUALS0={
       steps:['컵에 파우더 + 뜨거운 물 50ml로 완전히 녹이기','정수 200ml 붓고 섞기','얼음 가득 채우기','(아샷추) 에스프레소 1샷을 마지막에 올리기'],
       layers:[['아이스티',.84,'#F2A65A']]}},
     tips:['파우더를 찬물에 바로 넣으면 바닥에 가라앉아요']},
+  'r-einspanner':{cat:'recipe',em:'🍮',title:'아인슈페너',sub:'진한 커피 위에 달콤한 크림 · 빨대 없이 제공',loc:'espresso',locText:'크림은 바 냉장고 1칸 (전날 마감조 제조)',views:14,
+    vars:{ICE:{cup:'12oz 유리잔',ice:true,ings:[['얼음','컵 1/2'],['정수','80ml'],['에스프레소','2샷 (40ml)'],['아인슈페너 크림','60g (스쿱 2)'],['코코아 파우더','살짝']],
+      steps:['유리잔에 얼음 1/2 → 정수 80ml','에스프레소 2샷 붓기','크림 2스쿱을 숟가락 뒤로 천천히 올려 층 만들기','코코아 파우더 살짝 · 빨대 없이 제공 (「크림과 함께 마셔요」 안내)'],
+      layers:[['크림',.26,'#FFF6E6'],['커피 + 얼음',.58,'#5A3A22']]}},
+    tips:['크림 = 생크림 500ml + 연유 60g + 설탕시럽 20ml, 70%까지만 휘핑','크림은 제조 후 2일까지']},
+  'r-yuja':{cat:'recipe',em:'🍋',title:'유자차',sub:'고흥 유자청 · 겨울 인기 메뉴',loc:'fridge',locText:'워크인 냉장고 3번 칸 · 유자청 통 (노란 뚜껑)',views:18,
+    vars:{HOT:{cup:'12oz 머그 / 종이컵',ings:[['유자청','60g'],['뜨거운 물','250ml']],steps:['컵에 유자청 60g','뜨거운 물 250ml 붓고 바닥까지 저어 주기','유자 껍질이 위로 오게 정리해 제공'],layers:[['유자차',.84,'#F7C948']]},
+     ICE:{cup:'16oz 아이스컵',ice:true,ings:[['유자청','70g'],['뜨거운 물','50ml'],['정수','180ml'],['얼음','컵 가득']],steps:['유자청 + 뜨거운 물 50ml로 녹이기','정수 180ml 넣고 섞기','얼음 가득 채우기'],layers:[['유자 + 얼음',.84,'#F9D66B']]}},
+    tips:['유자청은 숟가락을 따로 써요 (다른 청과 섞이지 않게)']},
+  /* ---------- 케이크·샌드위치 ---------- */
+  'f-strawcake':{cat:'food',em:'🍓',title:'딸기 생크림 케이크',sub:'매일 오전 10시 입고 · 1홀 = 8조각',loc:'showcase',locText:'쇼케이스 1단 · 여분 홀은 워크인 냉장고 4번 칸',views:21,isSeason:true,
+    vars:{'매장':{cup:'디저트 접시 + 포크',ings:[['조각 케이크','1조각 (1/8홀)'],['디저트 접시','1개'],['포크','1개'],['슈가파우더','살짝 (선택)']],
+      steps:['케이크 칼을 뜨거운 물에 담갔다가 닦기','홀 중심에서 8등분 (조각마다 칼 닦기)','접시 중앙에 뾰족한 쪽이 손님을 향하게 올리기','포크는 오른쪽, 쟁반에 올려 제공'],layers:[]},
+     '포장':{cup:'조각 케이크 박스',ings:[['조각 케이크','1조각'],['조각 박스','1개'],['보냉팩','1개 (30분 이상 이동 시)'],['포크','1개']],
+      steps:['박스 바닥 받침에 케이크를 옮기기','박스 접고 봉인 스티커 붙이기','이동 시간 물어보고 30분 이상이면 보냉팩 추가','「2시간 안에 드세요」 안내'],layers:[]}},
+    tips:['쇼케이스 온도 3℃ 유지 · 입고 후 이틀째 남은 조각은 폐기','홀 케이크 주문은 2일 전 예약 (포스 「예약」 메모)']},
+  'f-basque':{cat:'food',em:'🧀',title:'바스크 치즈케이크',sub:'겉은 진하게 구워 속은 크리미하게 · 1홀 = 6조각',loc:'showcase',locText:'쇼케이스 2단 · 여분은 워크인 냉장고 4번 칸',views:16,
+    vars:{'매장':{cup:'디저트 접시 + 포크',ings:[['조각 케이크','1조각 (1/6홀)'],['꿀','1스푼 (요청 시)']],steps:['냉장고에서 꺼내 실온 10분 두기 (더 부드러워요)','칼을 데워 6등분','접시에 올리고 포크 · 꿀 요청 시 옆에 작은 종지'],layers:[]},
+     '포장':{cup:'조각 케이크 박스',ings:[['조각 케이크','1조각'],['조각 박스','1개']],steps:['유산지로 옆면 감싸기','박스에 넣고 봉인 스티커'],layers:[]}},
+    tips:['구운 날 포함 3일까지 판매']},
+  'f-hamcheese':{cat:'food',em:'🥪',title:'햄치즈 파니니',sub:'주문 후 그릴에 데워 제공 · 3분',loc:'counter',locText:'파니니 그릴은 카운터 오른쪽 · 샌드위치는 쇼케이스 3단',views:25,
+    vars:{'매장':{cup:'우드 플레이트',ings:[['햄치즈 파니니 (완제품)','1개'],['피클','3조각'],['냅킨','2장']],steps:['그릴 예열 확인 (초록불)','포장 비닐 벗기고 그릴에 올리기','뚜껑 닫고 3분 (치즈가 녹을 때까지)','대각선으로 잘라 플레이트 · 피클 곁들이기'],layers:[]},
+     '포장':{cup:'샌드위치 종이 봉투',ings:[['햄치즈 파니니','1개'],['종이 봉투','1개'],['피클 컵','1개 (요청 시)']],steps:['그릴 3분','반으로 자르지 않고 유산지에 싸기','봉투에 넣고 영수증 붙이기'],layers:[]}},
+    tips:['그릴은 마감 때 와이어 브러시로 청소','쇼케이스 샌드위치는 당일 판매 · 마감 때 남으면 폐기 기록']},
+  'f-eggmayo':{cat:'food',em:'🥚',title:'에그마요 샌드위치',sub:'차갑게 제공 (데우지 않음)',loc:'showcase',locText:'쇼케이스 3단 왼쪽',views:12,
+    vars:{'매장':{cup:'우드 플레이트',ings:[['에그마요 샌드위치','1개'],['냅킨','2장']],steps:['쇼케이스에서 꺼내 유통 시간 라벨 확인','포장 그대로 플레이트에 올려 제공 (손님이 개봉)'],layers:[]},
+     '포장':{cup:'종이 봉투',ings:[['에그마요 샌드위치','1개'],['종이 봉투','1개']],steps:['라벨 확인 후 봉투에 넣기','「냉장 보관 · 오늘 중 드세요」 안내'],layers:[]}},
+    tips:['절대 그릴에 데우지 않아요 (마요네즈 분리)','라벨 시간 지난 건 바로 폐기']},
   /* ---------- 주문·결제 ---------- */
   'm-group':{cat:'order',title:'단체 주문 준비',type:'주문·예약',loc:'counter',locText:'카운터 하부 수납장 · 포스 「예약」 메모',
     purpose:'10잔 이상 단체 주문은 미리 컵·홀더·캐리어를 준비해 두면 제조 시간을 절반으로 줄일 수 있어요.',
@@ -502,12 +566,55 @@ const MANUALS0={
     cautions:['14시 이후 발주는 다음다음 날 도착해요','두유·오트밀크는 다른 거래처예요 (창고 선반 B)'],
     terms:[['대리점','우유를 매일 배송해 주는 거래처'],['선입선출','먼저 들어온 재고를 먼저 쓰는 것']],views:41}
 };
+/* [5단계] 재고 위치 */
+const STOCK={
+  'r-americano':[['원두 (하우스 블렌드)','창고 선반 A 2칸 · 1kg 봉투'],['종이컵 12oz / 16oz','카운터 하부 수납장 1칸'],['뚜껑 · 슬리브','카운터 하부 수납장 2칸']],
+  'r-latte':[['우유','워크인 냉장고 2번 칸 (선입선출)'],['오트밀크','창고 선반 B (두유 옆)'],['원두','창고 선반 A 2칸']],
+  'r-vanilla':[['바닐라 시럽 여분','창고 선반 B 맨 위 (1L 병)'],['우유','워크인 냉장고 2번 칸']],
+  'r-mocha':[['초코 소스 여분','창고 선반 B 맨 위'],['휘핑크림 · 가스','바 냉장고 1칸 · 가스는 창고 선반 C']],
+  'r-coldbrew':[['콜드브루 원액','워크인 냉장고 1번 칸'],['추출용 원두 (굵게 분쇄)','창고 선반 A 3칸']],
+  'r-grapefruit':[['자몽청','워크인 냉장고 3번 칸'],['탄산수','창고 바닥 박스 (24캔)'],['로즈마리','워크인 냉장고 문쪽 칸']],
+  'r-greentea':[['녹차 파우더 여분','창고 선반 B 2칸 (녹색 라벨)']],
+  'r-strawberry':[['딸기청','워크인 냉장고 3번 칸 (빨간 뚜껑)'],['생딸기 (제조용)','워크인 냉장고 4번 칸']],
+  'r-peach':[['아이스티 파우더','창고 선반 B 박스']],
+  'r-einspanner':[['생크림','워크인 냉장고 2번 칸 오른쪽'],['연유','창고 선반 B'],['코코아 파우더','바 상부 선반']],
+  'r-yuja':[['유자청','워크인 냉장고 3번 칸 (노란 뚜껑)']],
+  'f-strawcake':[['홀 케이크 여분','워크인 냉장고 4번 칸'],['조각 박스 · 보냉팩','카운터 하부 수납장 3칸 · 냉동고']],
+  'f-basque':[['홀 케이크 여분','워크인 냉장고 4번 칸'],['꿀 · 종지','바 상부 선반']],
+  'f-hamcheese':[['파니니 완제품','워크인 냉장고 5번 칸 (입고 박스)'],['피클','워크인 냉장고 문쪽 칸'],['종이 봉투 · 유산지','카운터 하부 수납장 3칸']],
+  'f-eggmayo':[['샌드위치 완제품','워크인 냉장고 5번 칸']],
+  'm-group':[['캐리어 4구','창고 선반 C 아래 박스'],['컵 · 홀더','카운터 하부 수납장 1·2칸']],
+  'm-refund':[['영수증 용지','창고 선반 A 맨 위 (흰 상자)']],
+  'm-delivery':[['봉인 스티커','카운터 서랍 2칸'],['배달 봉투','카운터 하부 수납장 3칸']],
+  'm-espresso':[['「사용 중지」 표시','카운터 서랍 1칸'],['여분 행주','창고 선반 C']],
+  'm-ice':[['정수 필터','창고 선반 C (2개 남음)']],
+  'm-machine':[['원두','창고 선반 A 2칸'],['계량 저울','바 상부 선반']],
+  'm-grinder':[['밀폐 용기','창고 선반 C']],
+  'm-backflush':[['머신 세정제','머신 아래 서랍'],['블라인드 바스켓','머신 아래 서랍']],
+  'm-trash':[['쓰레기봉투 (일반 · 음식물)','창고 안쪽 분리수거함 옆 박스']],
+  'm-open':[['시재 (10만 원)','카운터 금고'],['냉장고 온도 기록지','워크인 냉장고 문 옆 클립보드']],
+  'm-milk':[['우유','워크인 냉장고 2번 칸'],['두유 · 오트밀크','창고 선반 B']]
+};
+Object.keys(STOCK).forEach(k=>{if(MANUALS0[k])MANUALS0[k].stock=STOCK[k]});
+/* [4단계] 시연 영상은 주문·결제 / 장비만 */
+const VIDEO_CATS=['order','equip'];
+function stockBox(m){return m.stock&&m.stock.length?`<div class="sec-t" style="margin:6px 0 0">📦 재고 위치</div><table class="ings stock">${m.stock.map(([a,b])=>`<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join('')}</table>`:''}
+function videoBox(k,m){
+  if(!VIDEO_CATS.includes(m.cat))return '';
+  const v=S.videos[k];
+  const ctl=`<div class="row" style="gap:8px"><label class="btn">📤 ${v||m.video!==false?'영상 바꾸기':'영상 올리기'}<input type="file" accept="video/*" hidden onchange="uploadVideo('${k}',this)"></label>${v||m.video!==false?`<button class="btn ghost" onclick="removeVideo('${k}')">🗑 삭제</button>`:''}<span class="muted" style="font-size:12px">점주·관리자만 보이는 버튼이에요</span></div>`;
+  if(v)return `<div class="sec-t" style="margin:6px 0 0">🎬 시연 영상</div><video src="${v.url}" controls style="width:100%;border-radius:12px;background:#000"></video><div class="muted" style="font-size:12px">${esc(v.name)} · 방금 올림</div>${ctl}`;
+  if(m.video===false)return `<div class="sec-t" style="margin:6px 0 0">🎬 시연 영상</div><div class="video" style="background:var(--surface2);color:var(--muted);border:1.5px dashed var(--line)"><div style="text-align:center">아직 영상이 없어요<br><small style="position:static">휴대폰으로 30초만 찍어 올려 주세요</small></div></div>${ctl}`;
+  return `<div class="sec-t" style="margin:6px 0 0">🎬 시연 영상</div><div class="video"><div class="play">▶</div><small>🎬 점주가 찍은 30초 시연 영상</small></div>${ctl}`;
+}
+function uploadVideo(k,inp){const f=inp.files&&inp.files[0];if(!f)return;const old=S.videos[k];if(old)URL.revokeObjectURL(old.url);S.videos[k]={url:URL.createObjectURL(f),name:f.name};S.manuals[k].video=true;markDirty();render();toast('🎬 영상을 올렸어요 · 모든 근무자가 볼 수 있어요')}
+function removeVideo(k){const old=S.videos[k];if(old)URL.revokeObjectURL(old.url);delete S.videos[k];S.manuals[k].video=false;markDirty();render();toast('영상을 삭제했어요')}
 const PLANS={fridge:'워크인 냉장고',storage:'창고',espresso:'에스프레소 머신',grinder:'그라인더',ice:'제빙기',counter:'카운터·포스',showcase:'쇼케이스'};
 
 let MID=100;
 function seed(){
   return {
-    view:'home', worker:'jy', nextWorker:null, shiftNo:0, filter:'all', sel:null, manual:null, mFrom:null, mCat:'all', mq:'', rv:null,
+    view:'home', worker:'jy', nextWorker:null, shiftNo:0, filter:'all', part:'all', sel:null, manual:null, mFrom:null, mCat:'all', mq:'', rv:null,
     phone:true, phoneTab:'noti', phonePush:null,
     bannerCarry:0, draft:null, rec:null, recFrom:null,
     clock:new Date(2026,10,19,12,51,30).getTime(),
@@ -516,15 +623,26 @@ function seed(){
     attLog:[{id:'jy',kind:'in',t:'06:56'},{id:'hn',kind:'in',t:'09:58'}],
     cards:[
       {id:'c1',type:'재고·발주',title:'우유 재고 부족 · 오늘 발주 필요',qty:'1L 2팩 남음 → 12팩 발주',loc:'워크인 냉장고 2번 칸',next:'발주 앱에서 12팩 주문',due:'오늘 14:00 전',urgent:true,status:0,from:'박서빈',at:'어제 22:41',
-        src:{kind:'voice',text:'우유 두 팩밖에 안 남았어요. 내일 두 시 전에 발주 넣어야 토요일 단체 주문 맞출 수 있어요.',dur:'0:09'},manual:'m-milk',carry:0,assignee:null,shift:-1},
+        src:{kind:'voice',text:'우유 두 팩밖에 안 남았어요. 내일 두 시 전에 발주 넣어야 토요일 단체 주문 맞출 수 있어요.',dur:'0:09'},manual:'m-milk',part:'am',dueDay:19,carry:0,assignee:null,shift:-1},
       {id:'c2',type:'장비 이상',title:'제빙기 필터 교체 경고등',qty:'필터 1개 (창고 C)',loc:'바 하부 제빙기',next:'필터 교체 후 RESET',due:'11/20(금)까지',urgent:false,status:2,from:'김지윤',at:'어제 12:58',
-        src:{kind:'text',text:'제빙기 필터 경고등 켜짐. 필터 재고 1개 남음'},manual:'m-ice',carry:1,assignee:'박서빈',shift:-1},
+        src:{kind:'text',text:'제빙기 필터 경고등 켜짐. 필터 재고 1개 남음'},manual:'m-ice',part:'mid',dueDay:20,carry:1,assignee:'박서빈',shift:-1},
       {id:'c3',type:'주문·예약',title:'토요일 14시 단체 주문 30잔',qty:'아이스 아메리카노 20 · 라떼 10',loc:'포스 「예약」 메모',next:'금요일 마감조가 컵·홀더 33세트 준비',due:'11/21(토) 14:00',urgent:false,status:1,from:'박서빈',at:'어제 21:15',
-        src:{kind:'text',text:'토욜 2시 단체 30잔 (아아20 라떼10) 컵 미리'},manual:'m-group',recipes:['r-americano','r-latte'],carry:0,assignee:null,shift:-1},
+        src:{kind:'text',text:'토욜 2시 단체 30잔 (아아20 라떼10) 컵 미리'},manual:'m-group',recipes:['r-americano','r-latte'],part:'pm',dueDay:21,carry:0,assignee:null,shift:-1},
       {id:'c4',type:'청소·위생',title:'그라인더 호퍼 주간 청소',qty:'그라인더 2대',loc:'에스프레소 머신 오른쪽',next:'-',due:'완료됨',urgent:false,status:4,from:'박서빈',at:'어제 22:50',
-        src:{kind:'text',text:'그라인더 청소 끝'},manual:'m-grinder',carry:0,assignee:'박서빈',shift:-1}
+        src:{kind:'text',text:'그라인더 청소 끝'},manual:'m-grinder',part:'pm',carry:0,assignee:'박서빈',shift:-1}
     ],
     promo:{title:'11월 겨울 시즌 행사 진행 중',items:['생딸기라떼 출시 기념 10% 할인','아메리카노 2잔 이상 주문 시 잔당 500원 할인','포스에서 「행사」 버튼 → 해당 할인 선택'],until:'11/30(일)까지'},
+    calSel:null,
+    events:[
+      {d:19,title:'원두 입고 (2kg × 3)',kind:'etc',t:'10:00'},
+      {d:21,title:'단체 주문 30잔',kind:'group',t:'14:00'},
+      {d:24,title:'구청 위생점검',kind:'hygiene',t:'오후'},
+      {d:25,title:'정기 방역 (세스코)',kind:'hygiene',t:'09:00'},
+      {d:27,title:'직원 회식',kind:'group',t:'19:30'},
+      {d:30,title:'겨울 행사 종료',kind:'promo'}
+    ],
+    videos:{}, wage:{}, payMemo:'11월분 급여는 12/10 지급 · 주휴수당은 주 15시간 이상 근무자만 별도 계산',
+    backupAt:null,
     notice:'토요일(11/21) 14시 단체 주문 30잔 있어요. 금요일 마감조는 컵·홀더 미리 준비 부탁해요 🙏',
     /* [테스트] 단체방 하나 */
     room:[
@@ -568,7 +686,7 @@ function typeBadge(t){const T=TYPES[t]||TYPES['기타'];return `<span class="typ
 function catBadge(k){const T=CATS[k]||CATS.etc;return `<span class="type" style="color:${T.c};background:${T.bg}">${T.ic} ${T.l}</span>`}
 function stBadge(s){return `<span class="st st-${s}"><i></i>${STATUS[s]}</span>`}
 function av(w,size){size=size||22;return `<span class="d" style="width:${size}px;height:${size}px;background:${w.color}">${w.name[0]}</span>`}
-function notify(title,text){S.notis.unshift({t:now(),title,text,fresh:true});S.phonePush={title,text};renderPhone();setTimeout(()=>{S.phonePush=null;renderPhone()},3200)}
+function notify(title,text){markDirty();S.notis.unshift({t:now(),title,text,fresh:true});S.phonePush={title,text};renderPhone();setTimeout(()=>{S.phonePush=null;renderPhone()},3200)}
 setInterval(()=>{S.clock+=1000;document.querySelectorAll('.clock').forEach(c=>c.textContent=now())},1000);
 
 /* 매장 도면 (위치 안내) */
@@ -641,8 +759,8 @@ function topbar(){
   return `<header class="top"><div class="store">카페 온기 성수점<small>공용 패드 · 근무 ${duty.length}명</small></div>
   <span class="chip hide-m" style="padding:6px 10px">🕐 <span class="clock">${now()}</span></span>
   <div class="row" style="gap:6px;flex-wrap:nowrap" title="눌러서 사용하는 사람 바꾸기">${duty.map(w=>`<button class="duty ${w.id===S.worker?'on':''}" onclick="switchUser('${w.id}')">${av(w)}${w.name}</button>`).join('')}<button class="duty" style="padding:4px 10px" onclick="go('attend')" title="출퇴근 화면">＋</button></div>
-  <span class="grow"></span>
-  <button class="btn ghost hide-m" onclick="togglePhone()">📱 ${S.phone?'폰 숨기기':'점주 폰'}</button>
+  <span class="grow"></span>${backupChip()}
+  <button class="btn ghost hide-m" onclick="togglePhone()" title="점주 폰 ${S.phone?'숨기기':'보기'}" style="padding:10px 12px">📱</button>
   <button class="btn dark" onclick="endShift()">퇴근 · 교대 마감 ➜</button></header>`;
 }
 function body(){
@@ -691,23 +809,56 @@ function viewHome(){
   if(f==='open')list=list.filter(c=>c.status<4);
   if(f==='urgent')list=list.filter(c=>c.urgent&&c.status<4);
   if(f==='mine')list=list.filter(c=>c.assignee===w.name);
-  const open=openCount(), urg=S.cards.filter(c=>c.urgent&&c.status<4).length;
+  const P=S.part, cp=curPart();
+  if(P!=='all')list=list.filter(c=>c.part===P);
+  const base=P==='all'?S.cards:S.cards.filter(c=>c.part===P);
+  const open=base.filter(c=>c.status<4).length, urg=base.filter(c=>c.urgent&&c.status<4).length;
+  const pb=(k)=>{const Q=PARTS[k],n=S.cards.filter(c=>c.part===k&&c.status<4).length;return `<button class="pbtn ${P===k?'on':''}" onclick="S.part='${k}';render()">${k===cp?'<span class="now">지금</span>':''}${n?`<span class="n">${n}</span>`:''}${Q.ic} ${Q.l}<small>${Q.t}</small></button>`};
   const fb=(k,l)=>`<button class="fbtn ${f===k?'on':''}" onclick="S.filter='${k}';render()">${l}</button>`;
   return `${S.bannerCarry?`<div class="banner">🔁 이전 교대에서 끝나지 않은 <b>${S.bannerCarry}건</b>이 자동으로 승계됐어요. <button class="x muted" onclick="S.bannerCarry=0;render()">✕</button></div>`:''}
   ${promoBar()}<div class="pin">📌 <div><b>공지</b> · ${esc(S.notice)}</div></div>
   <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:6px">
-   <div><h1 class="h1">${w.name}님, 오늘의 인수인계</h1><p class="sub" style="margin:0">미해결 <b>${open}</b>건 · 긴급 <b style="color:var(--red)">${urg}</b>건 — 긴급하고 오래된 카드가 맨 위에 와요.</p></div>
+   <div><h1 class="h1">${P==='all'?'오늘의 인수인계':PARTS[P].ic+' '+PARTS[P].l+' 파트 인수인계'}</h1><p class="sub" style="margin:0">미해결 <b>${open}</b>건 · 긴급 <b style="color:var(--red)">${urg}</b>건 — 긴급하고 오래된 카드가 맨 위에 와요.</p></div>
    <div class="row"><button class="btn lg" onclick="go('chat')">💬 단체방</button><button class="btn primary lg" onclick="S.recFrom='home';startVoice()">🎙️ 음성으로 기록</button></div></div>
+  <div class="parts"><span class="muted" style="font-size:13px;font-weight:700;margin-right:2px">공용 · 파트별</span><button class="pbtn ${P==='all'?'on':''}" onclick="S.part='all';render()">📋 전체<small>모든 파트</small></button>${Object.keys(PARTS).map(pb).join('')}</div>
   <div class="filters">${fb('all','전체')}${fb('open','미해결')}${fb('urgent','긴급')}${fb('mine','내 담당')}</div>
-  <div class="cards">${list.map(hcard).join('')||'<p class="muted">해당하는 카드가 없어요.</p>'}</div>`;
+  <div class="cards">${list.map(hcard).join('')||'<p class="muted">해당하는 카드가 없어요.</p>'}</div>
+  ${calendar()}`;
 }
+/* [7단계] 달력: 위생점검 · 단체 일정 · 미해결 이월 카드 */
+const EVK={hygiene:{l:'위생점검',c:'var(--green)'},group:{l:'단체·모임',c:'var(--violet)'},promo:{l:'행사',c:'var(--orange)'},etc:{l:'기타',c:'var(--blue)'},card:{l:'미해결 카드',c:'var(--red)'}};
+function dayItems(d){
+  const ev=S.events.filter(e=>e.d===d).map(e=>({...e}));
+  const cs=S.cards.filter(c=>c.status<4&&c.dueDay===d).map(c=>({d,title:c.title,kind:'card',card:c.id,carry:c.carry}));
+  return [...cs,...ev];
+}
+function calendar(){
+  const now_=new Date(S.clock), Y=now_.getFullYear(), M=now_.getMonth(), today=now_.getDate();
+  const first=new Date(Y,M,1).getDay(), days=new Date(Y,M+1,0).getDate();
+  const sel=S.calSel||today;
+  let cells='';for(let i=0;i<first;i++)cells+='<div class="cd empty"></div>';
+  for(let d=1;d<=days;d++){const it=dayItems(d), dow=(first+d-1)%7;
+    cells+=`<button class="cd ${d===today?'today':''} ${d===sel?'sel':''} ${d<today?'past':''}" onclick="S.calSel=${d};render()"><span class="dn" ${dow===0?'style="color:var(--red)"':dow===6?'style="color:var(--blue)"':''}>${d}</span>${it.slice(0,2).map(e=>`<span class="ev" style="--c:${EVK[e.kind].c}">${e.kind==='card'?'⚠ ':''}${esc(e.title)}</span>`).join('')}${it.length>2?`<span class="more">+${it.length-2}</span>`:''}</button>`}
+  const items=dayItems(sel);
+  const overdue=S.cards.filter(c=>c.status<4&&(c.carry>0||(c.dueDay&&c.dueDay<today)));
+  return `<section class="panel cal" style="margin-top:22px;padding:18px">
+   <div class="row" style="justify-content:space-between;margin-bottom:10px"><div class="sec-t" style="margin:0">📅 ${M+1}월 일정</div><div class="row" style="gap:10px">${Object.values(EVK).map(k=>`<span class="muted" style="font-size:12px"><i class="dot" style="background:${k.c}"></i>${k.l}</span>`).join('')}</div></div>
+   <div class="calgrid">${['일','월','화','수','목','금','토'].map((w,i)=>`<div class="wd" ${i===0?'style="color:var(--red)"':i===6?'style="color:var(--blue)"':''}>${w}</div>`).join('')}${cells}</div>
+   <div class="grid2" style="margin-top:14px;grid-template-columns:1fr 1fr">
+    <div><div class="sec-t">${M+1}/${sel} ${sel===today?'(오늘)':''}</div>${items.length?items.map(e=>`<div class="calit" ${e.card?`onclick="openCard('${e.card}')" style="cursor:pointer"`:''}><i class="dot" style="background:${EVK[e.kind].c}"></i><b>${esc(e.title)}</b>${e.t?`<span class="muted">${esc(e.t)}</span>`:''}${e.card?`<span class="tag red" style="margin-left:auto">미해결${e.carry?` · ${e.carry}회 이월`:''}</span>`:`<button class="x muted" style="margin-left:auto" title="삭제" onclick="delEvent(${sel},'${esc(e.title).replace(/'/g,'')}')">✕</button>`}</div>`).join(''):'<p class="muted" style="margin:0;font-size:13.5px">일정이 없어요.</p>'}
+     <form class="send" style="margin-top:10px" onsubmit="event.preventDefault();addEvent(${sel},this)"><select name="k" style="border:1px solid var(--line);border-radius:12px;padding:0 8px;background:var(--surface)">${['hygiene','group','promo','etc'].map(k=>`<option value="${k}">${EVK[k].l}</option>`).join('')}</select><input name="t" placeholder="${M+1}/${sel} 일정 추가 (예: 위생점검)" autocomplete="off"><button class="btn">추가</button></form></div>
+    <div><div class="sec-t">⚠️ 해결 안 된 이월 카드 <span class="muted" style="font-weight:500;font-size:13px">${overdue.length}건</span></div>${overdue.length?overdue.map(c=>`<button class="calit" style="width:100%;text-align:left" onclick="openCard('${c.id}')"><i class="dot" style="background:var(--red)"></i><b>${esc(c.title)}</b><span class="muted" style="margin-left:auto;font-size:12.5px">${c.dueDay?`기한 ${M+1}/${c.dueDay}`:''}${c.carry?` · ${c.carry}회 이월`:''}</span></button>`).join(''):'<p class="muted" style="margin:0;font-size:13.5px">밀린 카드가 없어요 👍</p>'}</div>
+   </div></section>`;
+}
+function addEvent(d,f){const t=f.t.value.trim();if(!t)return;S.events.push({d,title:t,kind:f.k.value});markDirty();notify('📅 일정 추가',`${new Date(S.clock).getMonth()+1}/${d} ${t}`);render()}
+function delEvent(d,t){S.events=S.events.filter(e=>!(e.d===d&&e.title.replace(/'/g,'')===t));markDirty();render()}
 function promoBar(){const P=S.promo;if(!P||!P.title)return '';
   return `<div class="promo"><span class="em">🎉</span><div><b>${esc(P.title)}</b><ul>${P.items.filter(Boolean).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>${P.until?`<span class="dday">${esc(P.until)}</span>`:''}</div>`}
 function cardMsgs(id){return S.room.filter(m=>m.card===id&&m.from!=='card')}
 function hcard(c){
   const msgs=cardMsgs(c.id).length;
   return `<button class="panel hcard ${c.urgent&&c.status<4?'urgent':''} ${c.status===4?'done':''} ${c.fresh?'newin':''}" onclick="openCard('${c.id}')">
-   <div class="tline">${typeBadge(c.type)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}${c.carry?`<span class="tag orange">🔁 ${c.carry}회 이월</span>`:''}${c.shift===S.shiftNo-1&&c.shift>=0?'<span class="tag brand">방금 넘어옴</span>':''}<span style="margin-left:auto">${stBadge(c.status)}</span></div>
+   <div class="tline">${typeBadge(c.type)}${partTag(c.part)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}${c.carry?`<span class="tag orange">🔁 ${c.carry}회 이월</span>`:''}${c.shift===S.shiftNo-1&&c.shift>=0?'<span class="tag brand">방금 넘어옴</span>':''}<span style="margin-left:auto">${stBadge(c.status)}</span></div>
    <div class="title">${esc(c.title)}</div>
    <dl class="meta"><dt>수량</dt><dd>${esc(c.qty)}</dd><dt>위치</dt><dd>${esc(c.loc||'-')}</dd><dt>기한</dt><dd ${c.urgent&&c.status<4?'style="color:var(--red)"':''}>${esc(c.due||'-')}</dd><dt>다음 행동</dt><dd>${esc(c.next)}</dd></dl>
    <div class="foot"><span>${c.src.kind==='voice'?'🎙️ 음성':'⌨️ 메모'} · ${esc(c.from)} · ${esc(c.at)}</span><span>${c.assignee?'👤 '+esc(c.assignee):''} ${msgs?'💬 '+msgs:''} ${c.manual?'📘':''}${c.recipes?' 🥤':''}</span></div></button>`;
@@ -723,7 +874,7 @@ function viewCard(){
   if(c.status===3)acts.push(`<button class="btn primary lg" style="background:var(--green);border-color:var(--green)" onclick="setSt(4)">✅ 완료</button>`);
   return `<button class="btn ghost" onclick="go('home')" style="margin:-6px 0 12px -10px">← 오늘의 인수인계</button>
   <div class="grid2"><section class="panel" style="padding:20px;display:flex;flex-direction:column;gap:14px">
-   <div class="tline">${typeBadge(c.type)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}${c.carry?`<span class="tag orange">🔁 ${c.carry}회 이월</span>`:''}<span class="ai-tag">AI 정리</span><span style="margin-left:auto" class="muted">${esc(c.from)} · ${esc(c.at)}</span></div>
+   <div class="tline">${typeBadge(c.type)}${partTag(c.part)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}${c.carry?`<span class="tag orange">🔁 ${c.carry}회 이월</span>`:''}<span class="ai-tag">AI 정리</span><span style="margin-left:auto" class="muted">${esc(c.from)} · ${esc(c.at)}</span></div>
    <h1 class="h1" style="margin:0">${esc(c.title)}</h1>
    <div><div class="sec-t" style="margin-bottom:4px">상태 <span class="muted" style="font-weight:500;font-size:13px">눌러서 바꿀 수 있어요${c.assignee?` · 담당 ${esc(c.assignee)}`:''}</span></div>
     <div class="stepper">${STATUS.map((s,i)=>`<button class="step ${i<c.status?'past':''} ${i===c.status?'cur':''}" onclick="setSt(${i})"><span class="n">${i<c.status?'✓':i+1}</span>${s}</button>`).join('')}</div></div>
@@ -917,7 +1068,7 @@ function viewReview(){
   const fld=(k,l)=>`<div class="field ${(!d[k]&&d.ask&&askField===k)?'miss':''}"><label>${l}${(!d[k]&&d.ask&&askField===k)?' · 비어 있음':''}</label><input value="${esc(d[k])}" oninput="S.draft['${k}']=this.value" placeholder="—"></div>`;
   return `<h1 class="h1">AI 카드를 확인해 주세요</h1><p class="sub">틀린 부분은 눌러서 바로 고칠 수 있어요. 확인하면 단체방에 올라가고, 끝날 때까지 다음 근무자에게 넘어가요.</p>
   <div class="grid2"><section class="panel" style="padding:20px;display:flex;flex-direction:column;gap:14px">
-   <div class="tline"><select onchange="S.draft.type=this.value;render()" style="border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--surface);font-weight:700">${Object.keys(TYPES).map(t=>`<option ${t===d.type?'selected':''}>${t}</option>`).join('')}</select><span class="ai-tag">AI 자동 분류</span>
+   <div class="tline"><select onchange="S.draft.type=this.value;render()" style="border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--surface);font-weight:700">${Object.keys(TYPES).map(t=>`<option ${t===d.type?'selected':''}>${t}</option>`).join('')}</select><span class="ai-tag">AI 자동 분류</span><select onchange="S.draft.part=this.value" title="처리할 파트" style="border:1px solid var(--line);border-radius:99px;padding:4px 10px;background:var(--surface);font-weight:700">${Object.entries(PARTS).map(([k,Q])=>`<option value="${k}" ${k===(d.part||S.part!=='all'&&S.part||curPart())?'selected':''}>${Q.ic} ${Q.l} 파트</option>`).join('')}</select>
     <label style="margin-left:auto;display:flex;gap:6px;align-items:center;font-weight:700;font-size:14px"><input type="checkbox" ${d.urgent?'checked':''} onchange="S.draft.urgent=this.checked"> 🚨 긴급</label></div>
    <div class="field wide"><label>제목</label><input value="${esc(d.title)}" oninput="S.draft.title=this.value" style="font-size:18px"></div>
    <div class="fields">${fld('qty','수량')}${fld('due','기한')}${fld('loc','위치')}${fld('next','다음 행동')}</div>
@@ -932,7 +1083,7 @@ function answer(o){const d=S.draft;d.answer=o;const f=(d.ask.field||'due');d[f]=
 function commitDraft(){
   const d=S.draft,me=W(S.worker).name;
   const id='n'+Date.now();
-  S.cards.unshift({id,type:d.type,title:d.title,qty:d.qty||'-',loc:d.loc,next:d.next,due:d.due,urgent:d.urgent,status:0,from:me,at:'오늘 '+now(),src:d.src,manual:d.manual,carry:0,assignee:null,shift:S.shiftNo,fresh:true});
+  S.cards.unshift({id,type:d.type,title:d.title,qty:d.qty||'-',loc:d.loc,next:d.next,due:d.due,urgent:d.urgent,status:0,from:me,at:'오늘 '+now(),src:d.src,manual:d.manual,part:d.part||(S.part!=='all'?S.part:curPart()),carry:0,assignee:null,shift:S.shiftNo,fresh:true});
   if(S.fromMsg){const s=S.room.find(x=>x.from==='suggest'&&x.ref===S.fromMsg);if(s)s.done=true;S.fromMsg=null}
   push({from:'card',who:me,card:id});
   notify(d.urgent?'🚨 긴급 인수인계 카드':'📦 새 인수인계 카드',`${d.title} (${me})`);
@@ -940,10 +1091,10 @@ function commitDraft(){
 }
 
 /* ---- [테스트] 업무 매뉴얼 (카테고리 + 레시피) ---- */
-function mMatch(m,q){if(!q)return true;q=q.trim();const hay=[m.title,m.sub||'',m.locText,...(m.steps||[]),...(m.vars?Object.values(m.vars).flatMap(v=>v.ings.map(x=>x[0])):[])].join(' ');return hay.includes(q)}
+function mMatch(m,q){if(!q)return true;q=q.trim();const hay=[m.title,m.sub||'',m.locText,...(m.stock||[]).flat(),...(m.steps||[]),...(m.vars?Object.values(m.vars).flatMap(v=>v.ings.map(x=>x[0])):[])].join(' ');return hay.includes(q)}
 function mcardHTML(k,m){
-  if(m.cat==='recipe')return `<button class="panel mcard rcard" onclick="openManual('${k}','list')"><div class="tline"><span class="em">${m.em}</span>${Object.keys(m.vars).map(v=>`<span class="tag" style="background:${v==='HOT'?'var(--red-weak)':'var(--blue-weak)'};color:${v==='HOT'?'var(--red)':'var(--blue)'}">${v}</span>`).join('')}${m.isSeason?'<span class="tag orange">시즌</span>':''}</div><b style="font-size:16px">${esc(m.title)}</b><span class="muted" style="font-size:13px">${esc(m.sub)}</span><span class="muted" style="font-size:12.5px">재료 ${Object.values(m.vars)[0].ings.length}가지 · 조회 ${m.views}회</span></button>`;
-  return `<button class="panel mcard" onclick="openManual('${k}','list')"><div class="tline">${catBadge(m.cat)}${m.isNew?'<span class="tag brand">NEW · 질문에서 생성</span>':''}</div><b style="font-size:16px">${esc(m.title)}</b><span class="muted" style="font-size:13px">📍 ${esc(m.locText)}</span><span class="muted" style="font-size:12.5px">${m.steps.length}단계 · 조회 ${m.views}회</span></button>`;
+  if(m.vars)return `<button class="panel mcard rcard" onclick="openManual('${k}','list')"><div class="tline"><span class="em">${m.em}</span>${Object.keys(m.vars).map(v=>`<span class="tag" style="background:${v==='HOT'?'var(--red-weak)':v==='ICE'?'var(--blue-weak)':'var(--gray-weak)'};color:${v==='HOT'?'var(--red)':v==='ICE'?'var(--blue)':'var(--muted)'}">${v}</span>`).join('')}${m.isSeason?'<span class="tag orange">시즌</span>':''}</div><b style="font-size:16px">${esc(m.title)}</b><span class="muted" style="font-size:13px">${esc(m.sub)}</span><span class="muted" style="font-size:12.5px">재료 ${Object.values(m.vars)[0].ings.length}가지 · 조회 ${m.views}회</span></button>`;
+  return `<button class="panel mcard" onclick="openManual('${k}','list')"><div class="tline">${catBadge(m.cat)}${m.isNew?'<span class="tag brand">NEW · 질문에서 생성</span>':''}</div><b style="font-size:16px">${esc(m.title)}</b><span class="muted" style="font-size:13px">📍 ${esc(m.locText)}</span><span class="muted" style="font-size:12.5px">${m.steps.length}단계${m.stock?` · 📦 재고 ${m.stock.length}`:''}${VIDEO_CATS.includes(m.cat)&&m.video!==false?' · 🎬 영상':''} · 조회 ${m.views}회</span></button>`;
 }
 function mlistHTML(){
   const all=Object.entries(S.manuals).filter(([k,m])=>(S.mCat==='all'||m.cat===S.mCat)&&mMatch(m,S.mq));
@@ -961,11 +1112,11 @@ function viewManuals(){
   <input class="msearch" placeholder="🔍 메뉴·재료·업무 검색 (예: 바닐라, 환불, 우유)" value="${esc(S.mq)}" oninput="S.mq=this.value;drawM()">
   <div id="mlist">${mlistHTML()}</div>`;
 }
-function openManual(k,from){S.manual=k;S.mFrom=from;S.mDone={};S.manuals[k].views++;const m=S.manuals[k];S.rv=m.vars?Object.keys(m.vars)[m.vars.ICE?Object.keys(m.vars).indexOf('ICE'):0]:null;S.view='manual';render();const c=$('#content');if(c)c.scrollTop=0}
+function openManual(k,from){S.manual=k;S.mFrom=from;S.mDone={};S.manuals[k].views++;const m=S.manuals[k];S.rv=m.vars?(m.vars.ICE?'ICE':Object.keys(m.vars)[0]):null;S.view='manual';render();const c=$('#content');if(c)c.scrollTop=0}
 function viewManual(){
   const m=S.manuals[S.manual];
   const back=S.mFrom==='card'?`<button class="btn ghost" onclick="S.view='card';render()" style="margin:-6px 0 12px -10px">← 카드로 돌아가기</button>`:`<button class="btn ghost" onclick="go('manuals')" style="margin:-6px 0 12px -10px">← 업무 매뉴얼</button>`;
-  if(m.cat==='recipe')return back+viewRecipe(m);
+  if(m.vars)return back+viewRecipe(m);
   const done=Object.values(S.mDone||{}).filter(Boolean).length;
   return `${back}<div class="tline" style="margin-bottom:6px">${catBadge(m.cat)}<span class="muted" style="font-size:13px">조회 ${m.views}회 · 점주 승인됨 ✓</span></div><h1 class="h1">${esc(m.title)}</h1><p class="sub">${esc(m.purpose)}</p>
   <div class="grid2"><section class="panel" style="padding:18px"><div class="sec-t">단계별 방법 <span class="muted" style="font-weight:500;font-size:13px">${done}/${m.steps.length} 완료 · 눌러서 체크</span></div>
@@ -974,25 +1125,26 @@ function viewManual(){
    <div class="sec-t" style="margin-top:18px">⚠️ 주의사항</div><ul class="warn" style="margin:0;padding-left:30px">${m.cautions.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>
    ${m.terms&&m.terms.length?`<div class="sec-t" style="margin-top:18px">📖 매장 용어</div><dl class="terms">${m.terms.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl>`:''}</section>
   <section class="panel" style="padding:18px;display:flex;flex-direction:column;gap:12px"><div class="sec-t" style="margin:0">📍 위치 안내</div><div style="font-weight:700">${esc(m.locText)}</div>${plan(m.loc)}
-   <div class="video"><div class="play">▶</div><small>🎬 점주가 찍은 30초 시연 영상</small></div></section></div>`;
+   ${stockBox(m)}${videoBox(S.manual,m)}</section></div>`;
 }
 function viewRecipe(m){
   const keys=Object.keys(m.vars), v=m.vars[S.rv]||m.vars[keys[0]];
   const done=Object.values(S.mDone||{}).filter(Boolean).length;
-  return `<div class="tline" style="margin-bottom:6px">${catBadge('recipe')}${m.isSeason?'<span class="tag orange">시즌 메뉴</span>':''}<span class="muted" style="font-size:13px">조회 ${m.views}회 · 점주 승인됨 ✓</span></div>
+  const VL={HOT:'🔥 HOT',ICE:'🧊 ICE','매장':'🍽️ 매장','포장':'🥡 포장'};
+  return `<div class="tline" style="margin-bottom:6px">${catBadge(m.cat)}${m.isSeason?'<span class="tag orange">시즌 메뉴</span>':''}<span class="muted" style="font-size:13px">조회 ${m.views}회 · 점주 승인됨 ✓</span></div>
   <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:14px"><div><h1 class="h1">${m.em} ${esc(m.title)}</h1><p class="sub" style="margin:0">${esc(m.sub)}</p></div>
-   ${keys.length>1?`<div class="vtabs">${keys.map(k=>`<button class="${k.toLowerCase()} ${k===S.rv?'on':''}" onclick="S.rv='${k}';S.mDone={};render()">${k==='HOT'?'🔥 HOT':'🧊 ICE'}</button>`).join('')}</div>`:`<span class="tag" style="background:var(--blue-weak);color:var(--blue);font-size:13px;padding:5px 12px">🧊 ICE 전용</span>`}</div>
+   ${keys.length>1?`<div class="vtabs">${keys.map(k=>`<button class="${k.toLowerCase()} ${k===S.rv?'on':''}" onclick="S.rv='${k}';S.mDone={};render()">${VL[k]||k}</button>`).join('')}</div>`:`<span class="tag" style="background:var(--blue-weak);color:var(--blue);font-size:13px;padding:5px 12px">🧊 ICE 전용</span>`}</div>
   <div class="grid2"><section class="panel" style="padding:18px">
-   <div class="sec-t">🧪 재료 · 분량 <span class="muted" style="font-weight:500;font-size:13px">${esc(v.cup)}</span></div>
+   <div class="sec-t">${m.cat==='food'?'🍽️ 준비물':'🧪 재료 · 분량'} <span class="muted" style="font-weight:500;font-size:13px">${esc(v.cup)}</span></div>
    <table class="ings">${v.ings.map(([a,b])=>`<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join('')}</table>
    <div class="sec-t" style="margin-top:18px">만드는 순서 <span class="muted" style="font-weight:500;font-size:13px">${done}/${v.steps.length} · 눌러서 체크</span></div>
    <ol class="steps">${v.steps.map((s,i)=>`<li class="${S.mDone[i]?'ok':''}" onclick="S.mDone[${i}]=!S.mDone[${i}];render()"><span class="n">${S.mDone[i]?'✓':i+1}</span><span>${esc(s)}</span></li>`).join('')}</ol>
    ${done===v.steps.length&&S.mFrom==='card'?`<div class="banner info" style="margin:14px 0 0">🎉 다 만들었어요! <button class="btn primary" style="margin-left:auto" onclick="S.view='card';render()">카드로 돌아가기</button></div>`:''}
    <div class="sec-t" style="margin-top:18px">💡 포인트</div><ul class="warn" style="margin:0;padding-left:30px;background:var(--amber-weak)">${m.tips.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></section>
   <section class="panel" style="padding:18px;display:flex;flex-direction:column;gap:12px">
-   <div class="sec-t" style="margin:0">🥤 완성 모습 (${S.rv||keys[0]})</div>
-   <div class="cupwrap">${cup(v)}<div class="legend">${v.layers.map(([l,p,c])=>`<span><i style="background:${c}"></i>${esc(l)}</span>`).join('')}${v.ice?'<span><i style="background:rgba(200,225,255,.8)"></i>얼음</span>':''}<span class="muted" style="font-size:12px;margin-top:4px">${esc(v.cup)}</span></div></div>
-   <div class="sec-t" style="margin:6px 0 0">📍 재료 위치</div><div style="font-weight:700">${esc(m.locText)}</div>${plan(m.loc)}</section></div>`;
+   <div class="sec-t" style="margin:0">${m.cat==='food'?'🍽️':'🥤'} 완성 모습 (${S.rv||keys[0]})</div>
+   ${v.layers&&v.layers.length?`<div class="cupwrap">${cup(v)}<div class="legend">${v.layers.map(([l,p,c])=>`<span><i style="background:${c}"></i>${esc(l)}</span>`).join('')}${v.ice?'<span><i style="background:rgba(200,225,255,.8)"></i>얼음</span>':''}<span class="muted" style="font-size:12px;margin-top:4px">${esc(v.cup)}</span></div></div>`:`<div style="display:flex;gap:16px;align-items:center;padding:14px;border-radius:14px;background:var(--surface2)"><span style="font-size:64px;line-height:1">${m.em}</span><div><b>${esc(v.cup)}</b><div class="muted" style="font-size:13px">${esc(m.sub)}</div></div></div>`}
+   <div class="sec-t" style="margin:6px 0 0">📍 위치</div><div style="font-weight:700">${esc(m.locText)}</div>${plan(m.loc)}${stockBox(m)}</section></div>`;
 }
 
 /* ---- 점주 대시보드 ---- */
@@ -1014,17 +1166,79 @@ function viewAdmin(){
     <div class="row"><button class="btn primary">행사 고정</button><button type="button" class="btn" onclick="S.promo={title:'',items:[],until:''};notify('🎉 행사 종료','상단 고정 해제');render()">행사 내리기</button></div></form>
    <div class="sec-t" style="margin-top:18px">📌 공지 고정</div><form class="send" style="margin:0" onsubmit="event.preventDefault();S.notice=this.n.value;notify('📌 공지 변경',S.notice);toast('공용 패드 맨 위에 고정됐어요');render()"><input name="n" value="${esc(S.notice)}"><button class="btn">고정</button></form></section>
    <section style="display:flex;flex-direction:column;gap:18px"><div class="panel" style="padding:18px"><div class="sec-t">🕘 오늘 출퇴근 기록</div>${attTable()}</div>
+
    <div class="panel" style="padding:18px"><div class="sec-t">📉 인수인계 누락 건수 (파일럿 가정치)</div>
-   <div class="bars">${[['도입 전 1주',9,1],['도입 전 2주',11,1],['도입 1주',5,0],['도입 2주',3,0],['도입 3주',2,0],['도입 4주',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*8}px"></i>${l}</div>`).join('')}</div></div></section></div><div style="margin-top:18px"><section class="panel" style="padding:18px"><div class="sec-t">카드 상태 보드</div><div class="board">${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="col"><h4>${stBadge(i)}<span class="muted">${L.length}</span></h4>${L.map(c=>`<div class="mini" ${c.urgent&&c.status<4?'style="border-color:var(--red)"':''}>${TYPES[c.type].ic} ${esc(c.title)}${c.assignee?`<div class="muted" style="font-size:11.5px">👤 ${esc(c.assignee)}</div>`:''}</div>`).join('')}</div>`}).join('')}</div>
+   <div class="bars">${[['도입 전 1주',9,1],['도입 전 2주',11,1],['도입 1주',5,0],['도입 2주',3,0],['도입 3주',2,0],['도입 4주',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*8}px"></i>${l}</div>`).join('')}</div></div></section></div><div class="grid2" style="margin-top:18px;grid-template-columns:1.4fr 1fr">${payPanel()}${backupPanel()}</div><div style="margin-top:18px"><section class="panel" style="padding:18px"><div class="sec-t">카드 상태 보드</div><div class="board">${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="col"><h4>${stBadge(i)}<span class="muted">${L.length}</span></h4>${L.map(c=>`<div class="mini" ${c.urgent&&c.status<4?'style="border-color:var(--red)"':''}>${TYPES[c.type].ic} ${esc(c.title)}${c.assignee?`<div class="muted" style="font-size:11.5px">👤 ${esc(c.assignee)}</div>`:''}</div>`).join('')}</div>`}).join('')}</div>
    </section></div>`;
 }
 const FAQ_DRAFT={
-  f1:{key:'m-receipt',cat:'order',title:'영수증 용지 교체',type:'재고·발주',loc:'storage',locText:'창고 선반 A 맨 위 (흰 상자) · 프린터는 포스 오른쪽',purpose:'영수증 용지가 떨어지면 카드 결제 영수증을 못 뽑아요. 프린터 빨간불이 깜빡이면 바로 교체해요.',steps:['포스 오른쪽 프린터 덮개 버튼 누르기','다 쓴 심 빼고 새 롤을 종이 끝이 위로 오게 넣기','종이를 2cm 빼고 덮개 닫기','「FEED」 버튼으로 시험 출력','창고 재고가 3롤 이하면 사장님께 알리기'],cautions:['감열지라 거꾸로 넣으면 글자가 안 나와요'],terms:[['감열지','열로 글자가 찍히는 영수증 용지']]},
-  f2:{key:'m-oat',cat:'etc',title:'오트밀크 재고 확인',type:'재고·발주',loc:'storage',locText:'창고 선반 B (두유 옆)',purpose:'오트밀크는 우유와 다른 거래처라 별도로 확인해요.',steps:['창고 선반 B에서 남은 팩 수 확인','4팩 이하면 발주 앱 「오트」 거래처 선택','6팩 단위로 발주'],cautions:['개봉 후 냉장 5일 이내 사용'],terms:[['거래처','물건을 납품하는 업체']]},
+  f1:{key:'m-receipt',cat:'order',stock:[['영수증 용지 (감열지)','창고 선반 A 맨 위 (흰 상자)']],title:'영수증 용지 교체',type:'재고·발주',loc:'storage',locText:'창고 선반 A 맨 위 (흰 상자) · 프린터는 포스 오른쪽',purpose:'영수증 용지가 떨어지면 카드 결제 영수증을 못 뽑아요. 프린터 빨간불이 깜빡이면 바로 교체해요.',steps:['포스 오른쪽 프린터 덮개 버튼 누르기','다 쓴 심 빼고 새 롤을 종이 끝이 위로 오게 넣기','종이를 2cm 빼고 덮개 닫기','「FEED」 버튼으로 시험 출력','창고 재고가 3롤 이하면 사장님께 알리기'],cautions:['감열지라 거꾸로 넣으면 글자가 안 나와요'],terms:[['감열지','열로 글자가 찍히는 영수증 용지']]},
+  f2:{key:'m-oat',cat:'etc',stock:[['오트밀크','창고 선반 B (두유 옆)']],title:'오트밀크 재고 확인',type:'재고·발주',loc:'storage',locText:'창고 선반 B (두유 옆)',purpose:'오트밀크는 우유와 다른 거래처라 별도로 확인해요.',steps:['창고 선반 B에서 남은 팩 수 확인','4팩 이하면 발주 앱 「오트」 거래처 선택','6팩 단위로 발주'],cautions:['개봉 후 냉장 5일 이내 사용'],terms:[['거래처','물건을 납품하는 업체']]},
   f3:{key:'m-showcase',cat:'equip',title:'마감 시 쇼케이스 온도 설정',type:'청소·위생',loc:'showcase',locText:'카운터 앞 쇼케이스 하단 패널',purpose:'마감 후 케이크 보관 온도를 지켜야 다음 날 판매할 수 있어요.',steps:['하단 패널 「SET」 3초','온도를 3℃로 맞추기','조명 OFF, 커튼 내리기'],cautions:['5℃ 이상이면 사장님께 알리기'],terms:[['SET','설정 모드 버튼']]}
 };
 function savePromo(f){S.promo={title:f.t.value.trim(),until:f.u.value.trim(),items:f.i.value.split('\n').map(x=>x.trim()).filter(Boolean)};
   notify('🎉 행사 고정',S.promo.title||'행사 내림');toast(S.promo.title?'모든 화면 맨 위에 행사가 고정됐어요':'행사를 내렸어요');render()}
+/* [8단계] 출퇴근 → 실근무시간 → 급여 (CSV) */
+const MIN_WAGE=10320; // 2026년 최저시급
+const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
+const fmtH=m=>`${Math.floor(m/60)}시간${m%60?` ${m%60}분`:''}`;
+function breakMin(w){return w>=480?60:w>=240?30:0} // 근로기준법: 4시간 30분, 8시간 1시간 휴게
+function monthRecords(){
+  // 11/1~11/18 근무표(가상) + 오늘 실제 출퇴근 기록
+  const now_=new Date(S.clock), Y=now_.getFullYear(), M=now_.getMonth(), today=now_.getDate();
+  const R=[];
+  const plan={jy:['07:00','13:00'],hn:['10:00','15:00'],mh:['13:00','19:00'],sj:['17:00','22:00'],sb:['19:00','23:00']};
+  const off={jy:[0,6],hn:[0,3,6],mh:[1,2],sj:[2,4],sb:[3,5]};
+  for(let d=1;d<today;d++){const dow=new Date(Y,M,d).getDay();
+    for(const w of WORKERS){if(off[w.id].includes(dow))continue;
+      const j=(d*7+w.id.charCodeAt(0))%9-4; // -4~+4분 흔들림
+      const [a,b]=plan[w.id];R.push({date:`${Y}-${String(M+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,id:w.id,in:hhmm(new Date(Y,M,d,0,toMin(a)-3+j%3).getTime()),out:hhmm(new Date(Y,M,d,0,toMin(b)+Math.abs(j)).getTime())})}}
+  for(const w of WORKERS){const a=S.att[w.id];if(a&&a.in)R.push({date:`${Y}-${String(M+1).padStart(2,'0')}-${String(today).padStart(2,'0')}`,id:w.id,in:a.in,out:a.out||null})}
+  return R.map(r=>{const gross=r.out?toMin(r.out)-toMin(r.in):null;const br=gross==null?0:breakMin(gross);return {...r,gross,br,net:gross==null?null:gross-br}});
+}
+function payroll(){
+  const R=monthRecords();
+  return WORKERS.map(w=>{const L=R.filter(r=>r.id===w.id&&r.net!=null), net=L.reduce((a,r)=>a+r.net,0), wage=S.wage[w.id]||MIN_WAGE;
+    return {w,days:L.length,net,wage,pay:Math.round(net/60*wage/10)*10,working:R.some(r=>r.id===w.id&&r.net==null)}});
+}
+function payPanel(){
+  const P=payroll(), tot=P.reduce((a,x)=>a+x.pay,0), mo=new Date(S.clock).getMonth()+1;
+  return `<div class="panel" style="padding:18px"><div class="sec-t">💰 ${mo}월 실근무시간 · 급여 메모 <span class="muted" style="font-weight:500;font-size:12.5px">출퇴근 기록 자동 집계</span></div>
+   <table class="alog pay"><tr><th>근무자</th><th>일수</th><th>실근무</th><th>시급</th><th style="text-align:right">예상 급여</th></tr>
+   ${P.map(x=>`<tr><td>${x.w.name}${x.working?' <span class="tag" style="background:var(--green-weak);color:var(--green)">근무 중</span>':''}</td><td>${x.days}일</td><td>${fmtH(x.net)}</td><td><input class="wage" type="number" step="10" value="${x.wage}" onchange="S.wage['${x.w.id}']=+this.value;markDirty();render()"></td><td style="text-align:right;font-weight:800">${x.pay.toLocaleString()}원</td></tr>`).join('')}
+   <tr><td colspan="4" style="font-weight:800">합계</td><td style="text-align:right;font-weight:800;color:var(--brand-ink)">${tot.toLocaleString()}원</td></tr></table>
+   <p class="muted" style="font-size:12px;margin:6px 0 10px">실근무 = 퇴근 − 출근 − 휴게(4시간 이상 30분, 8시간 이상 1시간). 주휴수당·세금·4대보험은 빠진 단순 계산이에요. 오늘 근무 중인 사람은 퇴근하면 반영돼요.</p>
+   <div class="sec-t" style="margin-bottom:6px">📝 급여 메모</div>
+   <textarea rows="2" style="width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface);resize:vertical" oninput="S.payMemo=this.value;markDirty(true)">${esc(S.payMemo)}</textarea>
+   <div class="row" style="margin-top:10px"><button class="btn primary" onclick="downloadPayCSV()">⬇️ 급여 CSV 내려받기</button><span class="muted" style="font-size:12px">엑셀에서 바로 열려요 (일별 기록 + 합계 + 메모)</span></div></div>`;
+}
+function downloadPayCSV(){
+  const R=monthRecords(), P=payroll(), mo=new Date(S.clock).getMonth()+1;
+  const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const rows=[['[일별 출퇴근 기록]'],['날짜','근무자','파트','출근','퇴근','총 체류(분)','휴게(분)','실근무(분)','실근무(시간)']];
+  R.sort((a,b)=>a.date.localeCompare(b.date)||a.in.localeCompare(b.in)).forEach(r=>rows.push([r.date,W(r.id).name,W(r.id).shift.split(' ')[0],r.in,r.out||'근무 중',r.gross??'',r.br,r.net??'',r.net==null?'':(r.net/60).toFixed(2)]));
+  rows.push([]);rows.push(['[근무자별 합계]']);rows.push(['근무자','근무일수','실근무(시간)','시급(원)','예상 급여(원)']);
+  P.forEach(x=>rows.push([x.w.name,x.days,(x.net/60).toFixed(2),x.wage,x.pay]));
+  rows.push(['합계','','','',P.reduce((a,x)=>a+x.pay,0)]);
+  rows.push([]);rows.push(['[메모]',S.payMemo]);rows.push(['※ 휴게: 4시간 이상 30분, 8시간 이상 1시간 차감 · 주휴수당/세금/4대보험 미포함']);
+  const csv='\ufeff'+rows.map(r=>r.map(q).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`cafe-ongi_payroll_${new Date(S.clock).getFullYear()}-${String(mo).padStart(2,'0')}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+  toast(`⬇️ ${mo}월 급여 CSV를 내려받았어요`);
+}
+/* [9단계] 실시간 백업 표시 + 백업 파일 */
+let _bk=null;
+function markDirty(quiet){S.saving=true;const el=$('#bk');if(el)el.outerHTML=backupChip();clearTimeout(_bk);_bk=setTimeout(()=>{S.saving=false;S.backupAt=S.clock;try{localStorage.setItem('ss-backup',JSON.stringify(snapshot()))}catch(e){}const el2=$('#bk');if(el2)el2.outerHTML=backupChip();const bp=$('#bkp');if(bp)bp.outerHTML=backupPanel()},900)}
+function snapshot(){const {modal,afterRender,recTimer,sr,videos,draft,...rest}=S;return {savedAt:new Date().toISOString(),store:'카페 온기 성수점',data:rest}}
+function backupChip(){const t=new Date(S.backupAt||S.clock);
+  return `<span class="chip bk ${S.saving?'saving':''}" id="bk" title="모든 기록은 바뀔 때마다 서버와 이 기기에 이중으로 저장돼요">${S.saving?'<i class="spin"></i>저장 중…':`<i class="ok"></i>백업 ${t?hhmm(t.getTime())+':'+String(t.getSeconds()).padStart(2,'0'):''}`}</span>`}
+function backupPanel(){const t=new Date(S.backupAt||S.clock);
+  return `<div class="panel" id="bkp" style="padding:18px"><div class="sec-t">🛡️ 데이터 백업 · 장애 대비</div>
+   <div class="bkrow"><span><i class="dot" style="background:var(--green)"></i>클라우드 실시간 저장</span><b>${t?'마지막 '+hhmm(t.getTime())+':'+String(t.getSeconds()).padStart(2,'0'):'대기 중'}</b></div>
+   <div class="bkrow"><span><i class="dot" style="background:var(--green)"></i>패드 내부 사본 (오프라인용)</span><b>${t?'동기화됨':'-'}</b></div>
+   <div class="bkrow"><span><i class="dot" style="background:var(--blue)"></i>매일 새벽 4시 전체 백업</span><b>보관 30일</b></div>
+   <p class="muted" style="font-size:12.5px;margin:8px 0 10px">서버가 멈춰도 패드에 저장된 사본으로 인수인계·매뉴얼을 계속 볼 수 있고, 복구되면 그동안 남긴 기록이 자동으로 올라가요.</p>
+   <button class="btn" onclick="downloadBackup()">⬇️ 지금 백업 파일 내려받기</button></div>`}
+function downloadBackup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(snapshot(),null,2)],{type:'application/json'}));a.download=`slidingshift_backup_${hhmm(S.clock).replace(':','')}.json`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast('🛡️ 백업 파일을 내려받았어요')}
 function draftManual(fid){
   const f=S.faqs.find(x=>x.id===fid), d=FAQ_DRAFT[fid];
   S.modal=()=>`<div class="scrim" onclick="if(event.target===this){S.modal=null;render()}"><div class="modal"><span class="ai-tag">AI가 쓴 매뉴얼 초안</span> ${catBadge(d.cat)}<h2 class="h1" style="margin:10px 0 2px">${esc(d.title)}</h2><p class="muted" style="margin:0 0 12px">근무자 질문 “${esc(f.q)}” ${f.n}회에서 생성 · 「${CATS[d.cat].l}」 분류로 들어가요</p>
