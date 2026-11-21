@@ -171,6 +171,11 @@ input,textarea,select{font:inherit;color:var(--ink)}
 .send input:focus{border-color:var(--brand)}
 .quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .quick button{font-size:12.5px;padding:5px 11px;border-radius:99px;background:var(--surface);border:1px solid var(--line)}
+.promo{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:14px;background:linear-gradient(110deg,#FF6B6B,#F2711C);color:#fff;margin-bottom:10px;font-size:14px;box-shadow:var(--shadow)}
+.promo .em{font-size:24px}
+.promo b{font-size:15px}
+.promo ul{margin:2px 0 0;padding-left:18px}
+.promo .dday{margin-left:auto;background:rgba(255,255,255,.22);border-radius:99px;padding:4px 11px;font-weight:800;font-size:12.5px;white-space:nowrap}
 .pin{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--amber-weak);margin-bottom:12px;font-size:14px}
 .threads{display:flex;flex-direction:column;gap:6px}
 .thr{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:12px;text-align:left;width:100%;border:1px solid transparent}
@@ -200,7 +205,7 @@ input,textarea,select{font:inherit;color:var(--ink)}
 .ai-steps li.run{color:var(--ink)} .ai-steps li.run .d{border-color:var(--brand);border-top-color:transparent;animation:spin .8s linear infinite}
 .ai-steps li.ok{color:var(--ink)} .ai-steps li.ok .d{background:var(--green);border-color:var(--green);color:#fff}
 @keyframes spin{to{transform:rotate(360deg)}}
-.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
 .ph{border-radius:14px;overflow:hidden;border:2px solid var(--line);text-align:left;background:var(--surface)}
 .ph:hover{border-color:var(--brand)}
 .ph svg{display:block;width:100%;height:auto}
@@ -345,7 +350,7 @@ textarea.big:focus{border-color:var(--brand)}
   .top{padding:12px 16px;flex-wrap:wrap}
   .content{padding:16px 16px 90px}
   .phone-wrap{display:none}
-  .recbig,.photos,.wk{grid-template-columns:1fr}
+  .recbig,.wk{grid-template-columns:1fr}
   .room .msgs{height:55vh}
   .cupwrap{flex-direction:column;align-items:flex-start}
   .fields{grid-template-columns:1fr}
@@ -466,7 +471,7 @@ const MANUALS0={
   /* ---------- 장비 ---------- */
   'm-espresso':{cat:'equip',title:'스팀 노즐 누수 응급 조치',type:'장비 이상',loc:'espresso',locText:'에스프레소 머신 2번 그룹 오른쪽 스팀 노즐',
     purpose:'스팀 노즐에서 물이나 증기가 계속 새면 화상 위험이 있고 보일러 압력이 떨어져요. 수리 기사가 오기 전까지 안전하게 운영하는 방법이에요.',
-    steps:['스팀 밸브를 끝까지 잠그고 젖은 행주로 노즐을 감싸기','서랍 1번 칸의 「사용 중지」 표시를 2번 그룹에 걸기','1번 그룹만으로 운영 (스팀도 1번 노즐 사용)','단체방에 상황과 사진 올리기','수리 기사 방문 시간을 카드에 기록'],
+    steps:['스팀 밸브를 끝까지 잠그고 젖은 행주로 노즐을 감싸기','서랍 1번 칸의 「사용 중지」 표시를 2번 그룹에 걸기','1번 그룹만으로 운영 (스팀도 1번 노즐 사용)','단체방에 상황 남기기','수리 기사 방문 시간을 카드에 기록'],
     cautions:['노즐을 맨손으로 만지지 마세요 (화상 위험)','머신 전원은 끄지 마세요 (다시 데우는 데 30분)'],
     terms:[['그룹(그룹헤드)','포터필터를 끼워 커피를 추출하는 부분'],['스팀 노즐','우유 거품을 내는 금속 관']],views:3},
   'm-ice':{cat:'equip',title:'제빙기 필터 교체',type:'장비 이상',loc:'ice',locText:'바 하부 오른쪽 제빙기, 필터는 창고 선반 C',
@@ -507,7 +512,7 @@ const PLANS={fridge:'워크인 냉장고',storage:'창고',espresso:'에스프�
 let MID=100;
 function seed(){
   return {
-    view:'attend', worker:null, nextWorker:'jy', shiftNo:0, filter:'all', sel:null, manual:null, mFrom:null, mCat:'all', mq:'', rv:null,
+    view:'home', worker:'jy', nextWorker:null, shiftNo:0, filter:'all', sel:null, manual:null, mFrom:null, mCat:'all', mq:'', rv:null,
     phone:true, phoneTab:'noti', phonePush:null,
     bannerCarry:0, draft:null, rec:null, recFrom:null,
     clock:new Date(2026,10,19,12,51,30).getTime(),
@@ -518,12 +523,13 @@ function seed(){
       {id:'c1',type:'재고·발주',title:'우유 재고 부족 · 오늘 발주 필요',qty:'1L 2팩 남음 → 12팩 발주',loc:'워크인 냉장고 2번 칸',next:'발주 앱에서 12팩 주문',due:'오늘 14:00 전',urgent:true,status:0,from:'박서빈',at:'어제 22:41',
         src:{kind:'voice',text:'우유 두 팩밖에 안 남았어요. 내일 두 시 전에 발주 넣어야 토요일 단체 주문 맞출 수 있어요.',dur:'0:09'},manual:'m-milk',carry:0,assignee:null,shift:-1},
       {id:'c2',type:'장비 이상',title:'제빙기 필터 교체 경고등',qty:'필터 1개 (창고 C)',loc:'바 하부 제빙기',next:'필터 교체 후 RESET',due:'11/20(금)까지',urgent:false,status:2,from:'김지윤',at:'어제 12:58',
-        src:{kind:'photo',photo:'ice',text:'필터 경고등 켜짐'},manual:'m-ice',carry:1,assignee:'박서빈',shift:-1},
+        src:{kind:'text',text:'제빙기 필터 경고등 켜짐. 필터 재고 1개 남음'},manual:'m-ice',carry:1,assignee:'박서빈',shift:-1},
       {id:'c3',type:'주문·예약',title:'토요일 14시 단체 주문 30잔',qty:'아이스 아메리카노 20 · 라떼 10',loc:'포스 「예약」 메모',next:'금요일 마감조가 컵·홀더 33세트 준비',due:'11/21(토) 14:00',urgent:false,status:1,from:'박서빈',at:'어제 21:15',
         src:{kind:'text',text:'토욜 2시 단체 30잔 (아아20 라떼10) 컵 미리'},manual:'m-group',recipes:['r-americano','r-latte'],carry:0,assignee:null,shift:-1},
       {id:'c4',type:'청소·위생',title:'그라인더 호퍼 주간 청소',qty:'그라인더 2대',loc:'에스프레소 머신 오른쪽',next:'-',due:'완료됨',urgent:false,status:4,from:'박서빈',at:'어제 22:50',
         src:{kind:'text',text:'그라인더 청소 끝'},manual:'m-grinder',carry:0,assignee:'박서빈',shift:-1}
     ],
+    promo:{title:'11월 겨울 시즌 행사 진행 중',items:['생딸기라떼 출시 기념 10% 할인','아메리카노 2잔 이상 주문 시 잔당 500원 할인','포스에서 「행사」 버튼 → 해당 할인 선택'],until:'11/30(일)까지'},
     notice:'토요일(11/21) 14시 단체 주문 30잔 있어요. 금요일 마감조는 컵·홀더 미리 준비 부탁해요 🙏',
     /* [테스트] 단체방 하나 */
     room:[
@@ -591,17 +597,6 @@ function cup(v){
   if(v.ice)s+=`<rect x="58" y="0" width="5" height="70" rx="2" fill="var(--brand)" opacity=".75" transform="rotate(10 60 40)"/>`;
   return s+`</svg>`;
 }
-/* 데모용 사진 (일러스트) */
-function photo(k){
-  const P={
-    milk:{bg:'#DCEBFF',em:'🥛',lab:'냉장고 선반 · 우유 2팩'},
-    ice:{bg:'#E3F6F5',em:'🧊',lab:'제빙기 · 필터 경고등'},
-    receipt:{bg:'#FFF3DC',em:'🧾',lab:'포스 · 영수증 용지 없음'},
-    leak:{bg:'#FDE7E7',em:'☕',lab:'머신 2번 그룹 · 노즐 누수'}
-  }[k];
-  return `<svg viewBox="0 0 240 150"><rect width="240" height="150" fill="${P.bg}"/><rect x="18" y="18" width="204" height="114" rx="10" fill="rgba(255,255,255,.55)"/><text x="120" y="86" font-size="54" text-anchor="middle">${P.em}</text><rect x="12" y="120" width="${P.lab.length*9+20}" height="22" rx="11" fill="rgba(0,0,0,.55)"/><text x="22" y="135" font-size="11" fill="#fff" font-family="Noto Sans KR,sans-serif">${P.lab}</text></svg>`;
-}
-
 /* ===================== AI 분석 (데모용 규칙 기반 + 시나리오) ===================== */
 const KNUM={'한':1,'두':2,'세':3,'네':4,'다섯':5,'여섯':6,'일곱':7,'여덟':8,'아홉':9,'열':10};
 function analyze(text,preset){
@@ -629,11 +624,6 @@ function analyze(text,preset){
 const SCRIPT_VOICE='2번 그룹 스팀 노즐에서 물이 계속 새요. 일단 행주로 감싸 놨는데 수리 기사님 불러야 할 것 같아요. 바쁠 때는 1번 그룹만 쓰면 돼요.';
 const PRESET_VOICE={type:'장비 이상',title:'에스프레소 머신 2번 그룹 스팀 노즐 누수',qty:'-',loc:'에스프레소 머신 2번 그룹',next:'1번 그룹만 사용 · 사장님께 수리 기사 요청',due:'',urgent:false,manual:'m-espresso',
   ask:{q:'수리 요청은 언제까지 필요할까요?',opts:['오늘 중 (영업에 지장)','내일 오픈 전','이번 주 안','급하지 않음']}};
-const PRESET_PHOTO={
-  milk:{type:'재고·발주',title:'우유 재고 2팩 · 발주 필요',qty:'1L 2팩 남음',loc:'워크인 냉장고 2번 칸',next:'발주 앱에서 12팩 주문',due:'',urgent:false,manual:'m-milk',ask:{q:'언제까지 발주해야 하나요?',opts:['오늘 14시 전','내일 오전','이번 주 안']},vision:'우유 팩 2개 인식 · 선반 빈 칸 70%'},
-  receipt:{type:'재고·발주',title:'포스 영수증 용지 소진',qty:'용지 0롤',loc:'카운터·포스',next:'창고에서 용지 롤 교체',due:'지금 바로',urgent:true,manual:null,ask:{q:'창고에 여분 용지가 있었나요?',opts:['있음 (교체 완료)','없음 · 주문 필요','확인 못 함'],field:'qty'},vision:'포스 프린터 · 용지 없음 표시등 인식'},
-  ice:{type:'장비 이상',title:'제빙기 필터 경고등',qty:'필터 1개',loc:'바 하부 제빙기',next:'필터 교체 후 RESET',due:'',urgent:false,manual:'m-ice',ask:{q:'언제까지 교체해야 하나요?',opts:['오늘 중','이번 주 안','급하지 않음']},vision:'제빙기 패널 · 주황색 필터 경고등 인식'}
-};
 
 /* ===================== 렌더 ===================== */
 function render(){
@@ -661,7 +651,7 @@ function topbar(){
   <button class="btn dark" onclick="endShift()">퇴근 · 교대 마감 ➜</button></header>`;
 }
 function body(){
-  return ({home:viewHome,card:viewCard,'rec-voice':viewVoice,'rec-photo':viewPhoto,'rec-text':viewText,'rec-ai':viewAI,review:viewReview,manuals:viewManuals,manual:viewManual,chat:viewChat,admin:viewAdmin}[S.view]||viewHome)();
+  return ({home:viewHome,card:viewCard,'rec-voice':viewVoice,'rec-text':viewText,'rec-ai':viewAI,review:viewReview,manuals:viewManuals,manual:viewManual,chat:viewChat,admin:viewAdmin}[S.view]||viewHome)();
 }
 
 /* ---- [테스트] 출퇴근 · 근무자 선택 ---- */
@@ -709,13 +699,15 @@ function viewHome(){
   const open=openCount(), urg=S.cards.filter(c=>c.urgent&&c.status<4).length;
   const fb=(k,l)=>`<button class="fbtn ${f===k?'on':''}" onclick="S.filter='${k}';render()">${l}</button>`;
   return `${S.bannerCarry?`<div class="banner">🔁 이전 교대에서 끝나지 않은 <b>${S.bannerCarry}건</b>이 자동으로 승계됐어요. <button class="x muted" onclick="S.bannerCarry=0;render()">✕</button></div>`:''}
-  <div class="pin">📌 <div><b>공지</b> · ${esc(S.notice)}</div></div>
+  ${promoBar()}<div class="pin">📌 <div><b>공지</b> · ${esc(S.notice)}</div></div>
   <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:6px">
    <div><h1 class="h1">${w.name}님, 오늘의 인수인계</h1><p class="sub" style="margin:0">미해결 <b>${open}</b>건 · 긴급 <b style="color:var(--red)">${urg}</b>건 — 긴급하고 오래된 카드가 맨 위에 와요.</p></div>
    <div class="row"><button class="btn lg" onclick="go('chat')">💬 단체방</button><button class="btn primary lg" onclick="S.recFrom='home';startVoice()">🎙️ 음성으로 기록</button></div></div>
   <div class="filters">${fb('all','전체')}${fb('open','미해결')}${fb('urgent','긴급')}${fb('mine','내 담당')}</div>
   <div class="cards">${list.map(hcard).join('')||'<p class="muted">해당하는 카드가 없어요.</p>'}</div>`;
 }
+function promoBar(){const P=S.promo;if(!P||!P.title)return '';
+  return `<div class="promo"><span class="em">🎉</span><div><b>${esc(P.title)}</b><ul>${P.items.filter(Boolean).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>${P.until?`<span class="dday">${esc(P.until)}</span>`:''}</div>`}
 function cardMsgs(id){return S.room.filter(m=>m.card===id&&m.from!=='card')}
 function hcard(c){
   const msgs=cardMsgs(c.id).length;
@@ -723,7 +715,7 @@ function hcard(c){
    <div class="tline">${typeBadge(c.type)}${c.urgent&&c.status<4?'<span class="tag red">긴급</span>':''}${c.carry?`<span class="tag orange">🔁 ${c.carry}회 이월</span>`:''}${c.shift===S.shiftNo-1&&c.shift>=0?'<span class="tag brand">방금 넘어옴</span>':''}<span style="margin-left:auto">${stBadge(c.status)}</span></div>
    <div class="title">${esc(c.title)}</div>
    <dl class="meta"><dt>수량</dt><dd>${esc(c.qty)}</dd><dt>위치</dt><dd>${esc(c.loc||'-')}</dd><dt>기한</dt><dd ${c.urgent&&c.status<4?'style="color:var(--red)"':''}>${esc(c.due||'-')}</dd><dt>다음 행동</dt><dd>${esc(c.next)}</dd></dl>
-   <div class="foot"><span>${c.src.kind==='voice'?'🎙️ 음성':c.src.kind==='photo'?'📷 사진':'⌨️ 메모'} · ${esc(c.from)} · ${esc(c.at)}</span><span>${c.assignee?'👤 '+esc(c.assignee):''} ${msgs?'💬 '+msgs:''} ${c.manual?'📘':''}${c.recipes?' 🥤':''}</span></div></button>`;
+   <div class="foot"><span>${c.src.kind==='voice'?'🎙️ 음성':'⌨️ 메모'} · ${esc(c.from)} · ${esc(c.at)}</span><span>${c.assignee?'👤 '+esc(c.assignee):''} ${msgs?'💬 '+msgs:''} ${c.manual?'📘':''}${c.recipes?' 🥤':''}</span></div></button>`;
 }
 
 /* ---- 카드 상세 ---- */
@@ -754,7 +746,6 @@ function viewCard(){
 function origin(c){
   const s=c.src;
   if(s.kind==='voice')return `<div class="origin"><div class="ic">🎙️</div><div><div class="quote">“${esc(s.text)}”</div><div class="audio">▶ <span class="bars">${Array.from({length:28},(_,i)=>`<i style="height:${4+Math.abs(Math.sin(i*1.7))*12}px"></i>`).join('')}</span> ${s.dur||'0:12'} · 음성 원본</div></div></div>`;
-  if(s.kind==='photo')return `<div class="origin"><div style="width:150px;flex:none;border-radius:10px;overflow:hidden">${photo(s.photo)}</div><div class="quote">${esc(s.text)}${s.vision?`<div class="audio">🔎 ${esc(s.vision)}</div>`:''}</div></div>`;
   return `<div class="origin"><div class="ic">⌨️</div><div class="quote">“${esc(s.text)}”</div></div>`;
 }
 function setSt(i){
@@ -774,11 +765,11 @@ function push(m){clearFresh();m.id='m'+(++MID);m.t=m.t||now();m.fresh=true;S.roo
 function chatBox(cid){
   const L=cid?S.room.filter(m=>m.card===cid):S.room;
   const typing=S.typing&&(cid?S.typing===cid:true);
-  const q=cid?['사진 보내드릴게요','확인했어요','지금 처리 중이에요','도움이 필요해요']:['확인했습니다!','오픈 완료했어요','잠깐 자리 비워요','도움이 필요해요'];
+  const q=cid?['확인했어요','지금 처리 중이에요','도움이 필요해요']:['확인했습니다!','오픈 완료했어요','잠깐 자리 비워요','도움이 필요해요'];
   return `<div class="chat"><div class="msgs" id="msgs-${cid||'room'}">${L.length?L.map(m=>bubble(m,false,!!cid)).join(''):'<div class="msg sys"><div class="bub">아직 이 카드 이야기가 없어요. 급한 일은 여기서 바로 보내세요.</div></div>'}${typing?'<div class="msg typing"><span class="who">'+OWNER+'</span><div class="bub"><i></i><i></i><i></i></div></div>':''}</div>
   <div class="quick">${q.map(x=>`<button onclick="sendW('${x}',${cid?`'${cid}'`:'null'})">${x}</button>`).join('')}</div>
   <form class="send" onsubmit="event.preventDefault();sendW(this.m.value,${cid?`'${cid}'`:'null'});"><input name="m" id="msgin" placeholder="${cid?'이 카드에 대해 단체방에 보내기…':'단체방에 보내기… 예) 오트밀크 3팩 남음 내일까지 발주'}" autocomplete="off"><button class="btn primary">보내기</button></form>
-  ${cid?'':`<div class="tools"><button class="btn" onclick="S.recFrom='chat';startVoice()">🎙️ 음성으로 기록</button><button class="btn" onclick="S.recFrom='chat';go('rec-photo')">📷 사진으로 기록</button><button class="btn" onclick="inputToCard()">📋 입력한 글을 인수인계 카드로</button><span class="muted" style="font-size:12.5px;align-self:center">기록은 AI가 카드로 정리해 이 방에 올려요</span></div>`}</div>`;
+  ${cid?'':`<div class="tools"><button class="btn" onclick="S.recFrom='chat';startVoice()">🎙️ 음성으로 기록</button><button class="btn" onclick="inputToCard()">📋 입력한 글을 인수인계 카드로</button><span class="muted" style="font-size:12.5px;align-self:center">기록은 AI가 카드로 정리해 이 방에 올려요</span></div>`}</div>`;
 }
 function bubble(m,ownerView,inCard){
   if(m.from==='sys')return `<div class="msg sys ${m.fresh?'new':''}"><div class="bub">${esc(m.text)}</div></div>`;
@@ -833,17 +824,17 @@ function msgToCard(mid){
 function viewChat(){
   const duty=onDuty().map(w=>w.id);
   const mine=S.cards.filter(c=>c.shift===S.shiftNo);
-  return `<h1 class="h1">소통 · 기록</h1><p class="sub">사장님과 모든 근무자가 함께 있는 단체방 하나예요. 말하거나 사진을 올리면 AI가 인수인계 카드로 정리해 이 방에 올려요.</p>
-  <div class="room"><section class="panel" style="padding:16px"><div class="pin" style="margin-bottom:10px">📌 <div><b>고정 공지</b> · ${esc(S.notice)}</div></div>${chatBox(null)}</section>
+  return `<h1 class="h1">소통 · 기록</h1><p class="sub">사장님과 모든 근무자가 함께 있는 단체방 하나예요. 말이나 글로 남기면 AI가 인수인계 카드로 정리해 이 방에 올려요.</p>
+  <div class="room"><section class="panel" style="padding:16px">${promoBar()}<div class="pin" style="margin-bottom:10px">📌 <div><b>고정 공지</b> · ${esc(S.notice)}</div></div>${chatBox(null)}</section>
   <aside style="display:flex;flex-direction:column;gap:14px">
    <div class="panel" style="padding:16px"><div class="sec-t">👥 단체방 참여자 <span class="muted" style="font-weight:500;font-size:13px">${WORKERS.length+1}명</span></div>
     <div class="mem"><span class="d" style="background:var(--ink)">👑</span><b>${OWNER}</b></div>
     ${WORKERS.map(w=>`<div class="mem">${av(w,28).replace('class="d"','class="d"')}<span>${w.name} <span class="muted" style="font-size:12px">${w.shift.split(' ')[0]}</span></span>${duty.includes(w.id)?'<span class="tag" style="margin-left:auto;background:var(--green-weak);color:var(--green)">근무 중</span>':''}</div>`).join('')}</div>
-   <div class="panel" style="padding:16px"><div class="sec-t">📋 이번 근무에 남긴 기록</div>${mine.length?mine.map(c=>`<button class="mini" style="width:100%;text-align:left" onclick="openCard('${c.id}')">${TYPES[c.type].ic} ${esc(c.title)}<div class="muted" style="font-size:11.5px">${esc(c.from)} · ${esc(c.at)}</div></button>`).join(''):'<p class="muted" style="margin:0;font-size:13.5px">아직 없어요. 특이사항이 생기면 음성·사진으로 바로 남겨 주세요.</p>'}</div>
+   <div class="panel" style="padding:16px"><div class="sec-t">📋 이번 근무에 남긴 기록</div>${mine.length?mine.map(c=>`<button class="mini" style="width:100%;text-align:left" onclick="openCard('${c.id}')">${TYPES[c.type].ic} ${esc(c.title)}<div class="muted" style="font-size:11.5px">${esc(c.from)} · ${esc(c.at)}</div></button>`).join(''):'<p class="muted" style="margin:0;font-size:13.5px">아직 없어요. 특이사항이 생기면 음성이나 글로 바로 남겨 주세요.</p>'}</div>
   </aside></div>`;
 }
 
-/* ---- 기록 (음성 · 사진 · 글) ---- */
+/* ---- 기록 (음성 · 글) ---- */
 function backRec(){return S.recFrom||'chat'}
 /* 녹음 버튼 → 바로 브라우저 내장 음성 인식(Web Speech API). 지원 안 되면 기본 시나리오로 */
 function startVoice(){
@@ -908,13 +899,6 @@ function stopVoice(){
   const sec=live?Math.max(1,Math.round((Date.now()-S.rec.t0)/1000)):12;
   runAI({kind:'voice',text,dur:Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')},analyze(text,live?null:PRESET_VOICE),['음성 → 텍스트 변환 (STT)','문제 유형 분류','수량 · 위치 · 기한 추출','빠진 정보 확인','관련 업무 매뉴얼 연결']);
 }
-function viewPhoto(){
-  return `<button class="btn ghost" onclick="go(backRec())" style="margin:-6px 0 12px -10px">← 돌아가기</button><h1 class="h1">사진으로 기록</h1><p class="sub">카메라로 찍거나, 시연용 샘플 사진을 골라 보세요.</p>
-  <div class="photos">${['milk','receipt','ice'].map(k=>`<button class="ph" onclick="pickPhoto('${k}')">${photo(k)}<div>${{milk:'냉장고 선반 (우유)',receipt:'포스 영수증 프린터',ice:'제빙기 패널'}[k]}</div></button>`).join('')}</div>
-  <label class="btn lg" style="margin-top:16px">📷 카메라 / 앨범에서 선택<input type="file" accept="image/*" capture="environment" hidden onchange="realPhoto(this)"></label>`;
-}
-function pickPhoto(k){const p=PRESET_PHOTO[k];runAI({kind:'photo',photo:k,text:p.title,vision:p.vision},analyze('',p),['사진 업로드','이미지 속 물품·장비 인식','문제 유형 분류','빠진 정보 확인','관련 업무 매뉴얼 연결'])}
-function realPhoto(inp){const f=inp.files&&inp.files[0];if(!f)return;toast('사진을 받았어요. 한 줄 설명을 덧붙이면 더 정확해요.');S.view='rec-text';S.photoHint=true;render()}
 function viewText(){
   return `<button class="btn ghost" onclick="go(backRec())" style="margin:-6px 0 12px -10px">← 돌아가기</button><h1 class="h1">짧은 문장으로 남기기</h1><p class="sub">대충 써도 괜찮아요. 아래 예시를 눌러 봐도 돼요.</p>
   <textarea class="big" id="tx" placeholder="예) 오트밀크 3팩 남음 내일 오전까지 발주"></textarea>
@@ -1028,6 +1012,11 @@ function viewAdmin(){
    <div class="panel kpi"><small>반복 질문 (이번 달)</small><div class="v">${14-S.faqs.filter(f=>f.approved).reduce((a,f)=>a+f.n,0)}건</div><div class="d up">▼ 지난달 대비 -42%</div></div></div>
   <div class="grid2"><section class="panel" style="padding:18px"><div class="sec-t">🙋 자주 나오는 질문 → 매뉴얼로 승인</div><p class="muted" style="margin:-4px 0 12px;font-size:13px">근무자들이 반복해서 물어본 질문을 AI가 모았어요. 승인하면 AI가 쓴 초안이 매장 매뉴얼이 돼요.</p>
    ${S.faqs.map(f=>`<div class="faq"><div><div class="q">“${esc(f.q)}”</div><div class="c">${f.n}회 질문 · 근무자 ${f.who}명</div></div>${f.approved?'<span class="st st-4" style="margin-left:auto"><i></i>매뉴얼 등록됨</span>':`<button class="btn primary" onclick="draftManual('${f.id}')">✨ 매뉴얼 초안 보기</button>`}</div>`).join('')}
+   <div class="sec-t" style="margin-top:18px">🎉 진행 중 행사 (상단 고정)</div>
+   <form onsubmit="event.preventDefault();savePromo(this)" style="display:flex;flex-direction:column;gap:8px">
+    <div class="send" style="margin:0"><input name="t" value="${esc(S.promo.title)}" placeholder="행사 이름 (비우면 내려가요)"><input name="u" value="${esc(S.promo.until)}" placeholder="기간" style="max-width:130px"></div>
+    <textarea name="i" rows="3" style="border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface);resize:vertical" placeholder="한 줄에 하나씩">${esc(S.promo.items.join('\n'))}</textarea>
+    <div class="row"><button class="btn primary">행사 고정</button><button type="button" class="btn" onclick="S.promo={title:'',items:[],until:''};notify('🎉 행사 종료','상단 고정 해제');render()">행사 내리기</button></div></form>
    <div class="sec-t" style="margin-top:18px">📌 공지 고정</div><form class="send" style="margin:0" onsubmit="event.preventDefault();S.notice=this.n.value;notify('📌 공지 변경',S.notice);toast('공용 패드 맨 위에 고정됐어요');render()"><input name="n" value="${esc(S.notice)}"><button class="btn">고정</button></form></section>
    <section style="display:flex;flex-direction:column;gap:18px"><div class="panel" style="padding:18px"><div class="sec-t">🕘 오늘 출퇴근 기록</div>${attTable()}</div>
    <div class="panel" style="padding:18px"><div class="sec-t">📉 인수인계 누락 건수 (파일럿 가정치)</div>
@@ -1039,6 +1028,8 @@ const FAQ_DRAFT={
   f2:{key:'m-oat',cat:'etc',title:'오트밀크 재고 확인',type:'재고·발주',loc:'storage',locText:'창고 선반 B (두유 옆)',purpose:'오트밀크는 우유와 다른 거래처라 별도로 확인해요.',steps:['창고 선반 B에서 남은 팩 수 확인','4팩 이하면 발주 앱 「오트」 거래처 선택','6팩 단위로 발주'],cautions:['개봉 후 냉장 5일 이내 사용'],terms:[['거래처','물건을 납품하는 업체']]},
   f3:{key:'m-showcase',cat:'equip',title:'마감 시 쇼케이스 온도 설정',type:'청소·위생',loc:'showcase',locText:'카운터 앞 쇼케이스 하단 패널',purpose:'마감 후 케이크 보관 온도를 지켜야 다음 날 판매할 수 있어요.',steps:['하단 패널 「SET」 3초','온도를 3℃로 맞추기','조명 OFF, 커튼 내리기'],cautions:['5℃ 이상이면 사장님께 알리기'],terms:[['SET','설정 모드 버튼']]}
 };
+function savePromo(f){S.promo={title:f.t.value.trim(),until:f.u.value.trim(),items:f.i.value.split('\n').map(x=>x.trim()).filter(Boolean)};
+  notify('🎉 행사 고정',S.promo.title||'행사 내림');toast(S.promo.title?'모든 화면 맨 위에 행사가 고정됐어요':'행사를 내렸어요');render()}
 function draftManual(fid){
   const f=S.faqs.find(x=>x.id===fid), d=FAQ_DRAFT[fid];
   S.modal=()=>`<div class="scrim" onclick="if(event.target===this){S.modal=null;render()}"><div class="modal"><span class="ai-tag">AI가 쓴 매뉴얼 초안</span> ${catBadge(d.cat)}<h2 class="h1" style="margin:10px 0 2px">${esc(d.title)}</h2><p class="muted" style="margin:0 0 12px">근무자 질문 “${esc(f.q)}” ${f.n}회에서 생성 · 「${CATS[d.cat].l}」 분류로 들어가요</p>
