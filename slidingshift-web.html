@@ -386,6 +386,19 @@ input.sel{font-weight:var(--seed-font-weight-regular)}
 .ings.stock td:first-child{white-space:nowrap;padding-right:16px;vertical-align:top}
 .room .msgs{height:calc(100vh - 560px);min-height:280px}
 
+
+/* [테스트] 광고 */
+.adbox{border-radius:var(--seed-radius-r3);box-shadow:inset 0 0 0 1px var(--bd);padding:var(--seed-dimension-x4)}
+.adbox.hid{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:var(--seed-dimension-x3) var(--seed-dimension-x4);background:var(--bg2);box-shadow:none}
+.adh{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.adb{display:flex;gap:14px;align-items:flex-start}
+.adimg{width:64px;height:64px;flex:none;border-radius:var(--seed-radius-r2);background:linear-gradient(135deg,#6B4226,#3B2314);color:#F3E3D3;display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:.08em}
+.adwhy{display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding:10px 12px;border-radius:var(--seed-radius-r2);background:var(--bg2);font-size:var(--seed-font-size-t3);color:var(--fg2)}
+.adwhy .i{margin-top:2px}
+.adimg.sm{width:40px;height:40px;font-size:9px;color:#fff}
+.lrow.adrow{background:color-mix(in srgb,var(--bg2) 60%,transparent)}
+.atabs{margin-bottom:var(--seed-dimension-x6)}
+.atabs .seed-tabs__list{overflow-x:auto;scrollbar-width:none}
 </style>
 </head>
 <body>
@@ -1230,31 +1243,39 @@ function viewRecipe(m){
 /* ---- 점주 대시보드 ---- */
 function viewAdmin(){
   const C=S.cards, openL=C.filter(c=>c.status<4).sort((a,b)=>(b.urgent-a.urgent)||(b.carry-a.carry)), done=C.filter(c=>c.status===4).length, carry=C.filter(c=>c.carry&&c.status<4).length;
-  const duty=onDuty(), pend=S.faqs.filter(f=>!f.approved).length;
-  return `${pghead('점주 대시보드',`매장에 없어도 지금 상황을 한눈에 · ${OWNER}`,badge('점주 모드','neutral','outline','large')+btn('잠그기',{s:'small',icon:'lock',on:'lockOwner()'}))}
-  <div class="stats">
-   <div class="stat"><small>지금 근무 중</small><div class="v">${duty.length}<span>명</span></div><div class="d">${duty.map(w=>w.name).join(' · ')||'-'}</div></div>
-   <div class="stat"><small>미해결 카드</small><div class="v">${openL.length}<span>건 · 이월 ${carry}</span></div><div class="d">완료 ${done}건 · 끝날 때까지 자동 승계</div></div>
-   <div class="stat"><small>카드 확인까지 평균</small><div class="v">4<span>분</span></div><div class="d pos">단톡방 대비 78% 단축</div></div>
-   <div class="stat"><small>반복 질문 (이번 달)</small><div class="v">${14-S.faqs.filter(f=>f.approved).reduce((a,f)=>a+f.n,0)}<span>건</span></div><div class="d pos">지난달 대비 42% 감소</div></div></div>
-  <div class="grid2"><div class="col">
-   <section>${secH(`지금 챙길 카드<span class="cnt">${openL.length}</span>`)}${openL.length?`<div class="list">${openL.map(c=>row({cls:'strong',on:`openCard('${c.id}')`,title:esc(c.title)+`<span class="tg">${c.urgent?badge('긴급','critical'):''}${c.carry?badge(`${c.carry}회 이월`,'warning'):''}</span>`,detail:`기한 ${esc(c.due||'-')} · ${c.assignee?'담당 '+esc(c.assignee):'담당 없음'}`,suffix:stBadge(c.status)+icon('right',16)})).join('')}</div>`:'<p class="muted">미해결 카드가 없어요.</p>'}</section>
-   <section>${secH(`매뉴얼로 만들 질문<span class="cnt">${pend}</span>`)}<p class="sec-d">근무자들이 반복해서 물어본 질문이에요. 승인하면 AI가 쓴 초안이 매장 매뉴얼이 돼요.</p>
-    <div class="list">${S.faqs.map(f=>row({title:`“${esc(f.q)}”`,detail:`${f.n}회 질문 · 근무자 ${f.who}명`,suffix:f.approved?badge('매뉴얼 등록됨','positive'):btn('초안 보기',{v:'neutralSolid',s:'small',on:`draftManual('${f.id}')`})})).join('')}</div></section>
-   <section>${secH('진행 중 행사',`<span class="aux">모든 화면 맨 위에 고정</span>`)}
-    <form onsubmit="event.preventDefault();savePromo(this)" class="fstack">
+  const duty=onDuty(), pend=S.faqs.filter(f=>!f.approved).length, T=S.aTab||'home';
+  const P=payroll(), tot=P.reduce((a,x)=>a+x.pay,0);
+  const TABS=[['home','한눈에',''],['cards','카드 현황',openL.length],['faq','매뉴얼 승인',pend],['notice','공지·행사',''],['pay','급여',''],['staff','알바생',active().length],['deal','거래처 혜택',OFFERS.length],['set','백업·보안','']];
+  const tab=([k,l,n])=>`<button type="button" role="tab" class="seed-tabs__trigger seed-tabs__trigger--triggerLayout_hug seed-tabs__trigger--size_medium" aria-selected="${T===k}" onclick="S.aTab='${k}';render()">${l}${n!==''?` <em>${n}</em>`:''}</button>`;
+  const go_=(k,l)=>`<button type="button" class="linkb" onclick="S.aTab='${k}';render()">${l}</button>`;
+  const V={
+   home:()=>`<div class="stats">
+     <div class="stat"><small>지금 근무 중</small><div class="v">${duty.length}<span>명</span></div><div class="d">${duty.map(w=>w.name).join(' · ')||'-'}</div></div>
+     <div class="stat"><small>미해결 카드</small><div class="v">${openL.length}<span>건 · 이월 ${carry}</span></div><div class="d">완료 ${done}건</div></div>
+     <div class="stat"><small>이번 달 예상 급여</small><div class="v">${Math.round(tot/10000)}<span>만 원</span></div><div class="d">${active().length}명 · ${go_('pay','자세히')}</div></div>
+     <div class="stat"><small>승인 기다리는 질문</small><div class="v">${pend}<span>건</span></div><div class="d">${go_('faq','매뉴얼로 만들기')}</div></div></div>
+    <div class="grid2"><section>${secH(`지금 챙길 카드<span class="cnt">${openL.length}</span>`,go_('cards','전체 보기'))}${openL.length?`<div class="list">${openL.map(c=>row({cls:'strong',on:`openCard('${c.id}')`,title:esc(c.title)+`<span class="tg">${c.urgent?badge('긴급','critical'):''}${c.carry?badge(`${c.carry}회 이월`,'warning'):''}</span>`,detail:`기한 ${esc(c.due||'-')} · ${c.assignee?'담당 '+esc(c.assignee):'담당 없음'}`,suffix:stBadge(c.status)+icon('right',16)})).join('')}</div>`:'<p class="muted">미해결 카드가 없어요.</p>'}</section>
+    <section>${secH('오늘 출퇴근 기록')}${attTable()}</section></div>`,
+   cards:()=>`<div class="grid2"><section>${secH('상태별 카드')}<div>${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="strow"><span class="sb">${stBadge(i)}</span><span class="n">${L.length}</span><span class="ts">${L.map(c=>esc(c.title)).join(' · ')||'-'}</span></div>`}).join('')}</div></section>
+    <section>${secH('인수인계 누락 건수',`<span class="aux">도입 전(회색) → 도입 후 · 파일럿 가정치</span>`)}
+    <div class="bars">${[['전 1주',9,1],['전 2주',11,1],['1주차',5,0],['2주차',3,0],['3주차',2,0],['4주차',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*9}px"></i>${l}</div>`).join('')}</div>
+    <p class="sec-d" style="margin-top:14px">카드 확인까지 평균 4분 · 단톡방 대비 78% 단축</p></section></div>`,
+   faq:()=>`<section style="max-width:720px">${secH(`매뉴얼로 만들 질문<span class="cnt">${pend}</span>`)}<p class="sec-d">근무자들이 반복해서 물어본 질문이에요. 승인하면 AI가 쓴 초안이 매장 매뉴얼이 돼요. 이번 달 반복 질문 ${14-S.faqs.filter(f=>f.approved).reduce((a,f)=>a+f.n,0)}건 · 지난달 대비 42% 감소</p>
+    <div class="list">${S.faqs.map(f=>row({title:`“${esc(f.q)}”`,detail:`${f.n}회 질문 · 근무자 ${f.who}명`,suffix:f.approved?badge('매뉴얼 등록됨','positive'):btn('초안 보기',{v:'neutralSolid',s:'small',on:`draftManual('${f.id}')`})})).join('')}</div></section>`,
+   notice:()=>`<div class="grid2"><section>${secH('진행 중 행사',`<span class="aux">모든 화면 맨 위에 고정</span>`)}
+     <form onsubmit="event.preventDefault();savePromo(this)" class="fstack">
      <div class="send" style="margin:0">${inp({name:'t',value:esc(S.promo.title),ph:'행사 이름 (비우면 내려가요)'})}<div style="max-width:150px">${inp({name:'u',value:esc(S.promo.until),ph:'기간'})}</div></div>
      <textarea name="i" rows="3" class="ta" placeholder="한 줄에 하나씩">${esc(S.promo.items.join('\n'))}</textarea>
      <div class="row">${btn('행사 고정',{v:'brandSolid',type:'submit'})}${btn('행사 내리기',{on:"S.promo={title:'',items:[],until:''};notify('🎉 행사 종료','상단 고정 해제');render()"})}</div></form></section>
-   <section>${secH('공지 고정')}<form class="send" style="margin:0" onsubmit="event.preventDefault();S.notice=this.n.value;notify('📌 공지 변경',S.notice);toast('공용 패드 맨 위에 고정됐어요');render()">${inp({name:'n',value:esc(S.notice)})}${btn('고정',{type:'submit'})}</form></section>
-  </div><div class="col">
-   <section>${secH('상태별 카드')}<div>${STATUS.map((s,i)=>{const L=C.filter(c=>c.status===i);return `<div class="strow"><span class="sb">${stBadge(i)}</span><span class="n">${L.length}</span><span class="ts">${L.map(c=>esc(c.title)).join(' · ')||'-'}</span></div>`}).join('')}</div></section>
-   <section>${secH('인수인계 누락 건수',`<span class="aux">도입 전(회색) → 도입 후 · 파일럿 가정치</span>`)}
-    <div class="bars">${[['전 1주',9,1],['전 2주',11,1],['1주차',5,0],['2주차',3,0],['3주차',2,0],['4주차',1,0]].map(([l,v,b])=>`<div class="b ${b?'before':''}"><em>${v}</em><i style="height:${v*9}px"></i>${l}</div>`).join('')}</div></section>
-   <section>${secH('오늘 출퇴근 기록')}${attTable()}</section>
-   ${backupPanel()}
-  </div></div>
-  <div class="wide-secs">${payPanel()}${staffPanel()}</div>`;
+    <section>${secH('공지 고정')}<form class="send" style="margin:0" onsubmit="event.preventDefault();S.notice=this.n.value;notify('📌 공지 변경',S.notice);toast('공용 패드 맨 위에 고정됐어요');render()">${inp({name:'n',value:esc(S.notice)})}${btn('고정',{type:'submit'})}</form></section></div>`,
+   pay:()=>payPanel(),
+   staff:()=>staffPanel(),
+   deal:()=>dealView(),
+   set:()=>`<div class="grid2">${backupPanel()}<section>${secH('대시보드 비밀번호')}<p class="sec-d">점주 대시보드에 들어올 때 묻는 숫자 4자리예요.</p><form class="send" onsubmit="event.preventDefault();changePin(this)"><input name="p1" inputmode="numeric" maxlength="4" placeholder="새 비밀번호 4자리" class="sel" style="width:170px">${btn('변경',{type:'submit'})}</form></section></div>`
+  };
+  return `${pghead('점주 대시보드',`매장에 없어도 지금 상황을 한눈에 · ${OWNER}`,badge('점주 모드','neutral','outline','large')+btn('잠그기',{s:'small',icon:'lock',on:'lockOwner()'}))}
+  <div class="mtools atabs"><div class="seed-tabs__root seed-tabs__root--size_medium"><div class="seed-tabs__list seed-tabs__list--triggerLayout_hug seed-tabs__list--size_medium" role="tablist">${TABS.map(tab).join('')}<div class="seed-tabs__indicator seed-tabs__indicator--triggerLayout_hug"></div></div></div></div>
+  ${(V[T]||V.home)()}`;
 }
 const FAQ_DRAFT={
   f1:{key:'m-receipt',cat:'order',stock:[['영수증 용지 (감열지)','창고 가운데 선반 맨 위 칸 (흰 상자)']],title:'영수증 용지 교체',type:'재고·발주',loc:'storage',locText:'창고 가운데 선반 맨 위 칸 (흰 상자) · 프린터는 포스 오른쪽',purpose:'영수증 용지가 떨어지면 카드 결제 영수증을 못 뽑아요. 프린터 빨간불이 깜빡이면 바로 교체해요.',steps:['포스 오른쪽 프린터 덮개 버튼 누르기','다 쓴 심 빼고 새 롤을 종이 끝이 위로 오게 넣기','종이를 2cm 빼고 덮개 닫기','「FEED」 버튼으로 시험 출력','창고 재고가 3롤 이하면 사장님께 알리기'],cautions:['감열지라 거꾸로 넣으면 글자가 안 나와요'],terms:[['감열지','열로 글자가 찍히는 영수증 용지']]},
@@ -1290,7 +1311,7 @@ function staffPanel(){
     <label class="row t2">시급 <input name="wg" type="number" step="10" min="0" value="${MIN_WAGE}" class="wage"> 원</label>
     ${btn('추가하기',{v:'brandSolid',type:'submit'})}</form></div>
    <p class="sec-d" style="margin-top:12px">근무 중인 사람은 퇴근한 뒤에 삭제할 수 있어요. 삭제해도 이번 달 출퇴근 기록과 급여는 남아요.</p>
-   <form class="send" style="max-width:520px;align-items:center" onsubmit="event.preventDefault();changePin(this)"><span class="lbl" style="margin:0;white-space:nowrap">대시보드 비밀번호 변경</span><input name="p1" inputmode="numeric" maxlength="4" placeholder="새 비밀번호 4자리" class="sel" style="width:150px">${btn('변경',{type:'submit'})}</form></section>`;
+   </section>`;
 }
 function addWorker(f){
   const name=f.nm.value.trim(), st=f.st.value, en=f.en.value, pt=(f.querySelector('input[name=pt]:checked')||{}).value||'파트';
@@ -1328,6 +1349,27 @@ function pinPaint(){const bx=$('.pinbox');if(!bx)return render();
   bx.querySelectorAll('.pdots i').forEach((d,i)=>d.classList.toggle('on',i<S.pinBuf.length));
   bx.querySelector('.perr').innerHTML=S.pinErr?'비밀번호가 달라요. 다시 입력해 주세요':'&nbsp;';
   bx.classList.remove('err');if(S.pinErr){void bx.offsetWidth;bx.classList.add('err')}}
+/* [테스트] 점주 대시보드 광고 (거래처 혜택) */
+const OFFERS=[
+ {id:'bean',ad:true,brand:'브라운빈 로스터리',cat:'원두',title:'하우스 블렌드 원두 1kg 첫 주문 15% 할인',sub:'에티오피아·브라질 블렌드 · 로스팅 3일 이내 배송 · 1kg 23,000원 → 19,550원',why:'이번 달 원두 사용량 38kg (지난달보다 12% 늘었어요)',pick:'우리 매장 사용량이면 한 달 약 9만 원 아껴요',until:'11/30(일)까지',img:'BEAN',bg:'linear-gradient(135deg,#6B4226,#3B2314)'},
+ {id:'milk',ad:true,brand:'초원목장 유업',cat:'우유',title:'카페 전용 우유 12팩 정기배송 8% 할인',sub:'주 2회 새벽 배송 · 1L 2,650원 → 2,438원',why:'우유 발주 카드가 이번 달 4번 올라왔어요',pick:'정기배송이면 발주 깜빡할 일이 줄어요',until:'12/15(월)까지',img:'MILK',bg:'linear-gradient(135deg,#6AA6E8,#2F6FB5)'},
+ {id:'cup',ad:false,brand:'공동구매',cat:'소모품',title:'종이컵 12oz 1,000개 공동구매',sub:'근처 카페 23곳이 함께 주문 · 1개 52원 → 41원',why:'창고 왼쪽 선반 컵 재고 기준',pick:'50곳이 모이면 1개 38원까지 내려가요',until:'12/5(금) 마감',img:'CUP',bg:'linear-gradient(135deg,#9CA3AF,#4B5563)'}];
+const OF=id=>OFFERS.find(o=>o.id===id);
+function adRow(){if(S.adHidden)return '';const o=OFFERS[0];
+  return `<div class="seed-list-item__root lrow adrow"><div class="seed-list-item__prefix"><div class="adimg sm" style="background:${o.bg}">${o.img}</div></div><button type="button" class="seed-list-item__content" onclick="adOpen('${o.id}')"><div class="seed-list-item__title">${esc(o.title)}<span class="tg">${badge('광고','neutral','outline')}</span></div><div class="seed-list-item__detail">${esc(o.brand)} · ${esc(o.pick)}</div></button><div class="seed-list-item__suffix"><button type="button" class="linkb" onclick="S.adHidden=true;adLog('hide');render()">숨기기</button>${icon('right',16)}</div></div>`}
+function dealView(){
+  return `<p class="sec-d" style="margin-bottom:16px">매장 기록(재고·발주 카드)을 보고 우리 매장에 맞는 혜택만 골라 보여 줘요. 매장 이름·매출은 업체에 넘기지 않아요. <button type="button" class="linkb" onclick="adInfo()">왜 이 혜택이 보이나요?</button></p>
+  <div class="list">${OFFERS.map(o=>row({prefix:`<div class="adimg sm" style="background:${o.bg}">${o.img}</div>`,on:`adOpen('${o.id}')`,title:esc(o.title)+`<span class="tg">${o.ad?badge('광고','neutral','outline'):badge('공동구매','brand')}${S.adSt&&S.adSt[o.id]?badge(S.adSt[o.id]==='sample'?'샘플 신청함':'발주에 담음','positive'):''}</span>`,detail:`${esc(o.brand)} · ${esc(o.cat)} · ${esc(o.until)}<br><span class="fgb" style="font-weight:500">${esc(o.pick)}</span>`,suffix:icon('right',16)})).join('')}</div>`}
+function adOpen(id){const o=OF(id);adLog('click');const st=(S.adSt||{})[id];
+  S.modal=()=>modal({close:'S.modal=null;render()',pre:`<div class="tags" style="margin:0">${o.ad?badge('광고','neutral','outline'):badge('공동구매','brand')}<span class="muted t2">${esc(o.brand)} · ${esc(o.until)}</span></div>`,title:esc(o.title),desc:esc(o.sub),
+   body:`<div class="adwhy" style="margin:0">${icon('chart',16)}<span>${esc(o.why)}<br><b>${esc(o.pick)}</b></span></div>`,
+   footer:(st?badge(st==='sample'?'샘플 신청 완료':'발주 앱에 담았어요','positive','weak','large'):(o.id==='bean'?btn('무료 샘플 200g 신청',{on:`adAct('${id}','sample')`}):'')+btn(o.ad?'할인가로 발주에 담기':'공동구매 참여',{v:'brandSolid',on:`adAct('${id}','order')`}))});render()}
+function adLog(k){S.adStat=S.adStat||{view:1,click:0,sample:0,order:0,hide:0};S.adStat[k]=(S.adStat[k]||0)+1}
+function adAct(id,k){const o=OF(id);S.adSt=S.adSt||{};S.adSt[id]=k;adLog(k);S.modal=null;
+  if(k==='sample'){notify('☕ 샘플 신청',`${o.brand} 원두 200g`);toast('샘플 신청 완료 · 배송지는 매장 주소로만 전달돼요')}else{notify('🛒 발주에 담김',`${o.brand} · ${o.title}`);toast('발주 앱 장바구니에 할인가로 담았어요')}render()}
+function adInfo(){S.modal=()=>modal({close:'S.modal=null;render()',title:'왜 이 혜택이 보이나요?',desc:'슬라이딩시프트는 매장 운영에 쓸모 있는 광고만 보여 줘요.',
+  body:`<ul class="helpol"><li>재고 기록과 발주 카드를 보고 <b>우리 매장이 실제로 쓰는 물건</b>만 골라요</li><li>업체는 “몇 개 매장에 보였고 몇 번 눌렀는지” 같은 <b>합계 숫자만</b> 받아요</li><li>알바생이 쓰는 화면에는 광고가 없어요</li><li>광고는 이 「거래처 혜택」 탭에서만 보여요. 다른 화면에는 광고가 없어요</li></ul>`,
+  footer:btn('닫기',{on:'S.modal=null;render()'})});render()}
 function lockOwner(){S.ownerAuth=false;S.view='home';render();toast('🔒 점주 대시보드를 잠갔어요')}
 function changePin(f){const a=f.p1.value.trim();if(!/^\d{4}$/.test(a))return toast('숫자 4자리로 입력해 주세요');S.pin=a;f.reset();markDirty();toast('🔑 비밀번호를 바꿨어요')}
 function monthRecords(){
